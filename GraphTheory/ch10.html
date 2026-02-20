@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        LINK COMPLETION
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Overview
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> identifying missing edges or predicting the future formation of edges between existing nodes in a graph.</p>
+            <p>It operates on the premise that while we may observe a snapshot of a network, that snapshot is often incomplete or evolving.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Similarity-Based Metrics
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>These assume that "nodes that are similar are more likely to connect."</p>
+            <ul>
+                <li><strong>Common Neighbors:</strong> If nodes $A$ and $B$ share many mutual friends, they are likely to connect.</li>
+                <li><strong>Neighborhood Overlap:</strong> Measuring shared local structures. Examples include Common Neighbors or the Jaccard similarity index, which normalize the count of mutual connections.</li>
+                <li><strong>Adamic-Adar Index:</strong> Gives more weight to common neighbors that have fewer total connections (i.e., "exclusive" mutual friends).</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Advanced Metrics
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Path-Based Metrics:</strong> These look at the distance between nodes. Dijkstra algorithm, A*, etc.</li>
+                <li><strong>Node Property Combinations:</strong> Merging individual attributes (e.g., age difference) or calculating the cosine similarity of node embeddings.</li>
+                <li><strong>Machine Learning / Graph Embeddings:</strong> Modern approaches use "Graph Neural Networks" (GNNs) or algorithms like Node2Vec to transform nodes into vectors in a high-dimensional space. If two vectors are close together, a link is predicted.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        TRAINING WORKFLOW
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Defining the Relationship Sets
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>In practice, you start with a “Master Graph” and perform a random edge split. You extract a percentage of existing links (positive examples) to form your Training and Evaluation sets, removing them from the graph. The remaining links become your <strong>Feature Generation Set</strong>. This ensures that when the model “looks” at the network, the links it is trying to predict are physically absent, forcing it to rely on topological patterns rather than direct adjacency.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Generating Negative Examples
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>A classifier needs to see both successful links and “failed” ones. You perform negative sampling by identifying pairs of nodes that do not have an existing relationship. To keep the model sharp, you often structure these as <em>hard negatives</em>—pairs that are close (e.g., distance of 2) but not connected. You then structure your dataset as a table where each row represents a node pair (, ) with a binary label: 1 for a real link, 0 for a sampled non-link.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Calculating Graph Metrics
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Using only the Feature Generation Set, you run graph algorithms to extract features for every pair in your training table. In a tool like Neo4j, you would execute node similarity or path-finding procedures. For each pair (, ), you calculate a vector of metrics:</p>
+            <div class="code-block">
+Adamic-Adar score based on mutual neighbors
+PageRank scores for both and to capture “importance”
+Shortest path length
+            </div>
+            <p>These metrics are appended to your table, transforming raw graph structures into a standard feature matrix.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Model Training & Feature Importance
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>The structured table—containing your pair features and their binary labels—is fed into a classifier (like Random Forest or XGBoost). The model learns which metrics are most predictive; for instance, it might find that Jaccard Similarity is a stronger predictor than Node Degree. Because the links in the training set were removed from the Feature Generation graph, the model is successfully trained to infer connections from pure context.</p>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        DATA-SPLITTING METHODS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Positive and Negative Samples
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>The standard approach for framing link prediction as a binary classification problem. In link prediction, a <strong>Positive Sample</strong> is an existing edge in the graph, representing a confirmed relationship. A <strong>Negative Sample</strong> represents a non-existent edge between two nodes. Because most nodes in a large graph aren't connected, negative samples grow quadratically, creating a class imbalance. To train effectively, you must subsample negatives to match the number of positives, teaching the model to distinguish between "likely" and "unlikely" future connections.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Random Splitting
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>It is the standard approach when the graph is a single "snapshot" in time with no chronological metadata. Random Splitting involves randomly selecting a percentage of edges to be removed from the graph and placed into the Training or Evaluation sets. The remaining edges form the Feature Generation subgraph. This method assumes the network's organizing principles are static and that any randomly chosen subset of edges is representative of the whole.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Time-Based Splitting
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>The gold standard for evolving networks. You select a specific point in time: edges formed before the cutoff create the Feature Generation graph, while edges formed after serve as the Evaluation set. This mimics real-world scenarios, like a recommendation engine predicting which users will become friends next week based on today's social structure, effectively preventing "future-look-ahead" bias.</p>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        NETWORK FEATURE ENGINEERING
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Network Distance Metrics
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>The core hypothesis is that nodes "closer" in the graph are more likely to connect. By measuring the shortest path in your Feature Set, you give the model a numerical way to assess proximity.</p>
+            <ul>
+                <li><strong>Distance = 1:</strong> implies an existing relationship already exists in the feature graph, which would trigger data leakage.</li>
+                <li><strong>Distance = 2:</strong> The nodes share at least one mutual neighbor (e.g., a "friend of a friend").</li>
+                <li><strong>Distance > 2:</strong> The nodes are further apart and statistically less likely to connect.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Preferential Attachment
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Universal signal for "cumulative advantage." Network growth principle summarized by the phrase <em>"the rich get richer."</em> It suggests that nodes with a high degree (many existing connections). It captures network "gravity." In systems where a few nodes act as hubs—such as the World Wide Web, academic citations, or international airports—these hubs attract new connections simply by being highly visible and accessible within the topology.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Local Neighborhood Metrics
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Common Neighbors:</strong> The intuition behind the common neighbor metric is simple. The more common neighbors two nodes have, the higher the chance of a link forming in the future.</li>
+                <li><strong>Adamic-Adar:</strong> Posits that common neighbors with fewer total connections provide stronger evidence of a future link than "promiscuous" neighbors with many connections. e.g. A pair of people have one friend in common. If that common friend has 1000 other friends, it is less likely that they will introduce the particular pair of people than if they only had two friends in total</li>
+                <li><strong>Clustering Coefficient:</strong> Measures how "tightly knit" the mutual friends of two nodes are. In any network, this metric identifies "pockets" where the infrastructure is nearly complete, suggesting that the final missing links are inevitable. e.g. Bioinformatics: In protein-interaction networks, if two proteins share neighbors that are themselves highly interconnected, it indicates they likely belong to the same functional module or protein complex, predicting a direct biological interaction.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        NODE EMBEDDING MODELS / CLASSIFICATION: HOW TO PREPARE GRAPH DATASETS FOR MACHINE LEARNING 
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <p>Every graph can be represented as an adjacency matrix</p>
+        <p><strong>The Problem:</strong> Adjacency matrices are high-dimensional, scale-rigid, and prone to overfitting.</p>
+        <p>Adding a single node breaks the input dimensions. Feeding this into a ML model causes overfitting.</p>
+        <p><strong>The Solution:</strong> Node embeddings compress local topology into dense, fixed-size vectors, focusing on neighborhood similarity at scale.</p>
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                Node Embedding Model Core Philosophies
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <ul>
+                <li><strong>Homophily (Community-Based):</strong> Nodes are embedded closely if they are neighbors or belong to the same cluster. This assumes "guilt by association"—if you are connected to enthusiasts of a specific niche, you likely share that interest. <em>Key Algorithm: FastRP. Focus: Proximity and connectivity.</em></li>
+                <li><strong>Structural Roles:</strong> Nodes are embedded closely if they perform the same function, regardless of distance. Two "hubs" connecting different clusters should have similar embeddings even if they are on opposite sides of the graph. <em>Focus: Topology and functional similarity.</em></li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section" open>
+    <summary>
+        TRANSDUCTIVE AND INDUCTIVE EMBEDDING MODELS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.1</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                Transductive and Inductive Embedding Models
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <ul>
+                <li><strong>Transductive Models:</strong> These models map specific nodes to embeddings like a fixed lookup table. If a new node arrives, it’s not in the "vocabulary," forcing a full recalculation of the entire graph and a retraining of any downstream classifiers. They lack the logic to generalize to unseen data.</li>
+                <li><strong>Inductive Models:</strong> Instead of a lookup table, these models learn a generalizable function (an "encoder") based on node features and neighborhood structures. This allows them to generate embeddings for entirely new nodes or separate graphs on the fly without needing to restart the training process.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Understanding Node2Vec
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Random Walks:</strong> In language, words appearing together share context; in graphs, nodes appearing in the same walk share structural proximity. This tricks Word2vec into "reading" your graph, learning that nodes often visited together should have similar vectors.</p>
+            
+            <ul>
+                <li><strong>The p parameter (Return parameter):</strong> controls the likelihood of immediately backtracking to a previous node. A low p forces the walk to stay close to the starting point, effectively emphasizing local clusters and microscopic structure (BFS-like behavior).</li>
+                <li><strong>The q parameter (In-out parameter):</strong> dictates the drive to explore outward. A low q encourages the walk to move further away from the origin into unvisited territory, capturing the global structure and macro-relationships across the network (DFS-like behavior).</li>
+                <li><strong>First-order walks:</strong> are memoryless; the next step depends only on your current node.</li>
+            </ul>
+
+            <div class="code-block">
+// First-order vs Second-order Logic
+- In a first-order walk, weights act as gravity. If node A has two neighbors, B (weight 1) and C (weight 4), you are 4x more likely to slide toward C. It’s "first-order" because the choice is based only on those immediate weights.
+
+- Second-order walks remember the previous node to weight the next move. This allows the algorithm to distinguish between returning home, circling the neighborhood, or exploring outward.
+            </div>
+        </div>
+
+    </div>
+</details>
+
+</body>
+</html>

@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* --- INTEGRATED CRT CORE STYLES --- */
+:root {
+--bg-color: #000000;
+--text-color: #00ff41;
+--accent-color: #00ff41;
+--dim-color: #003b00;
+--border-color: #00ff41;
+--font-main: 'Courier New', Courier, monospace;
+--font-header: 'Arial Black', Impact, sans-serif;
+--crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+}
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-main);
+        margin: 0;
+        padding: 20px;
+        line-height: 1.5;
+    }
+
+    /* --- VISUAL EFFECTS --- */
+    .dither-layer {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1;
+        background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+        background-size: 4px 4px;
+        opacity: 0.4;
+    }
+
+    .scanlines {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 9999;
+    }
+
+    /* --- MODULE COMPONENTS --- */
+    strong { color: var(--accent-color); text-decoration: underline; }
+    em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+    details.section {
+        margin-bottom: 15px;
+        border: 1px solid var(--dim-color);
+        background: #050505;
+    }
+
+    details.section > summary {
+        font-weight: bold;
+        padding: 12px;
+        background: #0a0a0a;
+        cursor: pointer;
+        list-style: none;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    details.section[open] > summary {
+        border-bottom: 1px solid var(--dim-color);
+        color: var(--accent-color);
+        text-shadow: var(--crt-glow);
+    }
+
+    .section-content { padding: 20px; }
+
+    .subsection {
+        margin-bottom: 30px;
+        border-left: 4px solid var(--dim-color);
+        padding-left: 15px;
+    }
+
+    .subsection-title {
+        background: var(--dim-color);
+        color: var(--accent-color);
+        padding: 4px 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+    }
+
+    .code-block {
+        background: #020a02;
+        border: 1px dashed var(--dim-color);
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 0.85rem;
+        color: var(--accent-color);
+        overflow-x: auto;
+    }
+
+    .eye-btn {
+        background: none;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+        cursor: pointer;
+        padding: 2px 5px;
+        display: flex;
+        align-items: center;
+        opacity: 0.7;
+    }
+    .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+</style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+<summary>
+EXPRESSIVENESS AND GRAPH CLASSIFICATION
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+
+<div class="section-content">
+    
+    <div class="subsection">
+        <span class="subsection-title">
+            <The Universal Approximation Theorem (UAT):>
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        
+        <p><strong>Goal:</strong> A foundational principle in neural network theory.</p>
+        
+        <ul>
+            <li>It states that a feed-forward network with even a <em>single hidden layer</em> and a finite number of neurons can approximate any continuous function to any desired degree of accuracy.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            <Weisfeiler-Leman Test Walkthrough:>
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>WL Test (The Benchmark):</strong> This is a purely mathematical, non-neural algorithm. The WL test acts as the benchmark used to judge how "smart" or "expressive" a new GNN architecture actually is. If a WL test can't tell two graphs apart, they are considered structurally "the same" for most standard algorithms.</p>
+        
+        <ul>
+            <li><strong>1. Initialization (The Baseline):</strong> Every node in graph is assigned the same initial label, () = 1. At this stage, every node is indistinguishable.</li>
+            <li><strong>2. Neighborhood Aggregation (The Nuance):</strong> For each node, we collect the labels of its immediate neighbors. <em>The Key Detail:</em> We collect these as a multiset (a set where duplicates matter). <em>Why?</em> If Node A has two neighbors with label “1” and Node B has three neighbors with label “1”, their multisets {1, 1} and {1, 1, 1} are different. This captures the node degree (connectivity) even when all labels are identical.</li>
+            <li><strong>3. Hash & Re-label (The Refinement):</strong> We feed the node’s current label and its neighbor multiset into a hash function. The hash function is injective, meaning different inputs must produce different new colors. After the first iteration, nodes with different degrees now have different colors.</li>
+        </ul>
+
+        <div class="code-block">
+¹() = ((), {{()    ()}})
+</div>
+
+        <ul>
+            <li><strong>4. Iteration (Information Propagation):</strong> Steps 2 and 3 are repeated. In the second iteration, nodes aggregate the new colors of their neighbors. Round 1 captures 1-hop connectivity (degree). Round 2 captures 2-hop connectivity (the degrees of your neighbors). Round captures the structural layout of the graph hops away.</li>
+            <li><strong>5. Termination & Canonical Form:</strong> The process stops when the number of distinct colors stays constant between two rounds (the “stable coloring”). The final set of colors and their counts (a histogram) represents the Canonical Form or “Graph Signature.” If two graphs produce different signatures, they are guaranteed to be non-isomorphic.</li>
+        </ul>
+    </div>
+
+</div>
+</details>
+
+<details class="section">
+<summary>
+GRAPH ISOMORPHISM NETWORK (GIN)
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+
+<div class="section-content">
+    
+    <div class="subsection">
+        <span class="subsection-title">
+            <Graph Isomorphism Network (GIN):>
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        
+        <p><strong>GIN (The Implementation):</strong> GIN is a Neural Network architecture. Its entire purpose is to be a "Neural WL Test." It uses the logic of the WL test to ensure its embeddings are as mathematically powerful as possible.</p>
+        
+        <p><strong>How GIN Works:</strong></p>
+        <ul>
+            <li><strong>1. Multiset Preservation:</strong> Instead of averaging neighbors, GIN treats the neighborhood as a multiset. It ensures that a node with two neighbors of type A is seen as different from a node with three neighbors of type A.</li>
+            <li><strong>2. The Injective Function:</strong> Injective Function is the "sorting machine" that ensures different inputs never produce the same output. Its job is to prevent structural collisions. If two nodes have different neighborhood structures, the injective function guarantees they will be mapped to different coordinates in the embedding space.</li>
+        </ul>
+
+        <div class="code-block">
+How it works:
+Sum Aggregation: Instead of averaging (which loses the number of neighbors) or taking the max (which loses the variety of neighbors), GIN sums the feature vectors. Summing a multiset is mathematically injective for unique inputs.
+MLP Refinement: The sum is fed into a Multi-Layer Perceptron (MLP). Because of the Universal Approximation Theorem, a sufficiently deep MLP can learn the specific injective mapping required to distinguish any two multisets.
+</div>
+</div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Data Handling & Mini-Batching
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <ul>
+            <li><strong>Disjoint Union [Diagonal Stacking]:</strong> Ensures there are no edges connecting a node in Graph A to a node in Graph B. They are processed together for speed, but they are mathematically invisible to each other. In practice, if Graph A has 3 nodes and Graph B has 2, PyG creates a single 5-node matrix. A stays in the top-left, B stays in the bottom-right, and the rest is zeros.</li>
+            <li><strong>Batch Vector:</strong> If Graph 0 has 3 nodes and Graph 1 has 2, the batch vector is [0,0,0,1,1]. Readout layers like global_add_pool use these indices to group and sum node embeddings by graph ID. If your mini-batch contains 100 total nodes across 4 different graphs, the vector might look like [0,0...1,1...2,2...3,3].</li>
+            <li><strong>Node Index:</strong> The position in the vector (e.g., index i is Node i).</li>
+            <li><strong>Value:</strong> The Graph ID (e.g., batch[i] = 2 means Node i belongs to Graph 2).</li>
+        </ul>
+    </div>
+
+</div>
+</details>
+
+<details class="section">
+<summary>
+GIN WALKTHROUGH
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+
+<div class="section-content">
+    
+    <div class="subsection">
+        <span class="subsection-title">
+            <GIN WALKTHROUGH:>
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        
+        <ul>
+            <li><strong>1. Data Preparation & The Batch Vector:</strong> Unlike node classification, where you work with one large connected graph, graph classification involves thousands of small, independent graphs. The Disjoint Union: Their adjacency matrices are joined diagonally, meaning there are zero edges connecting Graph A to Graph B. The Batch Vector: To keep track of these boundaries, we use a batch vector. This acts as a "Graph index” for every node. It ensures that during the final condensation step, the model knows exactly which nodes belong to which graphs.</li>
+            <li><strong>2. The GIN Layer: Injective Message Passing:</strong> The GIN layer performs "Message Passing" to capture local relationships. For every node, the model sums its own features with the features of its immediate neighbors. The MLP Engine: These aggregated sums are passed through a Multi-Layer Perceptron (MLP).</li>
+            <li><strong>3. Aggregation: The Power of the Sum:</strong> Inside each GINConv layer, you must choose how to condense a node's neighborhood. GIN requires <em>Sum aggregation</em>. Structural Integrity: Mean-pooling only captures the distribution of neighbor types, and Max-pooling only captures the strongest neighbor. Only Sum-pooling preserves the multiset of features. Example: Summation is the only way to distinguish a node with two "Carbon" neighbors from a node with four "Carbon" neighbors. This "counting" ability is what allows GIN to identify complex structural motifs.</li>
+            <li><strong>4. Global Readout & Jumping Knowledge (JK):</strong> Since we are classifying the entire graph, we must collapse all individual node embeddings into a single vector. This is called Global Readout. Condensing with JK: In a standard GNN, you only look at the nodes after the final layer (e.g., after 3 "hops"). However, the graph's identity might be defined by a small, local pattern (1-hop) rather than its global shape. The Multi-Scale Choice: We apply global_add_pool to the embeddings at every hop and concatenate them. This "Jumping Knowledge" approach ensures the final classifier doesn't just see the "latest gossip" from 3 hops away, but has a multi-resolution view of the graph's structure from every stage of the process.</li>
+            <li><strong>5. The Classifier & Regularization:</strong> The Classifier Head is the final MLP that converts the graph's high-dimensional "summary" into a categorical prediction. Dropout & Normalization: Graph classification datasets are often small, making deep GIN models prone to overfitting. Apply Dropout (typically p=0.5) before the final linear layer. This forces the model to learn robust, generalized structural patterns rather than memorizing specific training graphs.</li>
+            <li><strong>6. GIN vs. GINE: Incorporating Edges:</strong> If your dataset includes relational data (like chemical bond types), swap GINConv for GINEConv. GINE Logic: GINE incorporates edge features by adding the edge embedding to the neighbor node embedding before the MLP transformation. This is essential for molecular tasks where the connection type (single vs. double bond) is as informative as the atoms themselves.</li>
+        </ul>
+    </div>
+
+</div>
+</details>
+
+</body>
+</html>

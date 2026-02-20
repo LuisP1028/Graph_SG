@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        CONSTRUCTING NEAREST NEIGHBOR SIMILARITY NETWORKS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <p>Characterize a node’s immediate neighborhood as well as investigate its role in the whole network.</p>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                CREATING THE SIMILARITY NETWORK: EMBED NODES -> COSINE SIMILARITY —> LPA
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Goal:</strong> Useful to identify specific groups or clusters. <em>Cosine similarity</em> maps similar nodes, while <em>label propagation</em> is used to create "communities" of those similar nodes.</p>
+            
+            <ul>
+                <li><strong>Extraction:</strong> You convert a node's network position into a <em>"vector"</em> (a list of numbers).</li>
+                <li><strong>Logic:</strong> If a node has high Betweenness, it occupies a specific coordinate in feature space.</li>
+                <li><strong>Comparison:</strong> Using Cosine Similarity, you measure the <em>"distance"</em> between these coordinates. You aren't checking if they are friends; you're checking if they act the same way.</li>
+                <li><strong>Synthesis:</strong> You build a new network where an edge represents <em>"sameness."</em></li>
+                <li><strong>Segmentation:</strong> Label Propagation then finds clusters in this new graph. These clusters represent <em>"roles"</em>—like a group of bots that all share the same structural signature, even if they never interact.</li>
+            </ul>
+
+            <div class="code-block">
+Example:
+Extraction: Identify a node’s "Structural DNA." Instead of tweets, calculate a facility's "Throughput" (local property) and "Betweenness" (its role as a bridge).
+Vectorization: Every warehouse becomes a numerical vector: [volume, bridge_score]. You have turned operational behavior into spatial coordinates.
+Cosine Similarity: Compare these vectors. If two warehouses "act" the same, you draw a Similarity Edge between them—even if they aren't physically linked.
+Label Propagation: You let "labels" flow across these new similarity edges.
+Like a virus of "sameness," the label spreads until it hits a boundary where behavior changes.
+Segmentation: The result is a set of Communities based on roles—grouping all "Critical Global Hubs" together and all "Local Spoke Sites" together.
+            </div>
+        </div>
+    </div>
+</details>
+
+<details class="section" open>
+    <summary>
+        MOTIFS AND GRAPHLETS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.1</span>
+    </summary>
+    
+    <div class="section-content">
+        <p>In essence, you are moving from proximity-based analysis (who you know) to structural-role analysis (what you do). You're capturing the <em>"structural signature"</em> of a node's immediate neighborhood by quantifying the number of out-degrees, in-degrees for each node in a community, to identify nodes that have similar in/out degree "shapes" (e.g. roles).</p>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                MOTIFS AND GRAPHLETS
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Motif:</strong> A recurring <em>"blueprint"</em> or pattern in a network, like a specific arrangement of connections (e.g., a triangle). It describes the collective shape of the group. With motifs, you only count how often this pattern occurs in a network.</li>
+                <li><strong>Graphlet:</strong> The specific position a node occupies within a motif. It defines a node’s unique <em>functional role</em> based on its location in that specific pattern.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                BETWEENESS CENTRALITY
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Betweenness Centrality measures a node’s <strong>strategic value</strong> as a broker. While graphlets look at local "shapes," this identifies a node's global position by calculating how often it sits on the shortest path between all other node pairs. Nodes with high betweenness act as <em>critical bridges</em>; they control the flow of information.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                CLOSENESS CENTRALITY
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Closeness Centrality measures <strong>accessibility</strong>. It calculates the shortest paths from one node to every other node in the network. A high score indicates a <em>"central"</em> location, allowing a node to reach the entire system with minimum latency.</p>
+        </div>
+    </div>
+</details>
+
+<details class="section" open>
+    <summary>
+        Community Detection Algorithms on top of Similarity Networks
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.2</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                LOUVAIN ALGORITHM
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>The Louvain algorithm scans the similarity network to find nodes that interact with each other far more frequently than they do with the rest of the network. These dense clusters represent <em>functional modules</em>—groups of nodes that are bound because they collaborate on specific cellular tasks, such as metabolic pathways.</p>
+            
+            <ul>
+                <li><strong>1. From Similarity to Segments:</strong> By maximizing <em>Modularity</em>, it ensures these clusters represent significant, non-random structural niches rather than coincidental overlaps.</li>
+                <li><strong>Modularity:</strong> To find order, you need a baseline of chaos. We create a <em>Null Model</em> by shuffling the network's edges randomly while keeping node degrees constant (purposely shuffle connections (even if they don't exist in reality), to establish a baseline as to whether order exists in the graph). A high score proves the cluster is an intentional archetype, not a statistical accident.</li>
+                <li><strong>Aggregation:</strong> Nodes in the same community are collapsed into a single <em>"super-node."</em></li>
+                <li><strong>Self-loops & Edges:</strong> "self-loops" keep track of super-node relationships, while "weighted edges" keep track of supernode-supernode relationships. "self loops" inside of a super-node, is really just jargon for saying you keep a record of the relationships inside of a super-node. Weighted edges between super-nodes represent the <em>"bridge strength"</em> between groups, indicating how many links originally connected members of Community A to members of Community B.</li>
+                <li><strong>2. Identifying Functional "Tribes":</strong> This identifies behavioral archetypes. Because you are clustering based on similarity rather than direct interaction, the resulting groups are <em>"tribes"</em> of entities that perform identical functions.</li>
+                <li><strong>3. The Final Mutation:</strong> It saves cluster IDs to your RAM-based graph projection. This lets you use those segments as inputs for the next algorithm instantly, bypassing the delay of writing to your permanent database.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

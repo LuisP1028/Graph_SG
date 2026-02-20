@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Meta-Path Collapse Visualization</title>
+    <style>
+        :root {
+            --bg: #000000;
+            --fg: #33FF00;
+            --dim: rgba(51, 255, 0, 0.2);
+        }
+
+        /* Fully fluid typography and spacing across the entire viewport range */
+        body {
+            background-color: var(--bg);
+            color: var(--fg);
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0;
+            padding: clamp(10px, 2vw, 30px);
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh; 
+            box-sizing: border-box;
+            gap: clamp(10px, 2vh, 20px);
+        }
+
+        header {
+            text-align: center;
+            border-bottom: clamp(1px, 0.2vw, 3px) dashed var(--fg);
+            padding-bottom: clamp(10px, 2vh, 15px);
+            flex-shrink: 0;
+        }
+
+        h1 { 
+            margin: 0; 
+            font-size: clamp(1.2rem, 3vw, 2.2rem); 
+            text-transform: uppercase; 
+            letter-spacing: clamp(1px, 0.1vw, 3px); 
+        }
+
+        /* MAIN CONTAINER: Fluid flex-wrap allows natural stacking on mobile/tablet */
+        #app-container {
+            display: flex;
+            flex-wrap: wrap;
+            flex: 1;
+            gap: clamp(15px, 2vw, 30px);
+            min-height: 0;
+        }
+
+        /* PANES: Grow to fill, stack when container is smaller than ~400px */
+        .pane {
+            flex: 1 1 min(100%, 400px);
+            border: clamp(2px, 0.3vw, 5px) solid var(--fg);
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(51, 255, 0, 0.03),
+                rgba(51, 255, 0, 0.03) 1px,
+                transparent 1px,
+                transparent 2px
+            );
+            box-shadow: 0 0 clamp(10px, 1.5vw, 25px) var(--dim);
+            min-height: 40vh; /* Ensures pane holds shape on stacked mobile layout */
+        }
+
+        .pane-title {
+            background: var(--fg);
+            color: var(--bg);
+            padding: clamp(6px, 1vh, 12px) clamp(10px, 1.5vw, 20px);
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: clamp(0.9rem, 1.5vw, 1.3rem);
+            flex-shrink: 0;
+        }
+
+        /* GRAPH PANE: Centers fluid SVG */
+        #graph-pane { 
+            flex: 1; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            overflow: hidden; 
+            position: relative;
+            padding: clamp(10px, 2vw, 20px);
+            box-sizing: border-box;
+        }
+
+        /* MATRIX PANE: Scrollable independently, fluid font size */
+        #matrix-pane { 
+            padding: clamp(10px, 2vw, 20px); 
+            overflow: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: clamp(10px, 1.5vh, 20px);
+            flex: 1;
+            font-size: clamp(0.85rem, 1.5vw, 1.25rem);
+        }
+
+        /* SVG: Uses relative viewBox coords scaling infinitely inside parent */
+        svg {
+            width: 100%;
+            height: 100%;
+            max-height: 100%;
+            display: block;
+            shape-rendering: crispEdges;
+            pointer-events: none; 
+        }
+
+        /* SVG VISUAL ELEMENTS */
+        .node-a { fill: url(#dither-blue); stroke: var(--fg); stroke-width: 2; }
+        .node-p { fill: url(#dither-orange); stroke: var(--fg); stroke-width: 2; }
+        .label-bg { fill: var(--bg); }
+        .label { 
+            fill: var(--fg); 
+            font-family: 'Courier New', monospace; 
+            font-size: 18px; /* Internal viewBox coords, scales automatically */
+            font-weight: bold; 
+            text-anchor: middle; 
+            dominant-baseline: middle; 
+        }
+
+        .edge-het { stroke: var(--fg); stroke-width: 1; stroke-dasharray: 4 4; opacity: 0.8; }
+        .edge-hom { stroke: var(--fg); stroke-width: 3; stroke-dasharray: 2 2; }
+
+        /* MATRICES & TABLES: Fluid cell sizing */
+        .matrix-wrapper { 
+            margin-top: clamp(5px, 1vh, 10px); 
+            overflow-x: auto;
+            max-width: 100%;
+        }
+        .matrix-label { 
+            margin-bottom: clamp(3px, 0.5vh, 8px); 
+            font-weight: bold; 
+            text-decoration: underline; 
+        }
+        
+        table { 
+            border-collapse: collapse; 
+            margin-top: clamp(3px, 0.5vh, 8px); 
+        }
+        td, th { 
+            border: clamp(1px, 0.1vw, 2px) solid var(--fg); 
+            width: clamp(25px, 3.5vw, 50px); 
+            height: clamp(25px, 3.5vw, 50px); 
+            text-align: center; 
+            font-size: 1em; /* Inherits fluid size from #matrix-pane */
+        }
+        th { background: var(--dim); color: var(--fg); }
+        .cell-1 { background: var(--fg); color: var(--bg); font-weight: bold; }
+        .cell-0 { color: var(--dim); }
+
+        p { margin: clamp(5px, 1vh, 12px) 0; }
+
+        /* CONTROLS: Fluid spacing, flex-wrap for mobile stacking */
+        #controls {
+            padding-top: clamp(10px, 2vh, 20px);
+            border-top: clamp(1px, 0.2vw, 3px) dashed var(--fg);
+            display: flex;
+            flex-wrap: wrap; 
+            justify-content: space-between;
+            align-items: center;
+            gap: clamp(15px, 2vw, 25px);
+            flex-shrink: 0;
+            position: relative;
+            z-index: 100;
+            background-color: var(--bg);
+        }
+
+        #status-text { 
+            font-size: clamp(0.95rem, 2vw, 1.4rem); 
+            font-weight: bold;
+            text-shadow: 0 0 clamp(2px, 0.5vw, 6px) var(--fg);
+            flex: 1 1 100%;
+            text-align: center;
+        }
+
+        button {
+            background: var(--bg);
+            color: var(--fg);
+            border: clamp(2px, 0.3vw, 5px) solid var(--fg);
+            font-family: inherit;
+            font-size: clamp(0.9rem, 1.5vw, 1.3rem);
+            padding: clamp(8px, 1.5vh, 18px) clamp(16px, 3vw, 36px);
+            cursor: pointer;
+            text-transform: uppercase;
+            font-weight: bold;
+            box-shadow: clamp(3px, 0.5vw, 6px) clamp(3px, 0.5vw, 6px) 0 var(--dim);
+            transition: transform 0.1s, box-shadow 0.1s;
+            flex: 1 1 auto;
+            max-width: 100%;
+        }
+
+        button:hover { 
+            background: var(--fg); 
+            color: var(--bg); 
+            box-shadow: clamp(1px, 0.2vw, 3px) clamp(1px, 0.2vw, 3px) 0 var(--fg);
+        }
+        
+        button:active {
+            transform: translate(clamp(1px, 0.2vw, 3px), clamp(1px, 0.2vw, 3px));
+            box-shadow: 0 0 0;
+        }
+
+        /* Specific breakpoint just to align text cleanly once beyond mobile widths */
+        @media (min-width: 600px) {
+            #status-text {
+                flex: 0 1 auto;
+                text-align: left;
+            }
+            button {
+                flex: 0 1 auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Heterogeneous Graph Collapse</h1>
+    </header>
+
+    <div id="app-container">
+        <div class="pane">
+            <div class="pane-title">Graph View</div>
+            <div id="graph-pane">
+                <svg id="canvas" viewBox="0 0 600 550" preserveAspectRatio="xMidYMid meet">
+                    <defs>
+                        <pattern id="dither-blue" width="4" height="4" patternUnits="userSpaceOnUse">
+                            <rect width="4" height="4" fill="#000" />
+                            <rect width="2" height="2" fill="#33FF00" />
+                            <rect width="2" height="2" x="2" y="2" fill="#33FF00" />
+                        </pattern>
+                        <pattern id="dither-orange" width="4" height="4" patternUnits="userSpaceOnUse">
+                            <rect width="4" height="4" fill="#000" />
+                            <rect width="1" height="1" fill="#33FF00" />
+                            <rect width="1" height="1" x="2" y="2" fill="#33FF00" />
+                            <rect width="1" height="1" x="0" y="2" fill="#33FF00" />
+                        </pattern>
+                    </defs>
+                    <g id="edges-layer"></g>
+                    <g id="nodes-layer"></g>
+                </svg>
+            </div>
+        </div>
+
+        <div class="pane">
+            <div class="pane-title">Matrix Operations</div>
+            <div id="matrix-pane">
+                <div id="matrix-content">Initializing...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="controls">
+        <div id="status-text">Phase 1: Heterogeneous Graph</div>
+        <button id="next-btn">Next Phase >></button>
+    </div>
+
+    <script>
+        // --- DATA SETUP ---
+        // Internal SVG coordinate system. Scales perfectly to viewport via viewBox.
+        const authors = [
+            { id: 'A1', x: 150, y: 80 }, 
+            { id: 'A2', x: 150, y: 180 },
+            { id: 'A3', x: 150, y: 280 }, 
+            { id: 'A4', x: 150, y: 380 }, 
+            { id: 'A5', x: 150, y: 480 }
+        ];
+        
+        const papers = [
+            { id: 'P1', x: 450, y: 130 }, 
+            { id: 'P2', x: 450, y: 280 }, 
+            { id: 'P3', x: 450, y: 430 }
+        ];
+        
+        const M = [
+            [1, 0, 0], // A1 -> P1
+            [1, 1, 0], // A2 -> P1, P2
+            [0, 1, 0], // A3 -> P2
+            [0, 0, 1], // A4 -> P3
+            [0, 0, 1]  // A5 -> P3
+        ];
+
+        let currentState = 1;
+
+        // DOM Elements
+        const edgesLayer = document.getElementById('edges-layer');
+        const nodesLayer = document.getElementById('nodes-layer');
+        const matrixPane = document.getElementById('matrix-content');
+        const statusText = document.getElementById('status-text');
+        const nextBtn = document.getElementById('next-btn');
+
+        // --- DRAWING FUNCTIONS ---
+
+        function drawNodes(showPapers) {
+            nodesLayer.innerHTML = '';
+            
+            authors.forEach(a => {
+                nodesLayer.innerHTML += `
+                    <circle cx="${a.x}" cy="${a.y}" r="28" class="node-a"></circle>
+                    <rect x="${a.x - 18}" y="${a.y - 12}" width="36" height="24" class="label-bg"></rect>
+                    <text x="${a.x}" y="${a.y + 1}" class="label">${a.id}</text>
+                `;
+            });
+
+            if (showPapers) {
+                papers.forEach(p => {
+                    nodesLayer.innerHTML += `
+                        <rect x="${p.x - 28}" y="${p.y - 28}" width="56" height="56" class="node-p"></rect>
+                        <rect x="${p.x - 18}" y="${p.y - 12}" width="36" height="24" class="label-bg"></rect>
+                        <text x="${p.x}" y="${p.y + 1}" class="label">${p.id}</text>
+                    `;
+                });
+            }
+        }
+
+        function drawEdges(matrix, isHomo) {
+            edgesLayer.innerHTML = '';
+            if(!isHomo) {
+                matrix.forEach((row, i) => {
+                    row.forEach((val, j) => {
+                        if (val > 0) {
+                            edgesLayer.innerHTML += `<line x1="${authors[i].x}" y1="${authors[i].y}" x2="${papers[j].x}" y2="${papers[j].y}" class="edge-het"></line>`;
+                        }
+                    });
+                });
+            } else {
+                for(let i=0; i<matrix.length; i++) {
+                    for(let j=i+1; j<matrix[0].length; j++) {
+                        if(matrix[i][j] > 0) {
+                            let a1 = authors[i], a2 = authors[j];
+                            let controlX = (a1.x + a2.x) / 2 + 100; 
+                            let controlY = (a1.y + a2.y) / 2;
+                            edgesLayer.innerHTML += `<path d="M ${a1.x} ${a1.y} Q ${controlX} ${controlY} ${a2.x} ${a2.y}" class="edge-hom" fill="none"></path>`;
+                        }
+                    }
+                }
+            }
+        }
+
+        function generateTableHTML(matrix, rLabels, cLabels, title) {
+            let html = `<div class="matrix-wrapper"><div class="matrix-label">${title}</div><table><tr><th></th>`;
+            cLabels.forEach(l => html += `<th>${l}</th>`);
+            html += `</tr>`;
+            
+            matrix.forEach((row, i) => {
+                html += `<tr><th>${rLabels[i]}</th>`;
+                row.forEach(val => {
+                    html += `<td class="${val > 0 ? 'cell-1' : 'cell-0'}">${val}</td>`;
+                });
+                html += `</tr>`;
+            });
+            html += `</table></div>`;
+            return html;
+        }
+
+        // --- MATH HELPERS ---
+        const transpose = m => m[0].map((_, c) => m.map(r => r[c]));
+        const multiply = (a, b) => {
+            let result = Array(a.length).fill(0).map(() => Array(b[0].length).fill(0));
+            return result.map((row, i) => row.map((_, j) => 
+                a[i].reduce((sum, val, k) => sum + (val * b[k][j]), 0)
+            ));
+        };
+
+        // --- STATE ENGINE ---
+
+        function renderState() {
+            matrixPane.innerHTML = ''; 
+
+            if (currentState === 1) {
+                statusText.innerText = "Phase 1: Heterogeneous Graph (Author -> Paper)";
+                drawNodes(true);
+                drawEdges(M, false);
+                
+                matrixPane.innerHTML = `
+                    <p>> SYSTEM: DETECTED BIPARTITE GRAPH.</p>
+                    <p>> NODES: 5 AUTHORS (Blue), 3 PAPERS (Orange).</p>
+                    <p>> GOAL: COLLAPSE TO HOMOGENEOUS.</p>
+                    <p>> WAITING FOR MATRIX GENERATION...</p>
+                `;
+
+            } else if (currentState === 2) {
+                statusText.innerText = "Phase 2: Generate Adjacency Matrix M";
+                drawNodes(true);
+                drawEdges(M, false);
+
+                matrixPane.innerHTML = `
+                    <p>> GENERATING MATRIX M...</p>
+                    <p>> MAPS AUTHOR (Rows) TO PAPER (Cols).</p>
+                `;
+                matrixPane.innerHTML += generateTableHTML(M, authors.map(a=>a.id), papers.map(p=>p.id), "Matrix M");
+
+            } else if (currentState === 3) {
+                statusText.innerText = "Phase 3: Multiply M x M^T";
+                drawNodes(true);
+                drawEdges(M, false);
+
+                let MT = transpose(M);
+                
+                matrixPane.innerHTML = `
+                    <p>> CALCULATING SHARED PATHS...</p>
+                    <p>> OPERATION: M * Transpose(M)</p>
+                    <div style="display:flex; gap:clamp(10px, 2vw, 20px); align-items:center; flex-wrap:wrap; justify-content:center; margin-top: clamp(10px, 2vh, 20px);">
+                        ${generateTableHTML(M, authors.map(a=>a.id), papers.map(p=>p.id), "M")}
+                        <div style="font-size:clamp(1.5rem, 4vw, 3rem); font-weight:bold; margin: 0 clamp(5px, 1vw, 15px);">×</div>
+                        ${generateTableHTML(MT, papers.map(p=>p.id), authors.map(a=>a.id), "M^T")}
+                    </div>
+                `;
+
+            } else if (currentState === 4) {
+                statusText.innerText = "Phase 4: Homogeneous Graph (A_new)";
+                drawNodes(false); 
+                
+                let Anew = multiply(M, transpose(M));
+                drawEdges(Anew, true);
+
+                matrixPane.innerHTML = `
+                    <p>> TRANSFORMATION COMPLETE.</p>
+                    <p>> GRAPH IS NOW HOMOGENEOUS.</p>
+                    <p>> NEW EDGES REPRESENT CO-AUTHORSHIP.</p>
+                `;
+                matrixPane.innerHTML += generateTableHTML(Anew, authors.map(a=>a.id), authors.map(a=>a.id), "Final Adjacency (A_new)");
+            }
+        }
+
+        // --- EVENTS ---
+        nextBtn.addEventListener('click', () => {
+            currentState++;
+            if (currentState > 4) currentState = 1;
+            nextBtn.innerText = (currentState === 4) ? "RESTART SYSTEM >>" : "NEXT PHASE >>";
+            renderState();
+        });
+
+        // Initialize
+        renderState();
+
+    </script>
+</body>
+</html>

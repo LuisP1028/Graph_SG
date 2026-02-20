@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        MACHINE LEARNING FOR KNOWLEDGE GRAPHS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                Local Features
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Goal:</strong> Counting the node's direct connections.</p>
+            
+            <ul>
+                <li><strong>Individual Focus:</strong> Focus on individual nodes and their <em>immediate adjacency</em>.</li>
+                <li><strong>Metric Role:</strong> These metrics describe a node's specific role or importance based on its direct connections without considering the broader neighborhood structure.</li>
+                <li><strong>Example:</strong> Degree Centrality (count of edges).</li>
+                <li><strong>Focus:</strong> The specific node and its incident edges.</li>
+                <li><strong>Key Question:</strong> "How many direct connections does this point have?"</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Egonet Features
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Focus on the subgraph induced by a node and its neighbors (the "ego" and its "alters").</p>
+            <ul>
+                <li><strong>Structural Patterns:</strong> These capture local clustering, density, and the complex structural patterns within a node's <em>social circle</em>.</li>
+                <li><strong>Relationships:</strong> Egonet Features look at the relationships between those connections.</li>
+                <li><strong>Neighborhood:</strong> The structure and "tightness" of the neighborhood.</li>
+                <li><strong>Key Question:</strong> "Are my friends also friends with each other?"</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        NODE-FOCUSED TASKS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.1</span>
+    </summary>
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Input & Output
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Input:</strong> A single graph where individual nodes and their relationships (edges) serve as the data points.</p>
+            <p><strong>Output:</strong> Predictions for specific components, such as assigning classes to nodes (classification) or determining the probability of a connection between them (link prediction).</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Node Classification
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Homophily:</strong> The tendency for connected nodes to share similar attributes (e.g., social circles).</li>
+                <li><strong>Structural Equivalence:</strong> Nodes with similar neighborhood patterns often share roles, like proteins with similar functions.</li>
+                <li><strong>Heterophily:</strong> A pattern where "opposites attract," and nodes connect to those with different traits.</li>
+                <li><strong>Multilabel Classification:</strong> Assigning multiple categories to one node, such as predicting several interest groups for a single Flickr user.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Link Prediction
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Link prediction uses existing network structure and node traits to forecast missing or future connections. It treats the graph as a <em>semi-supervised problem</em> to fill in data gaps.</p>
+            <ul>
+                <li><strong>Recommendations:</strong> Suggesting friends or products.</li>
+                <li><strong>Knowledge Graph Completion:</strong> Inferring new facts or relationships.</li>
+                <li><strong>Bioinformatics:</strong> Predicting drug side effects or protein interactions.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Community detection (or clustering)
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Identifies dense groups of nodes that are more connected to each other than to the rest of the network.</p>
+            <ul>
+                <li><strong>Structural Summarization:</strong> It provides a macro-view of massive graphs by grouping them into functional modules or institutions.</li>
+                <li><strong>Topological Basis:</strong> Groups are formed because nodes in the same "community" have a higher propensity to interact (e.g., researchers at the same university).</li>
+                <li><strong>Hybrid Approaches:</strong> While mostly unsupervised, methods like label propagation can use a few known labels to guide the discovery of these communities.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        GRAPH-FOCUSED TASKS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.2</span>
+    </summary>
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Global Prediction
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Input:</strong> A collection of multiple independent graphs used as distinct data points.</p>
+            <p><strong>Output:</strong> A single label or value assigned to an entire graph structure, such as classifying a whole molecule or predicting overall graph functions.</p>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        &lt;ML on Graphs:&gt;
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.3</span>
+    </summary>
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Representation Learning
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Graph embedding or representation learning. By converting non-Euclidean graph structures (nodes/edges) into standard numerical vectors (feature engineering), you can feed them into traditional models like Random Forests or Neural Networks.</p>
+            <ul>
+                <li><strong>Vectorization:</strong> Vectorization in graphs is the process of converting complex relational data into numerical vectors.</li>
+                <li><strong>Node/Edge Attributes:</strong> If a node has raw data (e.g., a user's age), that specific feature is encoded.</li>
+                <li><strong>Topological Features:</strong> The relationships/structure itself (e.g., how many neighbors a node has) is "summarized" into the same vector.</li>
+                <li><strong>Feature Engineering:</strong> Feature Engineering is critical: How nodes are represented is more critical than the choice of classifier.</li>
+                <li><strong>Domain Knowledge:</strong> Understanding network dynamics (like homophily) often outperforms generic metrics like simple degree centrality.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Evaluating ML Graphs;
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>The process transforms test node embeddings using the same scaling parameters as the training set to ensure consistency. The evaluation utilizes four key statistical metrics:</p>
+            <ul>
+                <li><strong>Precision:</strong> The accuracy of positive predictions.</li>
+                <li><strong>Recall:</strong> The ability to find all relevant instances.</li>
+                <li><strong>F-score:</strong> The harmonic mean of precision and recall, balancing both.</li>
+                <li><strong>Confusion Matrix:</strong> A table summarizing where the model correctly identifies classes versus where it misclassifies them.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        &lt;Feature Engineering:&gt;
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.4</span>
+    </summary>
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Core Strategies
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>In traditional datasets, features are direct measurements from the real world. In graph-based ML, we must construct our features from the graph structure itself, we need to capture meaningful properties of nodes, relationships, or entire graphs as numerical values.</p>
+            <ul>
+                <li><strong>Local Features:</strong> These capture data from the <em>ego-centered network</em> (egonet). They analyze the "ego" (the specific node) and its "alters" (immediate or n-hop neighbors) to understand its local environment.</li>
+                <li><strong>Global Features:</strong> These quantify a node's role within the entire network. This includes centrality metrics like PageRank, Betweenness, and Closeness, which measure a node's influence and its connectivity to the rest of the graph.</li>
+                <li><strong>Incremental Featurization:</strong> Instead of giving the model all the data at once, they add one metric at a time. Building the feature vector step-by-step. You start with a simple vector (e.g., just node degree), train the model, and evaluate performance. Then, you concatenate a new metric (like PageRank) to that vector and re-train to see if accuracy improves.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Manual Node Feature Examples (Graph Theory)
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Degrees:</strong> Node degree measures immediate reach and influence, making it a robust baseline for featurization.</li>
+                <li><strong>Local homophily:</strong> By decomposing the degree into specific categories (e.g., connections to different groups), you capture the tendency for similar nodes to cluster.</li>
+                <li><strong>Triangle Subgraphs:</strong> Triangle subgraphs quantify the clustering and density of a node's immediate neighborhood. Triangles reveal if those neighbors are also connected to each other.
+                    <ul>
+                        <li><strong>Structural Strength:</strong> High triangle counts suggest the node is part of a cohesive group, which often correlates with higher influence or trust.</li>
+                        <li><strong>Homophily Amplification:</strong> If a node is part of multiple triangles where other members share a specific trait.</li>
+                    </ul>
+                </li>
+                <li><strong>Density:</strong> It quantifies the intensity of interaction within a node's immediate neighborhood. A high density in an egonet suggests a highly cohesive group where information or influence spreads rapidly.</li>
+                <li><strong>Geodesic Path:</strong> Shortest path represents the minimum distance between two nodes.</li>
+                <li><strong>Closeness:</strong> Quantifies how efficiently a node can reach every other node in the network. Calculated as the reciprocal of the average shortest path distance.
+                    <ul>
+                        <li><strong>Standard Closeness:</strong> High closeness score indicates a node that is "central".</li>
+                        <li><strong>Normalization:</strong> Handles disconnected graphs where distances might be infinite, adjusting scores to reflect reachable nodes.</li>
+                    </ul>
+                </li>
+                <li><strong>Betweenness:</strong> Measures how often a node acts as a bridge between other nodes by appearing on the shortest paths between other pairs.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                &lt;Manual Relationship Feature Examples:&gt;
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>&lt;Node-Based Combination:&gt;</strong> This approach creates a "link" feature by concatenating the data already known about the two individual nodes.</p>
+            <p><strong>Symmetric and Distance-Based Operation:</strong></p>
+            <ul>
+                <li><strong>Average:</strong> Captures the "central tendency" by taking the element-wise mean. Useful for community membership or social circle prediction.</li>
+                <li><strong>L1 (Manhattan):</strong> Measures absolute difference to highlight how dissimilar nodes are across dimensions.</li>
+                <li><strong>L2 (Euclidean):</strong> Calculates squared difference, emphasizing larger gaps between feature values.</li>
+            </ul>
+            <p><strong>Compositional Operations:</strong></p>
+            <ul>
+                <li><strong>Concatenation:</strong> Joins vectors end-to-end. Preserves all data but doubles computational cost. Gold standard when relationship order matters (e.g., "A acts on B").</li>
+                <li><strong>Hadamard (Element-wise Product):</strong> Multiplies corresponding elements. Captures interactions where both nodes must be high to signal a relationship.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                &lt;Path-Based Features:&gt;
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ol>
+                <li><strong>Semantic Blueprinting (Metapath Definition):</strong> Define potential "templates" for connections. Example: Villain $\rightarrow$ Cites $ \rightarrow$ Philosopher $\rightarrow$ Influenced $\rightarrow$ Concept.</li>
+                <li><strong>Metapath Reduction (Filtering the Columns):</strong> Statistical selection step. Analyze templates and discard those that don't historically correlate with the outcome to shrink the feature vector.</li>
+                <li><strong>Structural Scoring (Calculating the Values):</strong> Use DWPC (Degree-Weighted Path Count) to score paths. Mitigates "hub noise" by weighting paths through busy nodes less than niche nodes.</li>
+            </ol>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        &lt;Semi-Automated Feature Extraction:&gt;
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.5</span>
+    </summary>
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                ReFeX - Recursive feature extraction
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Recursively generating local and egonet features from the graph structure.</p>
+            <ul>
+                <li><strong>Aggregation:</strong> Aggregates egonet features into a summary statistic (mean or sum) and appends to the original vector.</li>
+                <li><strong>Evolution:</strong> Through recursion, simple counts evolve into regional "signatures." Captures increasingly global structural patterns.</li>
+                <li><strong>Structural Equivalence:</strong> Allows a node to learn its structural role and identifies "look-alike" nodes even across different graphs.</li>
+            </ul>
+            <div class="code-block">
+Imagine Node A has a local feature (degree) of 3.
+Round 1: Node A aggregates its neighbors' degrees.
+This "egonet feature" (e.g., the sum of neighbors' degrees) is added to A's vector.
+Round 2: When A's neighbor, Node B, performs its aggregation, it pulls in A’s updated vector—which now contains information about A's own neighbors.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Key Pruning Techniques
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>To prevent combinatorial explosion:</p>
+            <ul>
+                <li><strong>Correlation Analysis:</strong> Discards features that move in lockstep to keep the model lean.</li>
+                <li><strong>Logarithmic Binning:</strong> Groups values into "buckets" to handle "Power Law" distributions (many nodes with few connections vs few with millions).</li>
+                <li><strong>Threshold-based Pruning:</strong> Removes features with almost no variation across the graph that lack the power to distinguish roles.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

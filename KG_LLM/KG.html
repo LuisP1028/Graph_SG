@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        METAGRAPH & SOURCE LINKING
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                METAGRAPH ARCHITECTURE
+                <button class="eye-btn" onclick="window.parent.openViewport('viz/metagraph_structure.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Goal:</strong> Multi-level abstraction of complex systems where nodes represent entire subgraphs.</p>
+            
+            <ul>
+                <li><strong>Key 01:</strong> A metagraph is a <em>generalized graph</em> where edges connect sets of source nodes to sets of target nodes.</li>
+                <li><strong>Key 02:</strong> It also describes a <em>hierarchical structure</em> where nodes represent entire subgraphs.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                EXTRACTION & SOURCE LINKING
+                <button class="eye-btn" onclick="window.parent.openViewport('viz/source_linking.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Maintain provenance and avoid "Frankenstein" nodes during initial extraction.</p>
+            <ul>
+                <li><strong>Atomic Nodes:</strong> Every mention of "Person A" on chunk 1 is a <em>distinct node</em> from "Person A" on chunk 2.</li>
+                <li><strong>Disambiguation:</strong> If Page 5 mentions "Jordan" (the CEO) and Page 80 mentions "Jordan" (the intern), merging them immediately creates a <em>Frankenstein node</em> with conflicting data.</li>
+                <li><strong>Provenance & Explainability:</strong> In RAG or GraphRAG, when a model claims "Person X did Y," you can trace the <em>exact chunk</em> that provided that fact for verification.</li>
+            </ul>
+            <div class="code-block">
+// Begin by chunking (choose the appropriate method based on task)
+// For each chunk, you extract Entity mentions and their Relationships 
+// as they appear in that specific context.
+// Do not merge these entities immediately.
+            </div>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        NORMALIZATION AND CLEANSING
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.1</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                STANDARDIZATION & REFINEMENT
+                <button class="eye-btn" onclick="window.parent.openViewport('viz/cleansing_logic.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Ensure graph connectivity by merging variations of the same concept.</p>
+            <ul>
+                <li><strong>Standardization:</strong> Lowercasing "Engineer" and "engineer" treats them as a <em>single Occupation node</em> to prevent fragmentation.</li>
+                <li><strong>Cleansing:</strong> Task-specific process of refining raw mentions to match your <em>domain's logic</em>, such as stripping "Dr." or "CEO".</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        GRAPH-BASED ENTITY RESOLUTION
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.2</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                RELATIONAL CONTEXT & LOUVAIN
+                <button class="eye-btn" onclick="window.parent.openViewport('viz/louvain_clusters.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Use structural evidence and global interaction density to resolve entities.</p>
+            <ul>
+                <li><strong>Context is connectivity:</strong> If two candidate nodes share <em>common neighbors</em> (LIVES_IN, ATTENDED, MENTIONED), the structural evidence for merging them grows.</li>
+                <li><strong>Louvain Algorithm:</strong> Analyzes global interaction density to identify <em>neighborhoods</em> where nodes are more tightly connected to each other than to the rest of the graph.</li>
+                <li><strong>Mathematical Evidence:</strong> If "John Doe" from a maritime document and "John Doe" from astrophysics are placed into <em>different communities</em>, they belong to separate spheres.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        HOPS & TRAVERSAL
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.3</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                ECOSYSTEM MAPPING
+                <button class="eye-btn" onclick="window.parent.openViewport('viz/hop_explosion.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Identify influencers while avoiding query explosion.</p>
+            <ul>
+                <li><strong>2-Hops:</strong> Used to see the <em>ecosystem around a target</em> and identify "hidden hands" or influencers.</li>
+                <li><strong>Avoid 3+ Hops:</strong> In dense graphs, this leads to <em>query explosion</em> where everything becomes connected, rendering data meaningless.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        RETRIEVING HISTORY OF A TOPIC
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.4</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                AGGLOMERATIVE HIERARCHICAL CLUSTERING
+                <button class="eye-btn" onclick="window.parent.openViewport('viz/dendrogram.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Capture the entire history of a topic across different levels of granularity via a Taxonomic Overlay.</p>
+            <ul>
+                <li><strong>Embedding Generation:</strong> Create <em>high-dimensional vectors</em> for every entity (Occupations, Concepts, Materials) using models like SentenceBERT.</li>
+                <li><strong>AHC (Bottom-Up):</strong> Recursively merges the most <em>similar clusters</em> based on embedding distance.</li>
+                <li><strong>The Dendrogram:</strong> Creates a tree structure where specific entities (Heavy Nitrogen) are <em>leaf nodes</em> merging into broader clusters (Isotopes) and domain-level categories (Nuclear Physics).</li>
+                <li><strong>Upward Generalization:</strong> Querying "Nuclear Physics" automatically includes all facts related to its <em>children</em> (Isotopes, Cyclotrons).</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

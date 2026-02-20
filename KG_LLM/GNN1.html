@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        GRAPH NEURAL NETWORKS AND GRAPH REPRESENTATION LEARNING
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                Core-Periphery Structures
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p>In many real-world graphs (like social or citation networks), there is a dense "core" of highly connected nodes and a "periphery" of sparse, dangling leaf nodes.</p>
+            
+            <ul>
+                <li><strong>Core Nodes:</strong> Require high-hop info (global context) to distinguish their role in the massive cluster.</li>
+                <li><strong>Periphery (Leaf) Nodes:</strong> Their identity is usually defined by their 1 or 2 direct connections.</li>
+                <li><strong>Observation:</strong> Forcing them to aggregate 5-hop data leads to <em>over-smoothing</em>, where their unique features are washed out by the "average" of the entire graph.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                HYPERBOLIC SPACE FOR HIERARCHICAL GRAPH STRUCTURE REPRESENTATION
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Hyperbolic spaces are uniquely suited for representing hierarchical graph structures because of their fundamental geometric properties.</p>
+            <ul>
+                <li><strong>Root vs. Leaf Distance:</strong> In practice, the "center point" of your embedding space is where you place your most general or influential nodes (like a CEO in an org chart). As you move toward the "boundary" of the space, you are placing nodes that are farther away from that root in terms of graph distance (hops).</li>
+                <li><strong>The Scaling Problem:</strong>
+                    <ul>
+                        <li><strong>Euclidean Space</strong>: As you move outward, the “circumference” or “surface area” of the space grows too slowly ( r², r³). If your graph is a tree where every node has 3 children, the number of nodes grows exponentially (3¹, 3², 3³, …).</li>
+                        <li><strong>The Result</strong>: You very quickly run out of “physical room” to keep the leaves far apart from each other. The embedding is forced to “crush” unrelated leaf nodes together just to fit them into the available space.</li>
+                    </ul>
+                </li>
+                <li><strong>The Hyperbolic Solution:</strong> In hyperbolic space, the available room grows <em>exponentially</em> ( e) as you move toward the boundary. This matches the exponential growth of a tree perfectly. Near the edge there is essentially “infinite room,” allowing the leaves of the tree to maintain large, distinct distances from one another without being forced to overlap or collapse.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                LOCAL VS GLOBAL (POSITIONAL & STRUCTURAL EMBEDDINGS)
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Positional embeddings:</strong> Preserving the absolute positions. If we think of a friend group, positional embeddings would maintain information about who is central to the entire network, who bridges different communities, and how many steps it takes to get from one person to another. These embeddings use techniques like matrix factorization and random walks to capture global properties.</p>
+            <ul>
+                <li><strong>Global Geometry:</strong> Focuses on absolute coordinates and proximity—mapping exactly where a node is located within the entire graph's territory.</li>
+                <li><strong>Link Prediction:</strong> Knowing global coordinates reveals if two nodes are "close" enough to likely form a connection in the near future.</li>
+                <li><strong>Clustering:</strong> Nodes are grouped into communities based on their shared physical location and shared "neighborhood" in the broader topology.</li>
+            </ul>
+            <p><strong>Structural embeddings:</strong> Focus on relative positions or local patterns. Two people might be far apart in the network, but if they have similar friendship patterns (like both being the organizers of their respective friend groups), structural embeddings would represent them similarly.</p>
+            <ul>
+                <li><strong>Mechanism:</strong> This is where <em>GNNs excel</em>, as they can learn to recognize and preserve these local patterns of connectivity.</li>
+                <li><strong>Local Functional Roles:</strong> Focuses on behavioral "look-alikes"—nodes with identical connectivity patterns regardless of their global distance.</li>
+                <li><strong>Node Classification:</strong> Identifies "roles" (e.g., fraudster) by local habits; a GNN sees a "hub" by its neighbors, not its global address.</li>
+                <li><strong>Graph Classification:</strong> Classifies the whole graph based on recurring local sub-structures, like identifying a molecule's toxicity by its atomic bonds.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        ARCHITECTURES AND LEARNING PARADIGMS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                TRANSDUCTIVE VS INDUCTIVE LEARNING
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Transductive:</strong> Optimizes embeddings for a fixed node set on a static graph. It solves a "specific puzzle" but fails when new, unseen nodes appear.</li>
+                <li><strong>Inductive:</strong> Learns parametric rules (general strategies) from node features. It generalizes to new, unseen nodes or dynamic graph changes.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                ENCODER-DECODER ARCHITECTURES FOR GRL
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>1. Compression of Topology:</strong> The Encoder takes a node's entire complex existence—its neighbors, its neighbors' neighbors, and its structural role—and compresses it into a single point in space (an embedding). Look at <em>RAG Embeddings in LLM-SG</em>.</p>
+            <p><strong>2. Task Flexibility (The Decoder):</strong> The Decoder is the "translator" that proves the compression worked by reconstructing specific graph properties or predicting attributes from the embedding. Depending on your objective, you simply swap the decoder module:</p>
+            <ul>
+                <li><strong>Link Prediction:</strong> Use a decoder (like a pairwise inner product) that calculates the distance or similarity between two points to determine the probability of an edge existing between them.</li>
+                <li><strong>Node Classification:</strong> Use a decoder (like a MLP with Softmax) that maps a single node's point to a specific label, such as identifying a "fraudster" in a transaction network.</li>
+                <li><strong>Community Detection:</strong> Use a decoder that identifies clusters of points in the embedding space to reconstruct global partition patterns.</li>
+                <li><strong>Graph Reconstruction:</strong> Use a decoder designed to recreate the original adjacency matrix, proving the encoder captured the necessary "global" information from a Random Walk or GNN approach.</li>
+            </ul>
+            <p><strong>3. Unified Metric for Comparison:</strong> By using this framework, we can finally compare apples to oranges. We can mathematically prove whether a Random Walk encoder captures more "global" information than a GNN encoder by measuring how well their respective decoders reconstruct the original graph structure.</p>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        EMBEDDINGS AND KNOWLEDGE GRAPHS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                EMBEDDINGS FOR DIFFERENT TASKS
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Shallow Embeddings for Simple Graphs:</strong> Transductive methods that learn a fixed vector for a specific set of nodes.</p>
+            <ul>
+                <li><strong>Direct Optimization:</strong> Instead of learning a general formula (like a GNN), the model treats the vectors themselves as the parameters to be updated during training.</li>
+                <li><strong>Look-up Table:</strong> The encoder is essentially a massive table where each node_id points to a static, multi-dimensional vector.</li>
+                <li><strong>Connectivity Focus:</strong> These methods typically prioritize global proximity, often using random walks or matrix factorization to ensure nodes that are "close" in the graph have similar vectors.</li>
+            </ul>
+            <p><strong>Multirelational Encoder-Decoder:</strong></p>
+            <ul>
+                <li><strong>Multirelational Encoder:</strong> Unlike simple graphs where a node is just one vector, the encoder must now map nodes (entities) and relationships into the same vector space. For example, "Aspirin," "Headache," and "TREATS" each receive their own unique embedding.</li>
+                <li><strong>Multirelational Decoder (The Scoring Function):</strong> The decoder acts as a mathematical “truth-tester” for triples (h, r, t). It uses specific algebraic operations—like Translation (e.g., Aspirin + TREATS ≈ Headache)—to measure how well the relationship holds in the vector space.</li>
+                <li><strong>KG Completion via Loss Optimization:</strong> The author suggests optimizing the loss function specifically to predict missing edges (triples). This allows the model to "fill in the blanks" of a biomedical KG, such as discovering that a drug may treat a disease even if that link wasn't explicitly labeled in the training data.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Negative Sampling
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Loss Functions: The Logic of Negative Sampling</strong>. Because most graphs are sparse—meaning the vast majority of potential connections do not exist—a loss function must be able to distinguish “true” edges from “false” ones without checking the entire network by:</p>
+            <ul>
+                <li><strong>Rewarding True Facts:</strong> The model identifies a real connection (a “positive sample”) and adjusts the embedding vectors so the Decoder gives this relationship a high score.</li>
+                <li><strong>Penalizing False Facts:</strong> To provide contrast, the model “randomly samples” entities that are not known to have a relationship (e.g., Aspirin TREATS COX-2). These are <em>negative samples</em>.</li>
+                <li><strong>Balancing via γ (Gamma):</strong> Since there are far more non-existent links than real ones, the γ parameter controls how much weight is given to these negative examples. Think of it as deciding how much we care about correctly identifying false relationships compared to correctly identifying true ones; (we typically want γ > 1 to emphasize correctly identifying false relationships.)</li>
+            </ul>
+            <p><strong>Sampling Strategies:</strong></p>
+            <ul>
+                <li><strong>Random Sampling:</strong> The simplest method, which pairs a subject and relation with an entirely arbitrary node. While fast, it often creates "obvious" errors that don't challenge the model.</li>
+                <li><strong>Type-Constrained Sampling:</strong> Restricts the replacement to nodes of the same semantic category.</li>
+                <li><strong>Adversarial Sampling:</strong> Uses advanced logic to identify "difficult" negative examples that the model is likely to confuse with true facts.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        DECODER STRATEGIES AND LOGIC
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Multirelationship Decoders
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>The decoder acts as a reconstruction agent by translating latent vectors back into the original graph's structural or semantic properties.</p>
+            <ul>
+                <li><strong>Node-Level:</strong> It reconstructs links or attributes; for example, it calculates if two vectors are close enough to "rebuild" a missing edge.</li>
+                <li><strong>Graph-Level:</strong> It reconstructs a global identity; it maps the combined signature of all nodes to a single label.</li>
+                <li><strong>Important KG patterns:</strong>
+                    <ul>
+                        <li><strong>Symmetry and Asymmetry:</strong> It distinguishes between reversible links and one-way links.</li>
+                        <li><strong>Compositional Logic:</strong> It handles "chain reactions" where multiple links imply a new one.</li>
+                        <li><strong>Inverse Relationships:</strong> It understands natural opposites, automatically recognizing that if A contains B, B is part of A.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Multirelationship Decoder Strategies
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Translation-based (TransE):</strong> Treats relationships as physical shifts (translations) in space. It assumes that adding a relationship vector to a "head" node (e.g., Aspirin + TREATS) should land the model near the "tail" node (Headache).</p>
+            <p><strong>Matrix-based (RESCAL):</strong> Each relationship is a matrix—a set of rules that physically transforms an entity's vector. The decoder calculates a score by multiplying the head node vector by the relationship matrix, then multiplying that result by the tail node vector.</p>
+            <p><strong>Semantic Matching (DistMult & ComplEx):</strong> The Decoder acts as a similarity engine that calculates a "compatibility score" between two entities.</p>
+            <ul>
+                <li><strong>DistMult:</strong> Symmetric matching. Uses a diagonal matrix. Because the math is commutative (A * B = B * A), it treats all relationships as symmetric.</li>
+                <li><strong>ComplEx:</strong> Asymmetric matching. Breaks symmetry using the complex conjugate. If you swap the roles (Head/Tail), the resulting math produces a different number.</li>
+            </ul>
+            <div class="code-block">
+// Matrix Interaction Logic
+Score = HeadVector * RelationshipMatrix * TailVector
+            </div>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        MESSAGE PASSING AND GNN ENHANCEMENTS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Graph Neural Networks: Message Passing
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Standard message passing’s insight is that nodes can learn not just from their immediate connections but also from the broader graph structure through iterative updates.</p>
+            <p><strong>Best for:</strong> Tasks where a node's unique attributes are fundamentally different from its neighbors (heterophily). Use this when "who I am" matters more than "who I hang out with.”</p>
+            <div class="code-block">
+// Core GNN Mechanism
+1. AGGREGATE — Collects/combines messages from neighbors
+2. UPDATE — Uses aggregated messages to update node representation
+            </div>
+            <p><strong>The “Self-Loop” Variation:</strong> Best for graphs where nodes and neighbors share similar properties (homophily). With self-loops, the node’s own features are included in the initial sum/mean.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Core Neighborhood Normalization Methods
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Mean Normalization:</strong> Use when a node’s identity is defined by the average behavior of its peers. Treats every neighborhood equally, capturing the "local flavor" without volume bias.</li>
+                <li><strong>Symmetric Normalization (GCN):</strong> Scales messages by 1/√(di * dj). Shares the burden of normalization between sender and receiver, dampening high-degree hubs.</li>
+                <li><strong>Sum Aggregation:</strong> Essential for tasks where degree is a critical feature (e.g., GIN). Useful for chemistry or fraud detection. If the quantity of edges is as important as quality, do not normalize.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Update Methods
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Skip Connections [Static]:</strong> Prevents over-smoothing in heterophilic graphs by ensuring the node's unique feature identity isn't lost. Explicitly preserves the node's state by concatenating it with the message.</p>
+            <p><strong>Jumping Knowledge (JK) Networks:</strong> Use for core-periphery structures when the graph is structurally "lumpy." Aggregates embeddings from every layer into a final representation.</p>
+            <ul>
+                <li><strong>Max-Pooling JK:</strong> Selects the single most informative scale (1..K hops) for each feature dimension.</li>
+                <li><strong>Concatenation JK:</strong> Preserves all scales (1...k hops) as distinct features.</li>
+                <li><strong>Attention JK:</strong> Decides which neighborhood scales deserve the most focus vertically.</li>
+            </ul>
+            <p><strong>Gated Updates [Dynamic]:</strong> Uses a GRU-like gate to weigh the node's current state against the new message. The model can dynamically "mute" a neighbor that doesn't align with the trajectory.</p>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

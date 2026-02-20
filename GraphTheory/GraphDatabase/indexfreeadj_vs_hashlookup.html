@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>O(1) Hash vs Index-Free Adjacency</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* The canvas is scaled up to fit the window, creating sharp pixels */
+        canvas {
+            display: block;
+            width: 100vw;
+            height: 100vh;
+            image-rendering: pixelated; /* Crucial for retro look */
+        }
+
+        #scanline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.2) 50%,
+                rgba(0,0,0,0.2)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 10;
+        }
+    </style>
+</head>
+<body>
+    <div id="scanline"></div>
+    <canvas id="mainCanvas"></canvas>
+
+<script>
+/**
+ * DITHERPUNK VISUALIZATION: Hash Map vs Native Graph
+ * * Tech Stack: Vanilla JS + HTML5 Canvas
+ * Technique: Render to low-res buffer -> Apply Atkinson Dithering -> Upscale via CSS
+ */
+
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+// Internal Resolution (Low res for chunky pixels and performance)
+const W = 426; 
+const H = 240;
+canvas.width = W;
+canvas.height = H;
+
+// Colors
+const BLACK = [0, 0, 0];
+const GREEN = [51, 255, 0]; // #33FF00
+
+// State Management
+let frames = 0;
+
+// --- UTILS ---
+
+function drawPixel(x, y, color) {
+    // Helper to draw directly to imageData if needed, but we use Context API for shapes
+    ctx.fillStyle = `rgb(${color[0]}, ${color[1]}, ${color[2]})`;
+    ctx.fillRect(Math.floor(x), Math.floor(y), 1, 1);
+}
+
+function drawText(text, x, y, size = 10) {
+    ctx.fillStyle = `rgb(${GREEN.join(',')})`;
+    ctx.font = `${size}px monospace`;
+    ctx.fillText(text, x, y);
+}
+
+function drawBox(x, y, w, h, filled = false) {
+    ctx.strokeStyle = `rgb(${GREEN.join(',')})`;
+    ctx.lineWidth = 1;
+    ctx.strokeRect(x, y, w, h);
+    if(filled) {
+        ctx.fillStyle = `rgb(${GREEN.join(',')})`;
+        ctx.fillRect(x, y, w, h);
+    }
+}
+
+function drawLine(x1, y1, x2, y2) {
+    ctx.strokeStyle = `rgb(${GREEN.join(',')})`;
+    ctx.beginPath();
+    ctx.moveTo(x1, y1);
+    ctx.lineTo(x2, y2);
+    ctx.stroke();
+}
+
+function drawCircle(x, y, r, filled = false) {
+    ctx.strokeStyle = `rgb(${GREEN.join(',')})`;
+    ctx.beginPath();
+    ctx.arc(x, y, r, 0, Math.PI * 2);
+    ctx.stroke();
+    if (filled) {
+        ctx.fillStyle = `rgb(${GREEN.join(',')})`;
+        ctx.fill();
+    }
+}
+
+// --- SIMULATION CLASSES ---
+
+class LeftSimulation {
+    constructor() {
+        this.xOffset = 10;
+        this.width = (W / 2) - 20;
+        this.cycles = 0;
+        
+        // Entity Positions
+        this.hashBox = { x: this.xOffset + this.width/2 - 20, y: 30, w: 40, h: 20 };
+        this.indexGrid = { x: this.xOffset + 20, y: 80, w: this.width - 40, h: 40, cols: 8 };
+        this.heapY = 180;
+        this.heapNodes = [
+            {x: this.xOffset + 40, y: this.heapY, label: "A"},
+            {x: this.xOffset + 90, y: this.heapY, label: "B"}, // Target
+            {x: this.xOffset + 140, y: this.heapY, label: "C"}
+        ];
+
+        // Animation State
+        this.state = 'idle'; // idle, spawning, hashing, indexing, fetching, complete
+        this.timer = 0;
+        this.particle = { x: 0, y: 0, label: "" };
+        this.targetIndexSlot = 3; // Arbitrary slot that points to Node B
+    }
+
+    update() {
+        // Logic Loop
+        switch(this.state) {
+            case 'idle':
+                this.timer++;
+                if(this.timer > 30) {
+                    this.state = 'spawning';
+                    this.particle = { x: this.xOffset + 10, y: 10, label: "KEY" };
+                    this.timer = 0;
+                }
+                break;
+            case 'spawning':
+                // Move to Hash Box
+                let dx = this.hashBox.x + 10 - this.particle.x;
+                let dy = this.hashBox.y + 10 - this.particle.y;
+                this.particle.x += dx * 0.1;
+                this.particle.y += dy * 0.1;
+                if(Math.abs(dx) < 1 && Math.abs(dy) < 1) {
+                    this.state = 'hashing';
+                    this.timer = 0;
+                }
+                break;
+            case 'hashing':
+                this.timer++;
+                this.cycles += 5; // HIGH COST
+                // Shake effect
+                this.particle.x = (this.hashBox.x + 10) + (Math.random() * 4 - 2);
+                if(this.timer > 40) {
+                    this.particle.label = "ADDR";
+                    this.state = 'indexing';
+                }
+                break;
+            case 'indexing':
+                // Move to specific grid slot
+                let slotW = this.indexGrid.w / this.indexGrid.cols;
+                let targetX = this.indexGrid.x + (this.targetIndexSlot * slotW) + slotW/2;
+                let targetY = this.indexGrid.y + this.indexGrid.h/2;
+                
+                this.particle.x += (targetX - this.particle.x) * 0.1;
+                this.particle.y += (targetY - this.particle.y) * 0.1;
+                
+                this.cycles += 2; // Medium Cost
+
+                if(Math.abs(targetX - this.particle.x) < 1) {
+                    this.state = 'fetching';
+                    this.particle.label = "PTR";
+                }
+                break;
+            case 'fetching':
+                // Move to Heap Node B
+                let nodeB = this.heapNodes[1];
+                this.particle.x += (nodeB.x - this.particle.x) * 0.1;
+                this.particle.y += (nodeB.y - this.particle.y) * 0.1;
+                this.cycles += 3; // Memory travel cost
+
+                if(Math.abs(nodeB.y - this.particle.y) < 1) {
+                    this.state = 'complete';
+                    this.timer = 0;
+                }
+                break;
+            case 'complete':
+                this.timer++;
+                if(this.timer > 20) this.state = 'idle';
+                break;
+        }
+    }
+
+    draw() {
+        // Draw Static UI
+        drawText("HASH MAP (O(1))", this.xOffset, 15);
+        drawText(`CYCLES: ${this.cycles}`, this.xOffset, H - 10);
+
+        // Hash Box
+        drawBox(this.hashBox.x, this.hashBox.y, this.hashBox.w, this.hashBox.h);
+        drawText("HASH", this.hashBox.x + 5, this.hashBox.y + 13);
+
+        // Index Grid
+        drawBox(this.indexGrid.x, this.indexGrid.y, this.indexGrid.w, this.indexGrid.h);
+        let slotW = this.indexGrid.w / this.indexGrid.cols;
+        for(let i=1; i<this.indexGrid.cols; i++) {
+            drawLine(this.indexGrid.x + i*slotW, this.indexGrid.y, this.indexGrid.x + i*slotW, this.indexGrid.y + this.indexGrid.h);
+        }
+
+        // Heap
+        this.heapNodes.forEach(n => {
+            drawCircle(n.x, n.y, 10);
+            drawText(n.label, n.x - 3, n.y + 3);
+        });
+
+        // Particle
+        if(this.state !== 'idle' && this.state !== 'complete') {
+            drawBox(this.particle.x - 8, this.particle.y - 6, 16, 12, true);
+            ctx.fillStyle = "black";
+            ctx.fillText(this.particle.label, this.particle.x - 6, this.particle.y + 2);
+        }
+        
+        // Success Highlight
+        if(this.state === 'complete') {
+             drawCircle(this.heapNodes[1].x, this.heapNodes[1].y, 12, true);
+        }
+    }
+}
+
+class RightSimulation {
+    constructor() {
+        this.xOffset = W/2 + 10;
+        this.width = (W/2) - 20;
+        this.cycles = 0;
+
+        // Graph Structure
+        this.nodes = [
+            {id: "A", x: this.xOffset + 40, y: 60},
+            {id: "B", x: this.xOffset + 140, y: 120},
+            {id: "C", x: this.xOffset + 50, y: 160}
+        ];
+        
+        // Pointers (Hard links)
+        this.links = [
+            {from: 0, to: 1}, // A -> B
+            {from: 1, to: 2}  // B -> C
+        ];
+
+        this.state = 'idle'; // idle, active, traveling, arrived
+        this.timer = 0;
+        this.activeNode = 0; // Start at A
+        this.travelProgress = 0;
+    }
+
+    update() {
+        switch(this.state) {
+            case 'idle':
+                this.timer++;
+                if(this.timer > 30) {
+                    this.state = 'active'; // Light up Node A
+                    this.timer = 0;
+                }
+                break;
+            case 'active':
+                this.timer++;
+                if(this.timer > 20) {
+                    this.state = 'traveling';
+                    this.travelProgress = 0;
+                }
+                break;
+            case 'traveling':
+                this.travelProgress += 0.05; // Fast travel
+                this.cycles += 1; // LOW COST
+                if(this.travelProgress >= 1) {
+                    this.state = 'arrived';
+                    this.timer = 0;
+                }
+                break;
+            case 'arrived':
+                this.timer++;
+                if(this.timer > 30) {
+                    this.state = 'idle';
+                    // Reset cycles periodically so it doesn't get too huge compared to left
+                    // But we want to show it grows slower.
+                }
+                break;
+        }
+    }
+
+    draw() {
+        drawText("INDEX-FREE (NATIVE)", this.xOffset, 15);
+        drawText(`CYCLES: ${this.cycles}`, this.xOffset, H - 10);
+
+        // Draw Links (Pointers)
+        ctx.strokeStyle = `rgba(${GREEN.join(',')}, 0.5)`;
+        this.links.forEach(l => {
+            let n1 = this.nodes[l.from];
+            let n2 = this.nodes[l.to];
+            drawLine(n1.x, n1.y, n2.x, n2.y);
+        });
+
+        // Draw active travel beam
+        if(this.state === 'traveling') {
+            let n1 = this.nodes[0];
+            let n2 = this.nodes[1];
+            let currX = n1.x + (n2.x - n1.x) * this.travelProgress;
+            let currY = n1.y + (n2.y - n1.y) * this.travelProgress;
+            
+            // Draw beam
+            ctx.lineWidth = 3;
+            drawLine(n1.x, n1.y, currX, currY);
+            ctx.lineWidth = 1;
+        }
+
+        // Draw Nodes
+        this.nodes.forEach((n, idx) => {
+            let filled = false;
+            // A is active at start
+            if(idx === 0 && (this.state === 'active' || this.state === 'traveling')) filled = true;
+            // B is active at arrival
+            if(idx === 1 && this.state === 'arrived') filled = true;
+            
+            drawCircle(n.x, n.y, 12, filled);
+            if(filled) ctx.fillStyle = "black";
+            else ctx.fillStyle = `rgb(${GREEN.join(',')})`;
+            drawText(n.id, n.x - 4, n.y + 3);
+        });
+    }
+}
+
+// --- MAIN LOOP ---
+
+const leftSim = new LeftSimulation();
+const rightSim = new RightSimulation();
+
+function applyDithering() {
+    // Get raw pixels
+    const imageData = ctx.getImageData(0, 0, W, H);
+    const data = imageData.data;
+    
+    // Atkinson Dithering Kernel
+    // [   ,   , 1/8, 1/8]
+    // [1/8, 1/8, 1/8,   ]
+    // [   , 1/8,   ,    ]
+
+    for (let y = 0; y < H; y++) {
+        for (let x = 0; x < W; x++) {
+            const i = (y * W + x) * 4;
+            
+            // Grayscale value (we only use green channel effectively)
+            const oldPixel = data[i + 1]; // Green channel
+            const newPixel = oldPixel > 128 ? 255 : 0; // Threshold
+            
+            // Quantization Error
+            const error = (oldPixel - newPixel) / 8;
+
+            // Set current pixel to binary palette
+            data[i] = 0;     // R
+            data[i+1] = newPixel; // G
+            data[i+2] = 0;   // B
+            // Alpha stays 255
+
+            // Distribute Error
+            if (x + 1 < W) data[((y) * W + (x + 1)) * 4 + 1] += error;
+            if (x + 2 < W) data[((y) * W + (x + 2)) * 4 + 1] += error;
+            if (y + 1 < H) {
+                if (x > 0) data[((y + 1) * W + (x - 1)) * 4 + 1] += error;
+                data[((y + 1) * W + (x)) * 4 + 1] += error;
+                if (x + 1 < W) data[((y + 1) * W + (x + 1)) * 4 + 1] += error;
+            }
+            if (y + 2 < H) data[((y + 2) * W + (x)) * 4 + 1] += error;
+        }
+    }
+    
+    ctx.putImageData(imageData, 0, 0);
+}
+
+function render() {
+    // 1. Clear Screen
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, W, H);
+
+    // 2. Draw Divider
+    ctx.strokeStyle = `rgba(${GREEN.join(',')}, 0.3)`;
+    ctx.beginPath();
+    ctx.moveTo(W/2, 0);
+    ctx.lineTo(W/2, H);
+    ctx.stroke();
+
+    // 3. Update & Draw Sims
+    leftSim.update();
+    leftSim.draw();
+    
+    rightSim.update();
+    rightSim.draw();
+
+    // 4. Apply Post-Processing (Atkinson Dither)
+    applyDithering();
+
+    requestAnimationFrame(render);
+}
+
+// Start
+render();
+
+</script>
+</body>
+</html>

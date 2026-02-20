@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        GRAPH LEARNING TASKS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                Node classification
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>A task that involves predicting the category (class) of a node in a graph.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Link prediction
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>A task that involves predicting missing links between pairs of nodes in a graph. This is useful in knowledge graph completion, where the goal is to complete a graph of entities and their relationships.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Graph classification
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>A task that involves categorizing different graphs into predefined categories. One example of this is in molecular biology, where molecular structures can be represented as graphs, and the goal is to predict their properties for drug design.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Graph generation
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>A task that involves generating new graphs based on a set of desired properties. One of the main applications is generating novel molecular structures for drug discovery.</p>
+        </div>
+
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        GRAPH LEARNING TECHNIQUE FAMILIES
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                Graph Signal Processing
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>A mathematical framework used to analyze, filter, and manipulate data that is not on a regular grid. Instead of analyzing how a signal changes over time, GSP analyzes how a signal changes across a topology (e.g. how a signal changes across layers/relationships/connections).</p>
+            <ul>
+                <li><strong>Example:</strong> Social Networks: Predicting how a "signal" (like an opinion or a virus) spreads through a web of friendships.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Matrix Factorization
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Think of it as <em>lossy compression</em> for relationships: you are stripping away the noise to find the latent factors of your data. Matrix factorization decomposes a large, complex matrix into two (or more) smaller, "latent" matrices that, when multiplied, approximate the original.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Matrix Factorization: Core Methods
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>SVD (Singular Value Decomposition):</strong> Dimensionality reduction. It decomposes a matrix into orthogonal components, capturing the most variance. Best for noise reduction and PCA in dense datasets where negative values are mathematically acceptable and data is on a regular grid.</li>
+                <li><strong>ALS (Alternating Least Squares):</strong> Optimized for massive, sparse matrices common in recommendation systems. It iteratively solves for one latent matrix while holding the other fixed.</li>
+                <li><strong>PMF (Probabilistic Matrix Factorization):</strong> A Bayesian approach that models latent factors as Gaussian distributions. It excels at handling uncertainty and prevents overfitting in extremely sparse datasets by incorporating prior distributions.</li>
+                <li><strong>NMF (Non-negative Matrix Factorization):</strong> Forces latent factors to be non-negative, creating a "parts-based" representation. It effectively identifies additive patterns in the data.</li>
+            </ul>
+            <div class="code-block">
+NMF example: Infrastructure: Energy Grid Load Decomposition
+Smart grids receive a total "sum" of power consumption.
+NMF decomposes this into end-use profiles (e.g., industrial cooling, residential lighting, or EV charging).
+Because a building cannot "un-consume" power, NMF’s additive nature accurately maps how these distinct infrastructure sectors stack to create the total demand on the transformer.
+            </div>
+            <ul>
+                <li><strong>GRMF (Graph-Regularized Matrix Factorization):</strong> It ensures that "connected" nodes in a topology have similar latent representations. Finds patterns from the data matrix while ensuring that "neighbors" on the graph stay close in the low-dimensional space.</li>
+                <li><strong>Standard MF (Global):</strong> It treats every row as an isolated data point in high-dimensional space. It compresses the data based on how rows look similar on average, even if those rows have no real-world relationship.</li>
+                <li><strong>GRMF (Local/Topological):</strong> It adds a "spatial awareness" constraint. It says: "Find the global patterns, but respect the local map." It ensures that if two nodes are connected in your graph, their low-dimensional representations stay close together.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Random Walk
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>It is essentially automated exploration. The paths created capture the "local flavor" of the network—which nodes are frequently visited together and how "reachable" one point is from another.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Random Walk: Core Methods
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Standard Random Walk:</strong> <strong>Best for:</strong> Measuring node centrality (like PageRank). <strong>Logic:</strong> Nodes that are "important" or well-connected naturally accumulate more "traffic" from random hoppers.</li>
+                <li><strong>Biased/Guided Walk (e.g., node2vec):</strong> <strong>Best for:</strong> Generating training data for Node Embeddings. <strong>Logic:</strong> You control the walk to stay "local" (BFS-like) or go "deep" (DFS-like). This forces the resulting data to capture specific structural roles or community memberships.</li>
+                <li><strong>Restarting Random Walk (RWR):</strong> <strong>Best for:</strong> Personalized recommendations or disease-gene prioritization. <strong>Logic:</strong> The walker has a chance to "teleport" back to the starting node. This measures proximity specifically relative to a "root" node of interest.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Deep Learning
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Transforming graph data into dense numerical vectors (embeddings) that a computer can actually calculate. It moves beyond simple statistics to capture the <em>non-linear</em>, <em>multi-hop patterns</em> hidden in the structure.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Deep Learning: Core Methods & Selection
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>GCN (Graph Convolutional Networks):</strong> <strong>Best for:</strong> Smooth global features (e.g., classifying a whole document or molecule). <strong>Logic:</strong> It acts like a "blur filter," averaging a node’s features with its neighbors.</li>
+                <li><strong>GAT (Graph Attention Networks):</strong> <strong>Best for:</strong> Noisy graphs where some connections matter more than others (e.g., social influence). <strong>Logic:</strong> Uses "Attention" to weigh the importance of specific neighbors, ignoring the irrelevant ones.</li>
+                <li><strong>Graph Autoencoders (GAE):</strong> <strong>Best for:</strong> Predicting missing links or anomaly detection. <strong>Logic:</strong> Learns to compress the graph into a "bottleneck" and then reconstruct it; if it can't reconstruct a part, that's your anomaly.</li>
+            </ul>
+        </div>
+
+    </div>
+</details>
+
+</body>
+</html>

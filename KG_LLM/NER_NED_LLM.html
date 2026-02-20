@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* --- INTEGRATED CRT CORE STYLES --- */
+:root {
+--bg-color: #000000;
+--text-color: #00ff41;
+--accent-color: #00ff41;
+--dim-color: #003b00;
+--border-color: #00ff41;
+--font-main: 'Courier New', Courier, monospace;
+--font-header: 'Arial Black', Impact, sans-serif;
+--crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+}
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-main);
+        margin: 0;
+        padding: 20px;
+        line-height: 1.5;
+    }
+
+    /* --- VISUAL EFFECTS --- */
+    .dither-layer {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1;
+        background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+        background-size: 4px 4px;
+        opacity: 0.4;
+    }
+
+    .scanlines {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 9999;
+    }
+
+    /* --- MODULE COMPONENTS --- */
+    strong { color: var(--accent-color); text-decoration: underline; }
+    em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+    details.section {
+        margin-bottom: 15px;
+        border: 1px solid var(--dim-color);
+        background: #050505;
+    }
+
+    details.section > summary {
+        font-weight: bold;
+        padding: 12px;
+        background: #0a0a0a;
+        cursor: pointer;
+        list-style: none;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    details.section[open] > summary {
+        border-bottom: 1px solid var(--dim-color);
+        color: var(--accent-color);
+        text-shadow: var(--crt-glow);
+    }
+
+    .section-content { padding: 20px; }
+
+    .subsection {
+        margin-bottom: 30px;
+        border-left: 4px solid var(--dim-color);
+        padding-left: 15px;
+    }
+
+    .subsection-title {
+        background: var(--dim-color);
+        color: var(--accent-color);
+        padding: 4px 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+    }
+
+    .code-block {
+        background: #020a02;
+        border: 1px dashed var(--dim-color);
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 0.85rem;
+        color: var(--accent-color);
+        overflow-x: auto;
+    }
+
+    .eye-btn {
+        background: none;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+        cursor: pointer;
+        padding: 2px 5px;
+        display: flex;
+        align-items: center;
+        opacity: 0.7;
+    }
+    .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+</style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+<summary>
+END-TO-END LLM NER PROCESS: IDENTIFYING ENTITIES
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+
+<div class="section-content">
+    
+    <div class="subsection">
+        <span class="subsection-title">
+            Step 1: Building the Medical Vocabulary
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        
+        <p><strong>Goal:</strong> The process begins by querying the Neo4j graph to extract a clean list of categories (like Disease, Organism, or Procedure).</p>
+        
+        <ul>
+            <li><strong>Key 01:</strong> This ensures the LLM doesn’t invent its own labels but uses the <em>standardized "language" of the ontology</em>.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Step 2: Constraining the LLM (Prompting)
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> The author constructs a "system prompt" that acts as a strict set of guardrails for the LLM.</p>
+        <ul>
+            <li><strong>Key 01:</strong> This prompt provides the list of categories from Step 1 and <em>explicitly forbids the model from using any other labels</em>.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Step 3: Generating Structured Intelligence
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Unstructured text is fed to the LLM, which identifies terms and maps them to the provided labels.</p>
+        <ul>
+            <li><strong>Key 01:</strong> The output is returned as <em>structured JSON</em>, listing each entity "mention" (the exact text found) alongside its classification.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Step 4: Precision Post-Processing
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> LLMs process text as tokens (probability chunks), not individual characters, making them notoriously unreliable at calculating exact offsets.</p>
+        <ul>
+            <li><strong>Key 01:</strong> To fix this, <em>scan the original string</em> for the LLM's extracted mentions.</li>
+        </ul>
+    </div>
+
+</div>
+</details>
+
+<details class="section">
+<summary>
+END-TO-END LLM NED PROCESS: DISAMBIGUATING ENTITIES
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+
+<div class="section-content">
+    
+    <div class="subsection">
+        <span class="subsection-title">
+            Step 1: Domain Tagging
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Identify the primary categories of your industry (e.g., Organization, Natural Feature, Mythological Figure).</p>
+        <ul>
+            <li><strong>Key 01:</strong> You crawl your graph and tag every node with <em>primary category name</em>.</li>
+            <li><strong>Key 02:</strong> Result: In your database, "Amazon.com" is now tagged as [Company, Tech], while the "Amazon River" is tagged as [Geography, Hydrology].</li>
+            <li><strong>Key 03:</strong> This ensures every "suspect" in your database <em>carries its resume with it</em>.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Step 2: Candidate Selection (The "Suspect Lineup")
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Instead of a simple lookup, the system performs a rigorous Candidate Selection (CS) process to generate a "shortlist" of possibilities from the ontology.</p>
+        <ul>
+            <li><strong>Key 01:</strong> <em>Fuzzy Search</em>: The system runs a full-text search for "Amazon," using "fuzzy matching" to catch variations or typos.</li>
+            <li><strong>Key 02:</strong> <em>Category Filtering</em>: It applies the tags from Step 1 as a filter. If the LLM identified "Amazon" as an [Organization], the system keeps "Amazon.com Inc" but instantly discards "Amazon River".</li>
+            <li><strong>Key 03:</strong> The Handoff: This step outputs a specific list of <em>Candidate IDs</em>.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Step 3: Candidate Disambiguation (The "Graph Logic")
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> The system determines which candidate is correct by analyzing their connections in the graph to other entities in the sentence (Anchors).</p>
+        <ul>
+            <li><strong>Key 01:</strong> <em>Hub Removal</em>: Before searching, the system uses Graph Data Science (GDS) to calculate "degree centrality" to exclude generic concepts like "Thing".</li>
+            <li><strong>Key 02:</strong> This forces the algorithm to find <em>specific, meaningful routes</em> rather than taking generic shortcuts.</li>
+        </ul>
+        <div class="code-block">
+// Technical Nuance
+The system uses the Neo4j function allShortestPaths to find the most direct route between a candidate and a context "anchor".
+</div>
+</div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Step 4: Prose-ification (Model Context)
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> The system translates those graph paths into a natural language "hint" for the LLM.</p>
+        <div class="code-block">
+Result: It generates a string: "Candidate 'Amazon Rainforest' is an Ecosystem located in South America and is connected to 'Deforestation' via the 'impacted_by' relationship."
+</div>
+</div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Step 5: Contextual Selection (The "Decision")
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> The system feeds the LLM the original sentence plus the "Cheat Sheet."</p>
+        <ul>
+            <li><strong>Key 01:</strong> The LLM uses <em>symbolic reasoning</em> to see that the "Ecosystem" tag and the "impacted_by" path perfectly match the context.</li>
+            <li><strong>Key 02:</strong> It definitively maps the word to the <em>unique ID for the Rainforest</em>, ignoring the Company or the River.</li>
+        </ul>
+    </div>
+
+</div>
+</details>
+
+</body>
+</html>

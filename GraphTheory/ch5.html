@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        NETWORK ARCHITECTURE & COMMUNITIES
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                SCALE FREE NETWORKS
+                <button class="eye-btn" onclick="window.parent.openViewport('path/to/visualization.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> most of the real-world networks are scale-free networks where a few big hubs hold together many tiny nodes.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Community Detection Algorithms / Importance Detection:
+                <button class="eye-btn" onclick="window.parent.openViewport('path/to/impl_viz.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Use community detection algorithms to group proteins with similar roles or identify physicians' specialties based on the prescription data.</p>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        CENTRALITY & PROJECTIONS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Centrality Algorithms [e.g. PageRank]
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Degree Centrality:</strong> Counts the number of relationships a node has</li>
+                <li><strong>Betweenness Centrality:</strong> Betweenness Centrality measures a node’s strategic value as a broker.</li>
+                <li><strong>Strategic Position:</strong> While graphlets look at local "shapes," this identifies a node's global position by calculating how often it sits on the shortest path between all other node pairs.</li>
+                <li><strong>Flow Control:</strong> Nodes with high betweenness act as <em>critical bridges</em>; they control the flow of information.</li>
+                <li><strong>Application:</strong> Can also be used to predict congestions in a road network</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">Node Degree Distributions</span>
+            <ul>
+                <li><strong>In-Degree:</strong> Count incoming relationships</li>
+                <li><strong>Out-Degree:</strong> Count outgoing connections</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">Native Projection</span>
+            <p><strong>Goal:</strong> Exploratory analysis on full dataset</p>
+            <ul>
+                <li><strong>Mechanism:</strong> Native projection reads data directly from the Neo4j storage engine into the GDS graph store.</li>
+                <li><strong>Performance:</strong> It is the "high-speed express lane," designed for raw performance and scale.</li>
+                <li><strong>Method:</strong> You simply list the labels and types you want, and GDS bulk-loads them.</li>
+                <li><strong>Use Case:</strong> It’s best when you need to analyze large, existing structures without needing to transform them first</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">Cypher Projection</span>
+            <p><strong>Goal:</strong> Surgical exploratory analysis on dataset subsection</p>
+            <ul>
+                <li><strong>Flexibility:</strong> Cypher projection uses custom queries to define exactly which nodes and relationships enter the memory.</li>
+                <li><strong>Capabilities:</strong> This provides maximum flexibility; you can filter data, compute weights on the fly, or even project "virtual" relationships that don't exist in the database.</li>
+                <li><strong>Use Case:</strong> Use this when your analysis requires a specific, highly customized subset of your graph</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        NAMED GRAPHS AND GRAPH REGISTRY
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">Graph Management</span>
+            <p><strong>Goal:</strong> In-memory graph management transforms data from disk-based storage into a specialized mathematical format [row/column compression/sparsity].</p>
+            <ul>
+                <li><strong>Resource Cost:</strong> This is "expensive" because it requires scanning raw data and rebuilding complex topologies into optimized RAM structures.</li>
+                <li><strong>Persistence:</strong> A graph registry acts as a persistent workspace for these structures.</li>
+                <li><strong>Efficiency:</strong> By registering a "named graph," you avoid repeating the costly transformation process.</li>
+                <li><strong>Multi-stage Analysis:</strong> This allows you to execute multiple analytical algorithms against the same pre-computed memory state, significantly reducing total computation time.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        DIFFERENT GRAPH ALGORITHMS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">BASICS</span>
+            <p><strong>Goal:</strong> To execute any GDS algorithm in write mode, you are essentially telling the graph engine to: Process: Run the math on your projected graph.</p>
+            <ul>
+                <li><strong>Persist:</strong> Save the resulting "Community ID" directly back to the original nodes in the database.</li>
+                <li><strong>Islands:</strong> Nodes that are "disconnected" from other nodes are tagged with a unique ID, facilitating future searching. Nodes in the same "island" get the same ID, while nodes in a different "island" get a different ID.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">Write Mode</span>
+            <p><strong>Goal:</strong> This mode computes the results and persistently saves them as a new property on the nodes within your database.</p>
+            <p><strong>Best for:</strong> Production pipelines or multi-stage analysis where a later algorithm depends on the results of the first (e.g., "Assign every node a Component ID so I can filter the graph later").</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">Read Mode</span>
+            <p><strong>Goal:</strong> This mode computes the algorithm and returns a stream of results to your console or application.</p>
+            <ul>
+                <li><strong>Status:</strong> It is read-only and does not modify the graph.</li>
+                <li><strong>Best for:</strong> Ad-hoc analysis, debugging, or when you only need a quick count (e.g., "How many islands are there?").</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">Weakly Connected Component</span>
+            <p><strong>Goal:</strong> It is used to find disconnected parts or islands within a network.</p>
+            <ul>
+                <li><strong>Initial Step:</strong> The WCC algorithm is probably a graph algorithm that should be executed as the first step of any graph analysis to evaluate graph connectivity.</li>
+                <li><strong>Directionality:</strong> WCC treats one-way streets [directed graphs] as two-way roads [undirected].</li>
+                <li><strong>Connectivity:</strong> If any path exists between two nodes—regardless of which way the arrows point.</li>
+                <li><strong>Isolated Nodes:</strong> An isolated node is simply an “island” with zero bridges connecting it to anything else.</li>
+                <li><strong>Fragmentation:</strong> Interpreting WCC statistics allows you to quantify the "fragmentation" of your data and determine if your graph is a unified system or a collection of isolated islands.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">Core Metrics</span>
+            <ul>
+                <li><strong>nodeCount:</strong> The total population within your projection.</li>
+                <li><strong>componentCount:</strong> The number of distinct, disconnected subgraphs. High counts suggest siloed data.</li>
+                <li><strong>max:</strong> The size of the "Giant Component"; ideally, this should encompass the vast majority of your nodes.</li>
+                <li><strong>pXX (Percentiles):</strong> The size threshold where XX% of components are smaller or equal to that value.</li>
+                <li><strong>Example:</strong> If P95=4, then 95% of your islands are tiny <=4 nodes.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">Strongly Connected Components</span>
+            <ul>
+                <li><strong>Definition:</strong> The only difference between the Weakly and Strongly Connected Components algorithm (SCC) is that the SCC algorithms considers relationship directions.</li>
+                <li><strong>Reciprocity:</strong> SCC is "strong" because connectivity must be reciprocal. This requires mutual reachability.</li>
+                <li><strong>Point of SCC (Information Loops):</strong> Identifying "echo chambers" in social networks or circular trading in finance.</li>
+                <li><strong>Point of SCC (Cycle Detection):</strong> Finding deadlocks in infrastructure or recursive dependencies in software code.</li>
+                <li><strong>Tightness:</strong> It reveals the most intensely reciprocal relationships, whereas WCC just shows general proximity.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">Local clustering coefficient</span>
+            <p><strong>Goal:</strong> Quantifies how connected or close the neighbors of a particular node are.</p>
+            <ul>
+                <li><strong>Cliquishness:</strong> measures the "cliquishness" of a specific node’s neighborhood.</li>
+                <li><strong>Logic:</strong> The LCC is simply the actual directed links between your neighbors divided by the total possible directed links.</li>
+                <li><strong>Total Possible Directed Links:</strong> is the maximum number of connections that could exist between your neighbors.</li>
+            </ul>
+            <div class="code-block">
+// For N neighbors, each pair can have two directions:
+Possible Links = N × (N - 1)
+// In a group of 3 neighbors: 3 × (3 - 1) = 6.
+            </div>
+            <ul>
+                <li><strong>LCC = 0 (The Star):</strong> None of your neighbors are connected to each other. You are the only bridge between them. If you were removed, they would have no way to reach one another.</li>
+                <li><strong>LCC = 1 (The Clique):</strong> Every single one of your neighbors is connected to every other neighbor. This forms a "complete graph" or a perfect circle where everyone knows everyone.</li>
+                <li><strong>0 < LCC < 1:</strong> This represents the reality of most social and biological networks—some of your friends know each other, but not all of them.</li>
+                <li><strong>NOTE:</strong> LCC is undefined for < 2 neighbors (division by zero).</li>
+                <li><strong>Solution:</strong> Use a `CASE` statement to assign 0 instead—this keeps the math valid for averaging and ensures every node has a usable value.</li>
+                <li><strong>Average LCC:</strong> is the network-wide mean of "cliquishness”.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">PageRank</span>
+            <p><strong>Goal:</strong> It measures the transitive or directional influence of nodes.</p>
+            <ul>
+                <li><strong>Prestige:</strong> PageRank measures a node's prestige based on the quality and quantity of its incoming links.</li>
+                <li><strong>Principle:</strong> It operates on the principle that a link from an influential source confers more "authority" than a link from an obscure one.</li>
+                <li><strong>Incoming Volume:</strong> You get rank if many nodes point to you.</li>
+                <li><strong>Incoming Quality:</strong> You get even more rank if the nodes pointing to you are already high-ranking themselves.</li>
+                <li><strong>Transitive Flow:</strong> When a high-ranking node points to you, it "votes" with its own authority, passing that prestige down the chain.</li>
+                <li><strong>Context:</strong> if, for example, Elon Musk or Andrew Ng follows you, you gain more influence than if I followed you</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">Dead-Ends and Teleportation</span>
+            <ul>
+                <li><strong>Rank Sinks:</strong> Nodes with no outgoing links act as "rank sinks." Because they don't pass influence forward, they cause the PageRank score to leak out of the network, eventually draining the scores of other nodes to zero.</li>
+                <li><strong>Damping Factor:</strong> To prevent rank from leaking out of dead ends, PageRank uses a Damping Factor (typically 0.85).</li>
+                <li><strong>Teleportation:</strong> This introduces a teleportation probability—a mathematical "jump" that redistributes influence across the network regardless of existing links.</li>
+                <li><strong>Preserving Hierarchy:</strong> By keeping the damping factor high (85%), the "votes" from influential neighbors still dominate. High-ranking nodes stay high because they are at the center of the local flow.</li>
+                <li><strong>Preventing Collapse:</strong> The 15% "teleportation" acts as a floor. It treats the entire network like a closed system where energy can't be destroyed—it just gets recycled back to everyone, ensuring the "leak" in a dead-end node doesn't drain the rest of the graph.</li>
+                <li><strong>Infrastructure Example:</strong> Ranks power grid substations to predict which "nodes" would cause the most catastrophic failures if offline.</li>
+                <li><strong>Defense Example:</strong> Analyzes logistics networks to identify fragile supply hubs that, if disrupted, would paralyze a military operation.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">Identifying which high-rank nodes are backing the influencers</span>
+            <p><strong>Goal:</strong> To identify "influence providers" in any network, you must structure your query to move backward from a known point of authority to its sources.</p>
+            <ol>
+                <li><strong>Define the "Target" Set:</strong> Start by isolating the entities you want to investigate. (e.g., "Critical Distribution Hubs" or "Top-Tier Journals"). Use a membership filter (like `IN`).</li>
+                <li><strong>Trace the Transitive Path:</strong> Identify the incoming relationships. You are looking for the "upstream" nodes that feed rank into your target.</li>
+                <li><strong>Rank the Rankers:</strong> Use a sorting bridge (like a `WITH` or `ORDER BY` clause) to evaluate the quality of these incoming nodes via a global importance metric like PageRank.</li>
+                <li><strong>Aggregate and Slice:</strong> Group providers by targets. Use `COLLECT` and `LIMIT` to focus on the "Elite" providers—the Top N nodes responsible for the majority of the target's prestige.</li>
+            </ol>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">Personalized PageRank (PPR)</span>
+            <p><strong>Goal:</strong> PPR transforms PageRank from a global popularity contest into a localized relevance map centered on specific source nodes.</p>
+            <ul>
+                <li><strong>Probability:</strong> A node’s score represents the mathematical probability of occupying that node during a stochastic(random) process that periodically restarts at your sources.</li>
+                <li><strong>Visit Frequency:</strong> High visit frequency = high contextual importance.</li>
+                <li><strong>Ripple Effect:</strong> It isolates the influence of your sources, surfacing "hidden" nodes that are vital to a specific community but ignored by global rankings because they lack massive, site-wide scale.</li>
+                <li><strong>Structural Discovery:</strong> By filtering out global noise (like Wikipedia), it reveals the most influential entities from a specific, localized "point of view."</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

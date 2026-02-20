@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        Representing network structure - Design
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    <div class="section-content">
+        <p><strong><<Basic Graph Representations>></strong></p>
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                ADJACENCY MATRIX:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> The most basic graph representation is the mathematical data structure adjacency matrix.</p>
+                        <ul>
+                <li><strong>Structure:</strong> An adjacency matrix is a square matrix, where the matrix elements indicate whether pairs of nodes are connected or not in the graph.</li>
+                <li><strong>Dimensions:</strong> The adjancency matrix dimensions are equal to the number of nodes in the graph.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                EDGE LIST
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Simple data structure where each row represents a relationship of a given network.</p>
+            <ul>
+                <li><strong>Weight:</strong> The value of the relationship weight is stored in a separate column.</li>
+                <li><strong>Metadata:</strong> You could also store additional information about the relationship in the edge list.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        Cypher Query Language and Graph Query Language
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Cypher Syntax (ASCII-Art)
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>To represent this via text, the Cypher language uses "ASCII-art" to make the code look like the graph it describes:</p>
+            <ul>
+                <li><strong>Nodes ( ):</strong> Parentheses represent the circle of a node. Inside, you define the Type (e.g., :Person) and Properties (e.g., {name: "Thomas"}).</li>
+                <li><strong>Relationships -[]->:</strong> Brackets inside an arrow represent the link. Relationships must have a source and target; they cannot exist in a vacuum.</li>
+            </ul>
+            <div class="code-block">
+// Example Cypher Syntax
+(:Person {name: "Thomas"})-[:WORKS_AT]->(:Company {name: "TechCorp"})
+            </div>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        Graph Databases:
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                NATIVE GRAPH
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> A native graph database is typically a type of NoSQL database designed to store graph representations.</p>
+            <ul>
+                <li><strong>Index free adjacency:</strong> Instead of an index, which would require O(1) pointers, keeping speed constant as the graph grows.</li>
+                <li><strong>Traversal:</strong> each node has pointers to other nodes it has a relationship with, facilitating traversal across query nodes.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Resource Description Framework Database:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Structured as a triple is a data entity that consists of subject, predicate, and object.</p>
+                        <ul>
+                <li><strong>Ontologies:</strong> RDF is particularly suitable for creating ontologies that describe a specific domain of knowledge.</li>
+                <li><strong>Function:</strong> Functioning like a basic sentence: Subject: The resource being described (an IRI or blank node). Predicate: The specific relationship or property (an IRI). Object: The value (Literal) or related entity (IRI/blank node).</li>
+                <li><strong>Nodes:</strong> Internationalized resource identifier (IRI): Denotes any realworld entity or concept. An IRI is used to identify nodes in the graph in an unambiguous way. It is like an ID. Literal: Literals are values used to represent datatypes like strings, numbers, or dates. Blank node: Blank nodes are nodes without an identifier used in special RDF modeling scenarios.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Labeled-property graph database
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Logic:</strong> Unlike simpler models, both nodes (the objects) and relationships (the connections) can store extra data as key-value pairs (properties). Labels categorize nodes (e.g., "Person" or "Product"). Properties provide details (e.g., "Name: Alice"). This internal structure makes the graph highly flexible for modeling complex real-world data.</p>
+            
+            <p><strong>1. Monopartite Networks: Homogeneous Flows</strong><br>
+            Definition: A graph where all nodes belong to a single category (e.g., $Node_A \to Node_A$).<br>
+            When to use: When you are modeling a peer-to-peer system where the "nature" of the entity doesn't change, only the direction of the influence.<br>
+            Logic: Use this for recursive importance (like PageRank). Influence flows through a single "type" of pipe, making it ideal for ranking, community detection, or pathfinding within a single domain (e.g., bank accounts, web pages, or social peers).</p>
+
+            <p><strong>2. Bipartite (and K-Partite) Networks: Heterogeneous Mapping</strong><br>
+            Definition: Edges can only exist between a node in one set and a node in the other. You cannot have an edge connecting two nodes within the same set. (e.g., $Node_A \to Node_B$).<br>
+            <br>
+            When to use: Use this to model ownership, consumption, or authorship. It separates the "actor" from the "object."<br>
+            Ontological Precision: By using specific labels (rather than generic ones), you "future-proof" the model against data collision when merging diverse datasets. It ensures that $Node_B$ and $Node_C$ don't get blurred into a single, unmanageable category.</p>
+
+            <p><strong>3. Reified Interactions (Nodes as Actions)</strong><br>
+            Definition: Turning a relationship into a standalone node (Reification).<br>
+            When to use: Use this when an interaction must be interactable. If you need to "like," "tag," or "comment" on an action that happened between two other nodes, that action must be a node.<br>
+            Logic: Since most graph models cannot point an edge at another edge, reifying the interaction allows you to attach metadata and incoming connections to the action itself without losing the history of the original event.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                4. Hierarchy of Citation: Directed Provenance
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Definition:</strong> Uses directed edges to track the origin of information. A Derivative Node (the copy or mention) has an outgoing relationship pointing to the Source Node (the original).</p>
+            <ul>
+                <li><strong>When to use:</strong> Use this to preserve the Source of Truth.</li>
+                <li><strong>Logic:</strong> Outgoing (Derivative): The new/derived node points "back" to indicate where it came from. Incoming (Source): The original entity only receives links, marking it as the definitive target. This allows you to measure an object's reach or popularity simply by counting its "in-degree" (incoming links).</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        EXTRACTION
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    <div class="section-content">
+        <p><strong>Data Storage: Separate/Within Node</strong><br>
+        When choosing between storing data as node properties or separate nodes, the decision rests on your query goals and scalability.</p>
+        
+        <p><strong>The Trade-off</strong><br>
+        Node Properties: Storing a list of URLs directly on a node is simple but slow for discovery. To find nodes sharing a link, the database must scan every node's list property—essentially a costly search.<br>
+        Separate Nodes: Use Separate Nodes for shared data to leverage index-free adjacency over property scanning.</p>
+
+        <p><strong>Standardization</strong><br>
+        Separate nodes work best when data is standardized. For example, "NYC" and "New York City" should point to the same node to ensure your graph remains unified and searchable.</p>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Simplifying Complex Relationships
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Relationship Specificity:</strong> By using Specific Edges [Relationships] (e.g., PURCHASED, WROTE), you create Semantic Filters. During a traversal, the database engine ignores irrelevant edges entirely, only following the specific "type" required.</p>
+            <p><strong>Network Folding:</strong> Simplifies complex relationships by converting indirect paths into direct connections. It is appropriate whenever you want to measure the strength of a relationship between two similar entities based on a shared "anchor."</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Applying Bipartite Networks
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Bipartite Projection (Folding) is your primary tool for distilling indirect associations into direct, measurable community clusters.</p>
+            <ul>
+                <li><strong>Directed Boundaries:</strong> Apply this when an action starts in Set A and targets Set B, but entities within the same set do not interact directly in that specific context.</li>
+                <li><strong>Discovery via Projection:</strong> This is the core utility. By linking two nodes in Set A because they share a common neighbor in Set B, you project a new network. This reveals "co-occurrence" or hidden community clusters.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

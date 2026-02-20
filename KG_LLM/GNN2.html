@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        Node Classification & Link Prediction with GNNs
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                &lt;PRE-PROCESSING&gt;
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>1. Node-Level Preprocessing</strong></p>
+            <ul>
+                <li><strong>Incremental Re-indexing:</strong> Maps sparse, high-cardinality IDs (like Bitcoin hashes) to a dense, zero-indexed integer range to enable direct memory addressing and prevent massive, empty tensors.</li>
+                <li><strong>Feature Normalization:</strong> Scales node features (e.g., transaction amounts) using Z-score or Min-Max scaling to ensure stable gradient descent.</li>
+                <li><strong>Positional Encodings:</strong> Injects global structural info (via Laplacian Eigenvectors) so the model understands a node's relative location.</li>
+            </ul>
+
+            <p><strong>2. Edge-Level Preprocessing</strong></p>
+            <ul>
+                <li><strong>Adjacency List Construction:</strong> Converts source-target pairs into compact formats like Coordinate (COO) for GPU-optimized message passing.</li>
+                <li><strong>DropEdge:</strong> Randomly removes a subset of edges during training as a regularizer to mitigate over-smoothing.</li>
+                <li><strong>Edge Weighting:</strong> Assigns importance values to edges based on attributes like transaction frequency or illicit proximity.</li>
+            </ul>
+
+            <p><strong>3. Structural & Task-Specific Methods</strong></p>
+            <ul>
+                <li><strong>Graph Sampling/Partitioning:</strong> Clusters or samples subgraphs for massive datasets (like Elliptic) to fit into limited GPU memory.</li>
+                <li><strong>Virtual Nodes:</strong> Adds a global node connected to all others to facilitate long-range info flow.</li>
+            </ul>
+
+            <p><strong>4. Data Masking & Splitting (The Final Phase)</strong></p>
+            <p>To move from raw features to a trainable model, the workflow implements <em>Boolean Masking</em> to handle the semi-supervised nature of the labels:</p>
+            <ul>
+                <li><strong>Label Filtering:</strong> Creates a <em>known_mask</em> to distinguish between verified nodes (licit/illicit) and unknown/unlabeled nodes.</li>
+                <li><strong>Stochastic Indexing:</strong> Uses <em>torch.randperm</em> to shuffle the indices of labeled nodes, ensuring the split is not biased by the original data order.</li>
+                <li><strong>Boolean Split Masks:</strong> Defines <em>train_mask</em>, <em>val_mask</em>, and <em>test_mask</em> directly on the PyG Data object.</li>
+                <li>These masks allow the model to access the entire graph topology for learning representations while strictly limiting the loss calculation to the appropriate subsets.</li>
+                <li><strong>Class Balancing Check:</strong> A final verification of the licit-to-illicit ratio across masks to ensure the model isn't trained on skewed distributions.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                &lt;ENCODER-DECODER FOR NODE CLASSIFICATION&gt;
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>1. The Foundation: BaseGraphModel</strong></p>
+            <p>This is a template class. It defines a standard two-layer message-passing flow but leaves the specific "math" (the convolution type) open.</p>
+            <ul>
+                <li><strong>Parameters:</strong> It takes <em>conv_layer</em> as an argument, allowing you to pass any PyG layer (like SAGEConv or GCNConv).</li>
+                <li><strong>Logic:</strong> It enforces a RELU activation between layers to introduce non-linearity.</li>
+            </ul>
+
+            <p><strong>2. The Simple Implementation: SAGE</strong></p>
+            <p>Since GraphSAGE (Sample and Aggregate) has a simple signature in PyG, we simply "plug" it into the base template.</p>
+            <ul>
+                <li><strong>Definition:</strong> Inherits everything from <em>BaseGraphModel</em>.</li>
+                <li><strong>Mechanism:</strong> It passes <em>SAGEConv</em> as the <em>conv_layer</em>. The base class then handles the instantiation and the forward pass automatically.</li>
+            </ul>
+
+            <p><strong>3. The Custom Implementation: GAT</strong></p>
+            <p>Graph Attention Networks require specific parameters (like heads) that the standard base template doesn't explicitly handle in its __init__.</p>
+            <ul>
+                <li><strong>Override:</strong> Instead of letting the base class create the layers, GAT manually defines <em>self.conv1</em> and <em>self.conv2</em> inside its own constructor.</li>
+                <li><strong>Complexity:</strong> It accounts for multi-head attention, where the hidden dimension is multiplied by the number of heads (<em>hidden_dim * num_heads</em>).</li>
+            </ul>
+
+            <p><strong>4. Integration: NodeClassifier</strong></p>
+            <p>Finally, you wrap your chosen encoder (SAGE or GAT) into the NodeClassifier.</p>
+            <p><strong>The Encoder:</strong> The encoder performs recursive neighborhood aggregation. In a 2-layer setup:</p>
+            <ul>
+                <li><strong>Layer 1:</strong> Each node computes a feature vector by aggregating the initial attributes (X) of its immediate neighbors.</li>
+                <li><strong>Layer 2:</strong> These intermediate vectors are aggregated again. Because the neighbors now hold information about their neighbors, the center node effectively “sees” a 2-hop radius.</li>
+                <li><strong>Output:</strong> A refined node embedding — a dense vector that mathematically encodes both the node’s own identity and its neighbors’ context.</li>
+            </ul>
+
+            <p><strong>The Decoder: Logarithmic Mapping</strong></p>
+            <p>The “decoder” here is the <em>log_softmax</em> function, it is the standard for multi-class classification.</p>
+            <ul>
+                <li><strong>Numerical Stability:</strong> Unlike standard softmax, <em>log_softmax</em> operates in log-space, preventing vanishing gradient issues when probabilities are extremely close to 0 or 1.</li>
+                <li><strong>Final Output:</strong> A log-probability value for each node, which is then passed to <em>NLLLoss</em> (Negative Log-Likelihood) for optimization.</li>
+            </ul>
+
+            <p><strong>Other Decoders for Node Classification Tasks:</strong></p>
+            <ul>
+                <li><strong>1. Binary Classification: Sigmoid</strong> - Used when a node is either A or not A (e.g., Fraudulent vs. Legitimate). Output: A single scalar between 0 and 1. Loss: <em>BCELoss</em>.</li>
+                <li><strong>2. Multi-Label Classification: Sigmoid (Independent)</strong> - Used when a node can belong to multiple categories simultaneously. Output: A vector of probabilities. Loss: <em>BCEWithLogitsLoss</em>.</li>
+                <li><strong>3. Node Regression: Identity (Linear)</strong> - Used to predict a continuous value. Output: Raw real-valued numbers (logits). Loss: <em>MSELoss</em> or <em>L1Loss</em>.</li>
+                <li><strong>4. Clustering/Unsupervised: Inner Product</strong> - Used when you don't have labels. Output: The dot product of two node embeddings. Goal: High values for connected nodes.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        LINK PREDICTION & HETEROGENEOUS SYSTEMS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.1</span>
+    </summary>
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                &lt;ENCODER-DECODER FOR LINK PREDICTION&gt;
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Phase 1: Global Identity Normalization (Indexing)</strong></p>
+            <p>The Core: Mapping arbitrary entity names into a continuous 0-indexed integer space for direct GPU memory addressing. Ecosystem Expansion: Beyond basic dictionary mapping, massive streaming graphs use hash functions (e.g., MurmurHash) to convert strings to integers on the fly.</p>
+            
+            <p><strong>Phase 2: Structural Encoding (the edge_index)</strong></p>
+            <p>The Core: Storing network topology in a 2 × E Coordinate (COO) tensor to separate “who a node knows” from “what a node is.” Ecosystem Expansion: While COO is standard, tools like <em>scipy.sparse</em> offer CSR (Compressed Sparse Row) formats, which are vastly superior for high-performance matrix multiplications.</p>
+
+            <p><strong>Phase 3: Feature Matrix Alignment (X)</strong></p>
+            <p>The Core: Creating a 1:1 correspondence between a node’s integer ID and its row in the dense feature matrix. Ecosystem Expansion: Features (X) can be generated using algorithms like PageRank or dense vector embeddings via LLMs (semantic text chunking) prior to alignment.</p>
+
+            <p><strong>Phase 4: Dataset Splitting & Edge Masking</strong></p>
+            <p>The Core: Hiding ground-truth positive edges and generating fake “negative” edges. Ecosystem Expansion: Tools like PyG’s <em>TemporalData</em> ensure models don’t predict the past using future edges. Hard Negative Mining frameworks select highly plausible but fake edges to force finer decision boundaries.</p>
+
+            <p><strong>Phase 5: Mini-Batching (Subgraph Generation)</strong></p>
+            <p>The Core: Using breadth-first expansion to extractLocalized, multi-hop subgraphs. Ecosystem Expansion: <em>Cluster-GCN</em> uses METIS to partition graphs. <em>GraphSAINT</em> samples random walks to neutralize “neighbor explosion.”</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                —HETEROGENOUS ENCODERS—
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>In a homogeneous GNN, the model uses one weight matrix. In a heterogeneous graph, the encoder maintains separate weight matrices for each relationship type.</p>
+            
+            <p><strong>ENCODING APPROACHES:</strong></p>
+            <ul>
+                <li><strong>1. Identity-based (Lookup Tables):</strong> Assigns a unique, trainable vector to every individual entity. matrix stores one vector per ID. Use this for large-scale Collaborative Filtering with little metadata.</li>
+                <li><strong>2. Feature-based (Linear/MLP Projections):</strong> Transforms raw attributes (age, price) into a vector space using a Linear layer or MLP. Appropriate for cold-start scenarios.</li>
+                <li><strong>3. Hybrid Fusion (The "Two-Step"):</strong> Merges Identity and Feature methods. Concatenates the "what" (feature) to the "who" (identity). Appropriate for RecSys needing a "warm start."</li>
+                <li><strong>4. Contextual/Sequential Encoders:</strong> Models like RNNs or Transformers process sequences of past actions. Use this for session-based recommendations.</li>
+            </ul>
+
+            <p><strong>DECODER APPROACHES:</strong></p>
+            <ul>
+                <li><strong>1. Dot Product (Similarity-Based):</strong> Computes similarity between user and item vectors. Critical for large-scale retrieval efficiency.</li>
+                <li><strong>2. Multi-Layer Perceptron (MLP) (Non-Linear):</strong> Concatenates embeddings and passes them through a neural network. Used for high-precision ranking.</li>
+                <li><strong>3. TransE (Translational Distance):</strong> Treats relationship as translation: h + r ≈ t. Ideal for knowledge graphs with logical flow.</li>
+                <li><strong>4. DistMult (Multiplicative Interaction):</strong> Relationship as diagonal matrix M_r. Score = h_i^T M_r h_j. Performs element-wise multiplication weighted by relationship importance.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

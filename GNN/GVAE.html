@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GVAE Architecture: Ditherpunk Visualization</title>
+<style>
+  :root {
+    --bg: #000000;
+    --fg: #00FF41;
+    --font: 'Courier New', Courier, monospace;
+  }
+
+  body {
+    background-color: var(--bg);
+    color: var(--fg);
+    font-family: var(--font);
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .terminal-container {
+    width: 100%;
+    max-width: 800px;
+    border: 2px solid var(--fg);
+    padding: 2px;
+    box-sizing: border-box;
+    box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+  }
+
+  .inner-border {
+    border: 1px solid var(--fg);
+    padding: 20px;
+    position: relative;
+  }
+
+  h2 {
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 1px dashed var(--fg);
+    padding-bottom: 10px;
+    margin-top: 0;
+  }
+
+  /* --- Ditherpunk Patterns natively in CSS --- */
+  .dither-25 {
+    background-image: radial-gradient(var(--fg) 30%, transparent 30%);
+    background-size: 4px 4px;
+  }
+  
+  .dither-50 {
+    background-image: 
+      linear-gradient(45deg, var(--fg) 25%, transparent 25%, transparent 75%, var(--fg) 75%, var(--fg)),
+      linear-gradient(45deg, var(--fg) 25%, transparent 25%, transparent 75%, var(--fg) 75%, var(--fg));
+    background-position: 0 0, 2px 2px;
+    background-size: 4px 4px;
+  }
+
+  .dither-75 {
+    background-color: var(--fg);
+    background-image: radial-gradient(var(--bg) 30%, transparent 30%);
+    background-size: 4px 4px;
+  }
+
+  .solid { background-color: var(--fg); color: var(--bg); }
+
+  /* --- Layout & Visualization Area --- */
+  .viz-window {
+    height: 250px;
+    margin: 20px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 1px solid var(--fg);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .phase {
+    display: none;
+    width: 100%;
+    height: 100%;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-wrap: wrap;
+    animation: scanline 0.5s ease-out;
+  }
+
+  .phase.active { display: flex; }
+
+  /* --- Math Elements --- */
+  .matrix {
+    display: grid;
+    gap: 2px;
+    border: 2px solid var(--fg);
+    padding: 2px;
+  }
+
+  .m-4x4 { grid-template-columns: repeat(4, 1fr); width: 120px; height: 120px; }
+  .m-4x3 { grid-template-columns: repeat(3, 1fr); width: 90px; height: 120px; }
+  .m-3x4 { grid-template-columns: repeat(4, 1fr); width: 120px; height: 90px; }
+
+  .cell {
+    border: 1px solid var(--fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  .vector-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .vector {
+    display: flex;
+    border: 1px solid var(--fg);
+  }
+
+  .v-cell {
+    width: 30px;
+    height: 30px;
+    border: 1px solid var(--fg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .operator {
+    font-size: 24px;
+    margin: 0 15px;
+  }
+
+  .label {
+    font-size: 12px;
+    text-transform: uppercase;
+    margin-top: 5px;
+    text-align: center;
+  }
+
+  /* --- Text & Controls --- */
+  .description {
+    height: 80px;
+    font-size: 14px;
+    line-height: 1.4;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+
+  .controls {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px dashed var(--fg);
+    padding-top: 15px;
+  }
+
+  button {
+    background: var(--bg);
+    color: var(--fg);
+    border: 1px solid var(--fg);
+    padding: 8px 16px;
+    font-family: var(--font);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  button:hover:not(:disabled) {
+    background: var(--fg);
+    color: var(--bg);
+  }
+
+  button:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
+
+  .status { font-weight: bold; display: flex; align-items: center; }
+
+  @keyframes scanline {
+    0% { opacity: 0; transform: translateY(5px); }
+    100% { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Responsive adjustments */
+  @media (max-width: 600px) {
+    .viz-window { height: auto; min-height: 250px; padding: 20px 0; }
+    .operator { margin: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="terminal-container">
+  <div class="inner-border">
+    <h2>GVAE: Topology Reconstruction</h2>
+    
+    <div class="viz-window">
+      <div id="phase-1" class="phase active">
+        <div>
+          <div class="matrix m-4x4">
+            <div class="cell solid"></div><div class="cell"></div><div class="cell solid"></div><div class="cell"></div>
+            <div class="cell"></div><div class="cell solid"></div><div class="cell"></div><div class="cell solid"></div>
+            <div class="cell solid"></div><div class="cell"></div><div class="cell solid"></div><div class="cell solid"></div>
+            <div class="cell"></div><div class="cell solid"></div><div class="cell solid"></div><div class="cell solid"></div>
+          </div>
+          <div class="label">Adjacency Matrix (A)</div>
+        </div>
+      </div>
+
+      <div id="phase-2" class="phase">
+        <div class="vector-box">
+          <div class="vector">
+            <div class="v-cell solid">μ₁</div><div class="v-cell solid">μ₂</div><div class="v-cell solid">μ₃</div>
+          </div>
+          <div class="label">Mean (μ)</div>
+        </div>
+        <div class="vector-box">
+          <div class="vector">
+            <div class="v-cell dither-50">σ₁</div><div class="v-cell dither-50">σ₂</div><div class="v-cell dither-50">σ₃</div>
+          </div>
+          <div class="label">Uncertainty (σ)</div>
+        </div>
+      </div>
+
+      <div id="phase-3" class="phase">
+        <div class="vector-box"><div class="vector"><div class="v-cell solid">μ</div></div></div>
+        <div class="operator">+</div>
+        <div class="vector-box"><div class="vector"><div class="v-cell dither-50">σ</div></div></div>
+        <div class="operator">⊙</div>
+        <div class="vector-box"><div class="vector"><div class="v-cell dither-25">ε</div></div></div>
+        <div class="operator">=</div>
+        <div class="vector-box"><div class="vector"><div class="v-cell solid" style="background:var(--bg);color:var(--fg);border:2px solid var(--fg);">z</div></div><div class="label">Sampled Coord</div></div>
+      </div>
+
+      <div id="phase-4" class="phase">
+        <div>
+          <div class="matrix m-4x3" style="border-style: dashed;">
+             </div>
+          <div class="label">Latent Space (Z)</div>
+        </div>
+        <div class="operator">×</div>
+        <div>
+          <div class="matrix m-3x4" style="border-style: dashed;">
+             </div>
+          <div class="label">Transposed (Zᵀ)</div>
+        </div>
+      </div>
+
+      <div id="phase-5" class="phase">
+        <div>
+          <div class="matrix m-4x4">
+            <div class="cell solid"></div><div class="cell dither-25"></div><div class="cell dither-75"></div><div class="cell"></div>
+            <div class="cell dither-25"></div><div class="cell solid"></div><div class="cell dither-25"></div><div class="cell solid"></div>
+            <div class="cell dither-75"></div><div class="cell dither-25"></div><div class="cell solid"></div><div class="cell dither-75"></div>
+            <div class="cell"></div><div class="cell solid"></div><div class="cell dither-75"></div><div class="cell solid"></div>
+          </div>
+          <div class="label">Approximated (Â)</div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="description" id="desc-text">
+      </div>
+
+    <div class="controls">
+      <button id="btn-prev" disabled>&#9664; Prev</button>
+      <div class="status">PHASE <span id="phase-counter">1</span> / 5</div>
+      <button id="btn-next">Next &#9654;</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const phaseTexts = [
+    "PHASE 1: THE INPUT. The Adjacency Matrix (A) represents the deterministic, exact topology of the graph. A filled square means an edge exists.",
+    "PHASE 2: PROBABILISTIC ENCODER. The GCN layers map nodes into a d-dimensional distribution, outputting a Mean vector (center) and an SD vector (uncertainty spread).",
+    "PHASE 3: REPARAMETERIZATION TRICK. To remain differentiable, we 'throw a dart' into the distribution. We scale random noise (ε) by our uncertainty (σ) and add it to our center (μ) to get a discrete coordinate (z).",
+    "PHASE 4: SAMPLING DECODER. The individual z coordinates are stacked into matrix Z. The inner product (Z × Zᵀ) calculates the proximity of every node to every other node in latent space.",
+    "PHASE 5: OUTPUT. The inner product values are passed through a Sigmoid function, resulting in Â: a matrix of probabilities indicating how likely an edge is to exist between nodes."
+  ];
+
+  let currentPhase = 1;
+  const totalPhases = 5;
+
+  const btnPrev = document.getElementById('btn-prev');
+  const btnNext = document.getElementById('btn-next');
+  const counter = document.getElementById('phase-counter');
+  const descText = document.getElementById('desc-text');
+
+  // Helper to populate Phase 4 dummy matrices purely for visual aesthetic
+  const p4_m1 = document.querySelector('.m-4x3');
+  const p4_m2 = document.querySelector('.m-3x4');
+  for(let i=0; i<12; i++) {
+      p4_m1.innerHTML += `<div class="cell ${Math.random() > 0.5 ? 'dither-50' : 'dither-25'}"></div>`;
+      p4_m2.innerHTML += `<div class="cell ${Math.random() > 0.5 ? 'dither-50' : 'dither-25'}"></div>`;
+  }
+
+  function updateUI() {
+    // Update active class
+    document.querySelectorAll('.phase').forEach(p => p.classList.remove('active'));
+    document.getElementById(`phase-${currentPhase}`).classList.add('active');
+    
+    // Update text & counter
+    descText.innerText = phaseTexts[currentPhase - 1];
+    counter.innerText = currentPhase;
+
+    // Handle button states
+    btnPrev.disabled = currentPhase === 1;
+    btnNext.disabled = currentPhase === totalPhases;
+  }
+
+  btnNext.addEventListener('click', () => {
+    if (currentPhase < totalPhases) { currentPhase++; updateUI(); }
+  });
+
+  btnPrev.addEventListener('click', () => {
+    if (currentPhase > 1) { currentPhase--; updateUI(); }
+  });
+
+  // Initialize
+  updateUI();
+</script>
+
+</body>
+</html>

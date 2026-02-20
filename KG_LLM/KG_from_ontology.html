@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        ONTOLOGY
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                ONTOLOGY DEFINITION
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> An ontology is a formal, standardized map of terms and relationships used to unify diverse data.</p>
+            <ul>
+                <li>It acts as a <em>universal translator</em>: by "mapping" local data to this reference schema, you harmonize different sources.</li>
+                <li><strong>Human Phenotype Ontology (HPO): Cardiovascular</strong></li>
+                <li>Atrial septal defect (HP:0001631) — A hole in the wall separating the upper heart chambers.</li>
+                <li>Ventricular septal defect (HP:0001629) — A hole between the lower heart chambers.</li>
+                <li><strong>Homogeneous:</strong> Uniform structure and meaning (e.g., a neat SQL table).</li>
+                <li><strong>Heterogeneous:</strong> A chaotic mix of formats and contexts (e.g., PDFs, tweets, and legacy databases).</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section" open>
+    <summary>
+        KNOWLEDGE GRAPH TECHNOLOGIES
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                KNOWLEDGE GRAPH TECHNOLOGIES
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>OWL:</strong> Industry standard formatting providing the formal logic and schema for Knowledge Graphs, defining how entities relate.</p>
+            <ul>
+                <li><strong>Standardization:</strong> Provides a formal vocabulary to define "what things are" and "how they relate" using logic.</li>
+                <li><strong>Interoperability:</strong> Enables disparate systems to exchange data without losing meaning.</li>
+                <li><strong>Integration:</strong> Resolves semantic clashes, merging heterogeneous sources into a unified Knowledge Graph.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Resource Description Framework Database: make sure your data is correct and interoperable
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Structured as a <strong>triple</strong> is a data entity that consists of subject, predicate, and object.</p>
+            <ul>
+                <li>RDF is particularly suitable for creating ontologies that describe a specific domain of knowledge.</li>
+                <li>In RDF, relationships are global statements, and can be easily “mapped” given that different sources use the same RDF URI.</li>
+                <li>For example: If Source A (a clinical database) and Source B (a research paper) both use the URI: “http://purl.obolibrary.org/obo/HP_0001250”.</li>
+                <li>An LLM or system immediately knows both are talking about "Seizures," even if Source A calls it "Fits" and Source B calls it "Epilepsy."</li>
+            </ul>
+            <div class="code-block">
+Functioning like a basic sentence:
+Subject: The resource being described (an IRI or blank node).
+Predicate: The specific relationship or property (an IRI).
+Object: The value (Literal) or related entity (IRI/blank node).
+            </div>
+            <p><strong>Methods of adding metadata to RDF:</strong></p>
+            <p><strong>1. Reification</strong></p>
+            <p>Turn the “relationship” edge into its own distinct node, and have the initial node and end node point to the new “relationship node”. Fill the “relationship node” with metadata. While this keeps the logic clean, it triples the number of edges in your graph.</p>
+            <p><strong>2. Named Graphs</strong></p>
+            <p>The fourth element (the Graph ID) is a unique identifier attached to the statement. You then use that same ID as the "Subject" for new sentences that contain your metadata.</p>
+            <div class="code-block">
+The Statement: (Subject, Predicate, Object, Graph_ID_77)
+The Metadata: (Graph_ID_77, was_reported_by, Satellite_A)
+The "pointer" is the shared ID.
+            </div>
+            <p>When you want the metadata for a relationship, you look for any statement where the Subject matches the Graph ID of the relationship you're interested in.</p>
+            <p><strong>3. RDF-STAR</strong></p>
+            <p>In RDF-star, you use double-angled brackets << >> to wrap a triple, effectively telling the computer: "Treat this entire sentence as a single object."</p>
+            <div class="code-block">
+How it works in practice:
+Instead of creating a "middleman" node or an "ID" in a separate column, you just write: <<Subject -> Predicate -> Object>> -> hasMetadata -> "Value"
+The Fact: <<Diabetes -> hasSymptom -> Thirst>>
+The Metadata: You attach :source "Medical Journal" directly to that bracketed fact.
+            </div>
+            <p><em>The Catch:</em> Because this uses a special syntax (<< >>), older RDF databases don't understand it. It requires modern "RDF-star compatible" engines to actually run the queries.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                LABELED PROPERTY GRAPH: make your data useful and fast for an application
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>In LPG, the link itself has a "data payload." LPG (Labeled Property Graph) is built for speed and context. Every single line (edge) between two nodes can have its own private properties.</p>
+            <ul>
+                <li>Because LPG uses pointers for properties, it provides fast graph traversal through <em>index-free adjacency</em>.</li>
+            </ul>
+            <div class="code-block">
+Instead of:
+Find all of Alice's friends.
+For each friend, go find their "City" record.
+Check if City == "London".
+
+The LPG does:
+Teleport to Alice's neighbors.
+Instantly check the "City" property already living on that neighbor node as it arrives.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                KNOWLEDGE GRAPH CREATION
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Phase 1: Pre-Ingestion (The Guardrails)</strong></p>
+            <p>Before a single triple enters the database, you must define the physical rules. This prevents the "spiderweb" effect where duplicate data slows down your LLM.</p>
+            <ul>
+                <li><strong>Global Uniqueness:</strong> You create a constraint on the :Resource label (the default tag for all RDF imports) to ensure no two nodes share the same URI.</li>
+                <li><strong>Entry-Point Indexing:</strong> Since LPGs use Index-Free Adjacency, you only need an index to find the starting node. Once found, the system "teleports" to neighbors.</li>
+                <li>Critical Note: In Neo4j, a uniqueness constraint automatically creates an index. You only need to add extra indexes for properties you will filter by frequently (like id or name).</li>
+            </ul>
+            <p><strong>Phase 2: Orchestrated Import (The Bridge)</strong></p>
+            <p>Using Neosemantics (n10s), you translate the .owl logic into Neo4j nodes and edges. This is where you decide how much of the "RDF baggage" you want to carry.</p>
+            <div class="code-block">
+Key Configuration Tactics:
+handleVocabUris: "IGNORE": Essential for usability. It strips the 50-character URL prefix from property names, turning http://...#hasSymptom into just hasSymptom.
+applyNeo4jNaming: true: Automatically cleans up the RDF style. It converts camelCase or lowercase relationships into the standard Neo4j UPPERCASE_SNAKE_CASE, making your graph immediately compatible with other Neo4j tools.
+            </div>
+            <p><strong>Phase 3: Post-Import Enrichment (The Editor)</strong></p>
+            <p>Neosemantics is a translator, not an architect. Once the data is in, you use Cypher and APOC to mold the generic "Resources" into a domain-specific model.</p>
+            <ul>
+                <li><strong>1. The Sorting Hat (Labeling):</strong> You scan the generic nodes and apply specific labels based on their URI patterns. This allows you to run queries like MATCH (p:HpoPhenotype) instead of searching every single node in the database.</li>
+                <li><strong>2. String Surgery (Normalization):</strong> Using APOC's text functions, you transform raw URIs into standardized IDs. For your medical use case, this means converting .../HP_0001 into HP:0001.</li>
+            </ul>
+            <p><strong>Phase 4: Query Strategy (The Navigator)</strong></p>
+            <p>Once modeled, use the "Anchor, Funnel, Chain" method.</p>
+            <ul>
+                <li><strong>1. Anchor & Step (Entry):</strong> Never scan the whole graph. "Anchor" to a selective node (specific ID) using Phase 3's indexes, then "step" to immediate neighbors.</li>
+                <li><strong>2. Layered Funnel (Traversal):</strong> Narrow the search sequentially: Match Abstract Scope -> Find Specific Targets -> Fetch Metadata.</li>
+                <li><strong>3. Context Passing (Optimization):</strong> Use WITH checkpoints. Filter results early (e.g., keep top 5 items) before triggering expensive lookups on the rest.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                QUERYING MULTI-LAYERED DATASETS [Phase 4]
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>The abstract concept map (Taxonomy), the real-world records (Instances), and the descriptive details (Metadata). Querying is described as "stepping" through these layers sequentially rather than grabbing everything at once.</p>
+            <div class="code-block">
+Find the broad Concept.
+Pass those results down to find specific Data points.
+Finally, pull the Metadata (fine print).
+            </div>
+            <p>This "chaining" prevents the system from crashing by managing the data load step-by-step.</p>
+            <p><strong>Phase 5: Annotation Enrichment (The Glue)</strong></p>
+            <p>While Phases 1–3 build the taxonomic "skeleton," Phase 5 adds the "connective tissue" using external annotation files (like TSVs). This links abstract concepts to real-world evidence.</p>
+            <ul>
+                <li><strong>Tabular Ingestion:</strong> Use LOAD CSV to process flat data. This introduces specific clinical instances, evidence codes, and frequency metrics that structural .owl files lack.</li>
+                <li><strong>Relational Mapping:</strong> Through Match-and-Merge, you find existing ontology nodes (Phases 2–3) and draw physical edges (e.g., [:HAS_PHENOTYPIC_FEATURE]) to new disease nodes.</li>
+                <li><strong>Cross-Ontology Bridging:</strong> This phase integrates disparate datasets, turning a hierarchy of terms into a functional, multi-dimensional map for discovery.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                <<Subclass Reasoning (Subsumption)>>
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Similar to query expansion in a vector DB to "cast a wider net" (but here it's precise instead of probabilistic). Subclass reasoning uses <em>is-a hierarchies</em> to expand a query's scope. It ensures that a search for a general concept (Parent) also retrieves data tagged with specific variations (Children).</p>
+            <p><strong>When & Why to Implement</strong></p>
+            <ul>
+                <li><strong>When:</strong> Your data uses formal ontologies (HPO, SNOMED) or nested categories.</li>
+                <li><strong>Why:</strong> To resolve vocabulary mismatch. Users often search using broad terms ("heart disease"), while data is indexed under specifics ("atrial fibrillation"). It prevents missing relevant results that are logically linked but linguistically distinct.</li>
+            </ul>
+            <p><strong>How to Implement</strong></p>
+            <ul>
+                <li><strong>Identify Hierarchy:</strong> Locate the SUBCLASSOF or is_a relationship in your KG.</li>
+                <li><strong>Transitive Traversal:</strong> Use variable-length paths in Cypher (e.g., [:SUBCLASSOF*1..n]) to find descendants.</li>
+                <li><strong>Query Expansion:</strong> In an LLM pipeline, use a "Rewriter" agent to identify the parent entity and fetch its subclasses to augment the retrieval context.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

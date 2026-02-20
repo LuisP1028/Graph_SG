@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        GRAPH ATTENTION NETWORKS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                The GAT Architecture:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Goal:</strong> GATs have become one of the most popular GNN architectures thanks to excellent out-of-the-box performance.</p>
+            
+            <ul>
+                <li><strong>Main Idea:</strong> The main idea behind GATs is that some nodes are more important than others, weighing node features and node degrees.</li>
+                <li><strong>Comparison:</strong> Although GCNs share this idea, they’re limiting, as they only consider node degrees.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Inductive bias
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Definition:</strong> Simply a set of "prior assumptions" a model makes to help it generalize to new, unseen data.</p>
+            <p>In GNNs, the shared matrix $W$ is the core of this bias because it assumes <em>homogeneity</em>:</p>
+            <ul>
+                <li><strong>Assumption of Symmetry:</strong> It assumes that the "rule" for transforming a feature (like a chemical bond or a user's age) is the same regardless of which node it belongs to.</li>
+                <li><strong>Structure over Identity:</strong> The bias forces the model to ignore who a node is (identity) and focus on what a node is (features) and who it knows (topology).</li>
+                <li><strong>Generalization:</strong> Without this bias, the model would just "memorize" the specific training graph (overfitting). With it, the model learns the underlying physics of the data, allowing it to work on an entirely different graph structure later.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Core Components
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Shared Weight Matrix ($W$):</strong> The <em>“Feature Refiner”</em></p>
+            <ul>
+                <li><strong>Dimensionality:</strong> It is a 2D grid of numbers (e.g., $F' \times F$).</li>
+                <li><strong>Role:</strong> The weight matrix $W$ is shared because it acts as a universal feature extractor. It doesn't learn about specific nodes; it learns which types of features are important across the entire domain.</li>
+            </ul>
+            <p><strong>The Weight Vector ($a$):</strong> The <em>“Relationship Scorer”</em></p>
+            <ul>
+                <li><strong>Dimensionality:</strong> It is a 1D list of numbers (e.g., $2F' \times 1$).</li>
+                <li><strong>Role:</strong> It looks at the concatenated features of two nodes at once. It acts like a judge that looks at the “concatenated vectors” created during feature fusion and decides how well these two nodes “match.”</li>
+                <li><strong>Output:</strong> It collapses a relationship between two nodes into a single scalar number (the attention score).</li>
+            </ul>
+            <p><strong>Summary:</strong> $W$ is used to understand what a node is; $a$ is used to understand how much one node should care about another.</p>
+        </div>
+
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        WALKTHROUGHS & VARIANTS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                ORIGINAL GAT ARCHITECTUREWALKTHROUGH:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ol>
+                <li><strong>1. Linear Projection:</strong> Every node’s raw features ($h_i$, $h_j$) are multiplied by a shared weight matrix $W$. This acts as a universal translator, projecting all nodes into the same high-dimensional latent space. By sharing $W$, the model learns general feature importance (inductive bias) rather than memorizing specific node locations, ensuring the “ruler” used to measure node $i$ is identical to the one used for node $j$.</li>
+                <li><strong>2. Feature Fusion:</strong> To analyze the relationship between the central node $i$ and neighbor $j$, their transformed vectors are concatenated horizontally: $[Wh_i || Wh_j]$. If each vector has dimension $F'$, this creates a single “super vector” of size $2F'$. This placement doesn’t blend the data; it keeps the sender and receiver features distinct yet adjacent so the model can evaluate them as a paired unit.</li>
+                <li><strong>3. Learnable Mapping:</strong> The super vector is multiplied by a learnable weight vector $a$ of the same length ($2F'$). This operation is a dot product, which mathematically collapses the long vector into a single scalar value $e_{ij}$. This scalar represents the raw “compatibility” between the nodes. During training, backpropagation adjusts the values in $a$ to “learn” which feature combinations deserve higher attention scores.</li>
+                <li><strong>4. Non-Linearity & Normalization:</strong> A LeakyReLU activation adds non-linearity to each attention score [scalars] results, and a Softmax is applied across all neighbors so that probabilities sum to 1.</li>
+            </ol>
+            <p><strong>Non-Linearity (LeakyReLU):</strong> LeakyReLU is applied to the raw scalar to break mathematical linearity. Without it, the model could only learn simple, straight-line relationships. This activation allows for complex, conditional patterns (e.g., "if X exists but Y does not").</p>
+            <p><strong>Normalization (Softmax):</strong> Softmax normalization converts raw scores into a "percentage of influence" by squashing them into a probability distribution. This is essential for structural consistency; it ensures that whether a node has 2 or 2,000 neighbors, their total influence always sums to exactly 1.0. This prevents the hidden states of highly connected nodes from exploding in magnitude, keeping the learning process stable across the entire graph.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                MULTI-HEAD ATTENTION GAT ARCHITECTURE WALKTHROUGH:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>1. Parallel Linear Projections:</strong> The model initializes $K$ independent weight matrices ($W^1, W^2, …, W^K$), where $K$ is exactly equal to the number of attention heads. Every node’s raw features ($h_i, h_j$) are multiplied by each of these $K$ matrices in parallel. This creates $K$ distinct versions of the latent space, allowing the model to project nodes into different “feature subspaces” simultaneously.</li>
+                <li><strong>2. Multi-Head Feature Fusion:</strong> For every individual head $k$, the transformed vectors are concatenated horizontally: $[W^k h_i || W^k h_j]$. If the transformed dimension is $F'$, this results in $K$ unique “super vectors” of size $2F'$. This structure keeps the sender and receiver features distinct for each head’s specific perspective.</li>
+                <li><strong>3. Independent Learnable Mappings:</strong> The model initializes $K$ independent learnable weight vectors ($a^1, a^2, …, a^K$), matching the number of attention heads. Each vector $a^k$ is responsible only for its corresponding head. The dot product between $a^k$ and its head’s super vector collapses the relationship into a unique raw scalar $e^k_{ij}$. This ensures that head 1 can “score” a relationship based on different criteria than head 2.</li>
+                <li><strong>4. Head-Specific Non-Linearity & Normalization:</strong> The LeakyReLU and Softmax processes are applied independently within each head. This results in $K$ different sets of attention coefficients ($\alpha^k_{ij}$), each forming a valid probability distribution (summing to 1.0) within its own head.</li>
+                <li><strong>5. Multi-Head Aggregation:</strong> After each of the $K$ attention heads has calculated its own unique version of a node’s new embedding ($h'_i$), the model must combine these independent results into a single output.</li>
+            </ul>
+            <p><strong>Benefits:</strong> <em>Rich Representation</em> (captures structural vs. functional patterns), <em>Stability</em> (averaging reduces noise), and <em>Feature Preservation</em> (concatenating passes expertise forward).</p>
+            <div class="code-block">
+// Aggregation Methods
+Concatenation (||): h'_i = ||_{k=1}^K σ(Σ α^k_{ij} W^k h_j) // Hidden Layers
+Averaging (avg): h'_i = σ(1/K Σ_{k=1}^K Σ α^k_{ij} W^k h_j) // Final Layer
+            </div>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                IMPROVED MULTI-HEAD ATTENTION GATv2 ARCHITECTURE WALKTHROUGH:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Original Limitation:</strong> In the original GAT, the weight matrix $W$ is applied to nodes individually before they are compared. This creates a “global” ranking: if node $A$ is more “important” than node $B$, it will have a higher attention score for every node in the graph. It can’t prioritize $A$ for one neighbor and $B$ for another.</p>
+            <p><strong>GATv2 Solution:</strong> GATv2 applies $W$ after joining the nodes together. This allows the attention score to depend on the interaction between specific pairs, letting node $i$ pick node $j$ while node $k$ picks node $l$.</p>
+        </div>
+
+    </div>
+</details>
+
+</body>
+</html>

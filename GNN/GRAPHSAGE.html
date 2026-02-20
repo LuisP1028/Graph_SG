@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        ADVANCED GNN ARCHITECTURES
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                PRE REQS:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> In practice, the graph is built by expanding ’s neighborhood to hops.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Computation Graph:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Key 01:</strong> Computation flows inward: Leaf nodes (at distance) pass features to their neighbors at, which aggregate and transform them.</li>
+                <li><strong>Key 02:</strong> This repeats until produces a final embedding from its 1-hop neighbors.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        GRAPHSAGE:
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Its goal
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> GraphSAGE is a GNN architecture designed to handle large graphs. Its goal is to generate node embeddings for downstream tasks, such as node classification.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                1. Neighbor sampling:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Mechanism:</strong> GraphSAGE addresses exponentially large computation graphs and hub nodes via neighbor sampling.</li>
+                <li><strong>Strategy:</strong> Instead of aggregating all neighbors, it samples a fixed number per hop.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Tradeoffs of low sampling numbers:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Low sampling (few neighbors) increases training efficiency and lowers memory usage, but introduces higher variance: sampled neighbors may miss important information, leading to noisier gradients, less stable training, and potentially reduced accuracy or generalization.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                PinSAGE:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Replaces uniform neighbor sampling with random walks starting from each node. It performs multiple short random walks, then selects the most frequently visited nodes as neighbors. This <em>importance-based sampling</em> captures structurally relevant nodes more effectively than random selection, improving efficiency and performance in recommendation tasks.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                2. Aggregation:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Mean Aggregator:</strong> In practice, this is the most straightforward approach. It calculates the average of the current embeddings of the target node and its sampled neighbors. This averaged vector is then multiplied by a weight matrix $W$ and passed through a non-linear activation function like ReLU. <strong>Use Case:</strong> It is ideal for general-purpose applications where computational simplicity and efficiency are prioritized.</p>
+            <p><strong>LSTM aggregator:</strong> LSTM aggregator is powerful because its high capacity allows it to learn complex, non-linear interactions between neighbors. Since neighbors lack a natural order, random shuffling forces the LSTM to identify patterns within the entire set rather than an arbitrary sequence. This allows it to capture intricate structural features that simpler aggregators might overlook. <strong>Use Case:</strong> The LSTM aggregator is appropriate when your graph contains complex, non-linear dependencies between neighbors that simple averaging or max-pooling might miss.</p>
+            <p><strong>Pooling aggregator:</strong> The Pooling Aggregator operates through a two-step process to extract the most prominent features from a node's neighborhood: 
+            Step 1: Feature Transformation via MLP. The MLP acts as a feature extractor, transforming each neighbor's raw embedding into a higher-level, processed representation. By passing every neighbor through the same MLP, the model learns to highlight specific "important" attributes across the neighborhood before the aggregation occurs.
+            Step 2: Element-Wise Max Pooling. After the MLP transforms each embedding, the aggregator performs an element-wise max operation. This means that for every individual dimension in the embedding vector, the maximum value across all neighbors is selected to describe the representation for layer x. This "winner-take-all" approach makes the aggregator symmetric and robust to neighbor ordering, effectively capturing the strongest signals or "dominant" features within the neighborhood rather than just an average.
+            <strong>Use Case:</strong> It is highly effective for capturing "dominant" signals within a neighborhood, making it appropriate for applications like recommendation systems where specific strong neighbor attributes are more telling than the average.</p>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        GRAPHSAGE NODE CLASSIFICATION WALKTHROUGH:
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                1. Data Preparation & Loading
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Initialize your graph dataset. In PyTorch Geometric (PyG), this involves defining node features ($x$), connectivity (edge_index), and ground-truth labels ($y$). For multi-class tasks, ensure labels are mapped to discrete integers.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                2. Neighbor Sampling
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>For large-scale graphs, use a <em>NeighborLoader</em> to generate subgraphs. This is critical for scalability as it creates "computation graphs" for small batches of target nodes. <strong>Sampling Strategy:</strong> Specify num_neighbors (e.g., $[10, 10]$ for two layers) to control the size of each node's sampled neighborhood. <strong>Batching:</strong> Group target nodes into manageable sizes (e.g., batch_size=16) to process the graph iteratively.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                3. Model Architecture
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Define a GraphSAGE class inheriting from torch.nn.Module using SAGEConv layers. <strong>Aggregator Choice:</strong> By default, SAGEConv uses a mean aggregator. You can switch this to pooling (max-pooling after an MLP transformation) or LSTM (using random permutations to handle unordered sets) depending on your structural complexity needs. <strong>Layer Stacking:</strong> Use multiple layers (e.g., sage1, sage2) to capture multi-hop dependencies, separated by non-linear activations like ReLU and Dropout to prevent overfitting.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                4. Training Pipeline
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Adapt your training loop to handle batches. <strong>Forward Pass:</strong> Pass the batch's features and edges through the model. <strong>Loss Calculation:</strong> Apply a loss function (e.g., CrossEntropyLoss) specifically to the train_mask of the current batch. <strong>Metric Tracking:</strong> Accumulate loss and accuracy across all batches to represent the total epoch performance.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                5. Evaluation & Testing
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Switch the model to .eval() mode. While training uses sampled batches, evaluation can be performed on the full graph if memory allows, or through a dedicated test loader for massive datasets.</p>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        GRAPHSAGE NODE MULTI-LABEL CLASSIFICATION WALKTHROUGH:
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                1. Data Organization & Unification
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>The Choice:</strong> Use Batch.from_data_list() to unify disjoint graphs during training.</p>
+            <p><strong>The Reasoning:</strong> Many real-world applications (like protein modeling) provide multiple separate graphs. Unifying them allows you to treat a "forest" of graphs as one large adjacency matrix, enabling consistent neighbor sampling across the entire training set rather than processing one tiny graph at a time.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                2. Sampling & Stochastic Loading
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>The Choice:</strong> Implement NeighborLoader with defined sampling depths (e.g., num_neighbors=[20, 10]).</p>
+            <p><strong>The Reasoning:</strong> This transforms the graph into a set of local computation graphs. By limiting neighbors, you fix the memory footprint, ensuring the model can scale to massive datasets (like social networks) where loading the full graph into GPU memory is impossible.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                3. Aggregator Selection (SAGEConv)
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Mean Aggregator:</strong> Best for general node classification where the average context of neighbors is sufficient. It is computationally efficient and easy to interpret.</li>
+                <li><strong>Pooling Aggregator:</strong> Best for identifying "dominant" features or outliers. By using an MLP transformation before max-pooling, the model learns to highlight the most salient signals in a neighborhood, which is effective in recommendation systems.</li>
+                <li><strong>LSTM Aggregator:</strong> Best for complex, non-linear structural patterns. Because it uses random permutations, it learns to treat neighbors as a "set" while maintaining high expressive power to distinguish between intricate graph isomorphisms.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                4. Loss Functions & Multi-Label Logic
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>The Choice:</strong> Use BCEWithLogitsLoss for multi-label tasks.</p>
+            <p><strong>The Reasoning:</strong> Unlike CrossEntropyLoss (which assumes only one "correct" class), Binary Cross Entropy treats each of the 121 possible labels as an independent binary prediction. This is essential for applications like document tagging, where a node can belong to multiple categories simultaneously.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                5. Performance Metrics (F1 Score)
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>The Choice:</strong> Thresholding outputs at out > 0 and calculating a Micro-F1 Score.</p>
+            <p><strong>The Reasoning:</strong> In multi-label settings, simple accuracy is often misleadingly high if most labels are "0". The F1 score balances precision and recall, while micro-averaging ensures that rare labels are given appropriate weight in the final performance metric.</p>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

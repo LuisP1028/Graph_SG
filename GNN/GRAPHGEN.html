@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* --- INTEGRATED CRT CORE STYLES --- */
+:root {
+--bg-color: #000000;
+--text-color: #00ff41;
+--accent-color: #00ff41;
+--dim-color: #003b00;
+--border-color: #00ff41;
+--font-main: 'Courier New', Courier, monospace;
+--font-header: 'Arial Black', Impact, sans-serif;
+--crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+}
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-main);
+        margin: 0;
+        padding: 20px;
+        line-height: 1.5;
+    }
+
+    /* --- VISUAL EFFECTS --- */
+    .dither-layer {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1;
+        background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+        background-size: 4px 4px;
+        opacity: 0.4;
+    }
+
+    .scanlines {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 9999;
+    }
+
+    /* --- MODULE COMPONENTS --- */
+    strong { color: var(--accent-color); text-decoration: underline; }
+    em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+    details.section {
+        margin-bottom: 15px;
+        border: 1px solid var(--dim-color);
+        background: #050505;
+    }
+
+    details.section > summary {
+        font-weight: bold;
+        padding: 12px;
+        background: #0a0a0a;
+        cursor: pointer;
+        list-style: none;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    details.section[open] > summary {
+        border-bottom: 1px solid var(--dim-color);
+        color: var(--accent-color);
+        text-shadow: var(--crt-glow);
+    }
+
+    .section-content { padding: 20px; }
+
+    .subsection {
+        margin-bottom: 30px;
+        border-left: 4px solid var(--dim-color);
+        padding-left: 15px;
+    }
+
+    .subsection-title {
+        background: var(--dim-color);
+        color: var(--accent-color);
+        padding: 4px 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+    }
+
+    .code-block {
+        background: #020a02;
+        border: 1px dashed var(--dim-color);
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 0.85rem;
+        color: var(--accent-color);
+        overflow-x: auto;
+    }
+
+    .eye-btn {
+        background: none;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+        cursor: pointer;
+        padding: 2px 5px;
+        display: flex;
+        align-items: center;
+        opacity: 0.7;
+    }
+    .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+</style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+<summary>
+GRAPH GENERATION
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+
+<div class="section-content">
+    
+    <div class="subsection">
+        <span class="subsection-title">
+            CORE:
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        
+        <p><strong>Goal:</strong> Establishing foundations of Realistic and Goal-Directed generation.</p>
+        
+        <ul>
+            <li><strong>Realistic Graph Generation [Data Augmentation]:</strong> This approach focuses on structural imitation. The goal is to learn the underlying distribution of a reference graph (like a social network) to produce new versions that maintain its statistical properties, such as <em>degree distribution and clustering coefficients</em>. It is primarily used for data augmentation and privacy-preserving synthetic data.</li>
+            <li><strong>Goal-Directed Graph Generation [Maximize KPI]:</strong> This approach focuses on property optimization. Instead of mimicking an existing layout, Goal-Directed Generation treats a graph as a "design" to be optimized for a specific <em>Key Performance Indicator (KPI)</em>.</li>
+            <li><strong>Example: Traffic:</strong> You aren't just timing lights; you're generating new lane configurations or bypasses to minimize travel time (KPI).</li>
+            <li><strong>Example: Supply Chain:</strong> You're reconfiguring logistics edges (routes) to maximize throughput (KPI).</li>
+            <li><strong>Erds-Rényi (ER):</strong> The scientific control for graph theory. Use ER to prove a network is non-random. To prove a network is non-random, you compare its metrics against an graph with the same number of nodes and edges. Because connections are formed by pure chance (), it represents <em>"statistical noise."</em> If your real-world graph has a clustering coefficient or degree distribution (hubs) that deviates significantly from the baseline, you have "signal."</li>
+            <li><strong>Watts-Strogatz [Small World] model:</strong> The structural blueprint for propagation efficiency. While modern models (like GNNs) focus on learning complex features, <em>small-worldness</em> explains the topology that enables rapid communication across a system. It describes how a few "shortcut" edges collapse the distance between distant concepts without losing local density.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            DEEP GRAPH GENERATION:
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p>The adjacency matrix is the mathematical representation of every connection (edge) between entities (nodes). <strong>Approximating the adjacency matrix</strong> is the cornerstone of graph generation because it defines the topology of the network. By learning to reconstruct this matrix, a GVAE moves beyond just analyzing data—it learns the underlying <em>probabilistic rules</em> of how nodes relate.</p>
+    </div>
+
+</div>
+</details>
+
+<details class="section">
+<summary>
+GRAPHVAE ARCHITECTURE
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.1</span>
+</summary>
+<div class="section-content">
+<div class="subsection">
+<span class="subsection-title">
+GRAPHVAE:
+<button class="eye-btn">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+<circle cx="12" cy="12" r="3"></circle>
+</svg>
+</button>
+</span>
+<p>The GraphVAE architecture builds upon the GVAE by adding specific mechanisms for handling complex attributes and node matching.</p>
+<ul>
+<li><strong>1. The Input (, , ):</strong> Unlike a standard GVAE, the input here includes three distinct pieces of information for the encoder:
+<ul>
+<li>(Adjacency Matrix): The × structural skeleton of the graph.</li>
+<li>(Edge Attribute Tensor): A 3D block containing the specific properties of the connections (e.g., bond types in a molecule).</li>
+<li>(Node Attribute Matrix): A matrix containing the metadata for each node (e.g., atom types).</li>
+</ul>
+</li>
+<li><strong>2. The Encoder ((|)):</strong> The encoder uses <em>Edge-Conditional Convolutions (ECC)</em> to compress the graph into the latent vector. It doesn't just look at who is connected; it processes how they are connected based on the edge attributes in. In a standard GCN, every neighbor is treated equally regardless of the type of connection. The <strong>Edge-Conditional Convolution (ECC)</strong> evolves this by allowing the edge attributes in to dictate how information flows between nodes.</li>
+<li><strong>3. The Decoder ((|)):</strong> This is a Multi-Layer Perceptron (MLP) that attempts to reconstruct the entire graph in one shot. It outputs three probabilistic tensors (, , ) for a predefined number of nodes.</li>
+</ul>
+
+        <div class="code-block">
+Custom Filters: Instead of using a fixed weight matrix, the ECC uses a small sub-network that looks at the specific attributes of an edge to generate a unique convolutional filter.
+
+Contextual Messaging: When a node "talks" to its neighbor, the message is transformed by this custom filter.
+
+Result: Preserves functional differences between, for example, a single vs. double chemical bond.
+</div>
+</div>
+
+  <div class="subsection">
+      <span class="subsection-title">
+          IMPLEMENTATION DETAILS
+          <button class="eye-btn">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+          </button>
+      </span>
+      <p><strong>Probabilistic Tensors:</strong> Since discrete graphs are not mathematically “smooth,” the decoder predicts the likelihood of an atom or bond existing instead of making a binary choice. These tensors allow the model to remain <strong>differentiable</strong>, meaning it can use chain rule of differentiation to perform <em>backpropagation</em>. The <strong>Predefined Constraint ():</strong> Because a Multi-Layer Perceptron (MLP) has a fixed number of output neurons, it is architecturally locked into generating a graph with a specific, maximum number of nodes, denoted as. The <strong>Final Alignment:</strong> Since the MLP doesn't know the "order" of nodes, the resulting must undergo a <em>graph-matching step</em> to be compared against the original input during training.</p>
+  </div>
+</div>
+
+</details>
+
+<details class="section">
+<summary>
+EVOLUTION & HIERARCHY
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.2</span>
+</summary>
+<div class="section-content">
+<div class="subsection">
+<span class="subsection-title">
+EVOLUTION OF GVAE -> GRAPHVAE -> CGVAE:
+<button class="eye-btn">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+<circle cx="12" cy="12" r="3"></circle>
+</svg>
+</button>
+</span>
+<ol>
+<li><strong>Step 1: Topology Generation (GVAE) [Building Adjacency Matrix]:</strong> Foundational stage focusing exclusively on the <em>adjacency matrix</em>, capturing the structural DNA of a network.</li>
+<li><strong>Step 2: Attributed Generation (GraphVAE) [Including metadata]:</strong> Real-world networks carry metadata. GraphVAE generates node and edge attributes alongside topology. Critical for designing <em>functional entities</em> with specific properties.</li>
+<li><strong>Step 3: Constrained Generation (CGVAE) [Applying constraints]:</strong> Addresses the <em>"hallucination" problem</em>. Constraints act as logical guardrails. Uses an autoregressive decoder to build one node at a time, checking for validity at every step.</li>
+</ol>
+</div>
+</div>
+</details>
+
+<details class="section">
+<summary>
+RECURRENT GENERATION
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.3</span>
+</summary>
+<div class="section-content">
+<div class="subsection">
+<span class="subsection-title">
+GRAPHRNN CORE:
+<button class="eye-btn">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+<circle cx="12" cy="12" r="3"></circle>
+</svg>
+</button>
+</span>
+<ul>
+<li><strong>Step 1: The Graph-Level Decision (Adding a Node):</strong> The Graph-level RNN maintains the <em>"state" or memory</em> of the graph built so far. It "decides" to add a new node, corresponding to adding a new row and column to the adjacency matrix.</li>
+<li><strong>Step 2: The Edge-Level Execution:</strong> The Edge-level RNN receives the hidden state and begins a sequence of probabilistic decisions. It generates a <em>decimal probability</em> for each existing node, which is sampled to produce a discrete 1 (Edge) or 0 (No Edge).</li>
+<li><strong>Step 3: The Update Loop:</strong> Once the Edge-level RNN finishes its row, the final list of connections is fed back into the Graph-level RNN to update its "memory."</li>
+</ul>
+
+        <div class="code-block">
+// GraphRNN Feedback Loop Logic
+if (node_added) {
+edge_rnn.generate_sequence(current_state);
+graph_rnn.update_memory(edge_results);
+}
+</div>
+</div>
+</div>
+
+</details>
+
+</body>
+</html>

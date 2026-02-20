@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network Folding Projection - Ditherpunk</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            overflow: hidden;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        #canvas-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            /* Retro monitor glow */
+            box-shadow: inset 0 0 100px rgba(51, 255, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+            /* CRITICAL FIX: Forces the low-res canvas to stretch to fill the screen */
+            width: 100%;
+            height: 100%; 
+            image-rendering: pixelated; /* Keeps the sharp dither look when stretched */
+        }
+
+        #ui-layer {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            color: #33FF00;
+            pointer-events: none;
+            z-index: 10;
+            text-shadow: 0 0 5px #33FF00;
+            background: rgba(0, 0, 0, 0.6); /* Slight backing to read text over nodes */
+            padding: 10px;
+            border: 1px solid #33FF00;
+        }
+
+        h1 {
+            font-size: 1.5rem;
+            margin: 0 0 10px 0;
+            text-transform: uppercase;
+        }
+
+        #status {
+            font-size: 1rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+<div id="canvas-container">
+    <div id="ui-layer">
+        <h1>Network Projection</h1>
+        <div id="status">INITIALIZING SYSTEM...</div>
+    </div>
+    <canvas id="mainCanvas"></canvas>
+</div>
+
+<script>
+/**
+ * NETWORK FOLDING VISUALIZATION
+ * Style: Atkinson Dithering (Green Phosphor)
+ */
+
+// --- CONFIGURATION ---
+const CONFIG = {
+    colorOn: [51, 255, 0], // #33FF00
+    colorOff: [10, 20, 10], // Dark gray/green for "black" to allow subtle trails
+    tweetCount: 8,
+    tagCount: 4,
+    nodeSize: 12,
+    physics: {
+        repulsion: 800,
+        springLength: 120,
+        friction: 0.90
+    }
+};
+
+// --- CLASSES ---
+
+class Node {
+    constructor(id, type, x, y) {
+        this.id = id;
+        this.type = type; // 'tweet' (circle) or 'tag' (square)
+        this.x = x;
+        this.y = y;
+        this.vx = (Math.random() - 0.5) * 2;
+        this.vy = (Math.random() - 0.5) * 2;
+        this.radius = type === 'tweet' ? CONFIG.nodeSize : CONFIG.nodeSize * 1.2;
+        this.targetAlpha = 1.0;
+        this.currentAlpha = 1.0;
+    }
+
+    update() {
+        this.x += this.vx;
+        this.y += this.vy;
+        this.vx *= CONFIG.physics.friction;
+        this.vy *= CONFIG.physics.friction;
+
+        // Wall bounce with padding so they don't get stuck on edges
+        const padding = 20;
+        if (this.x < padding || this.x > width - padding) this.vx *= -1;
+        if (this.y < padding || this.y > height - padding) this.vy *= -1;
+
+        // Hard Clamp
+        this.x = Math.max(padding, Math.min(width - padding, this.x));
+        this.y = Math.max(padding, Math.min(height - padding, this.y));
+
+        // Smooth alpha transition
+        this.currentAlpha += (this.targetAlpha - this.currentAlpha) * 0.05;
+    }
+}
+
+class Edge {
+    constructor(source, target, type) {
+        this.source = source;
+        this.target = target;
+        this.type = type; // 'bipartite' or 'projected'
+        this.targetAlpha = 0;
+        this.currentAlpha = 0;
+        this.width = type === 'projected' ? 2 : 1;
+    }
+
+    update() {
+        this.currentAlpha += (this.targetAlpha - this.currentAlpha) * 0.05;
+    }
+}
+
+// --- SYSTEM STATE & LOGIC ---
+
+const canvas = document.getElementById('mainCanvas');
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+const statusDiv = document.getElementById('status');
+
+let width, height;
+// We use an offscreen canvas to draw grayscale, then dither to main canvas
+let bufferCanvas = document.createElement('canvas');
+let bufferCtx = bufferCanvas.getContext('2d', { willReadFrequently: true });
+
+let nodes = [];
+let edges = [];
+let projectedEdges = [];
+
+let currentState = 0; // 0: Init, 1: Bipartite, 2: Fold, 3: Monopartite, 4: Reset
+let stateTimer = 0;
+
+// --- INITIALIZATION ---
+
+function init() {
+    resize();
+    resetGraph();
+    loop();
+}
+
+function resetGraph() {
+    nodes = [];
+    edges = [];
+    projectedEdges = [];
+
+    // FIX: Dynamic centering based on current canvas size
+    // We define a "spawn area" that is a percentage of the screen
+    // to ensure nodes are always visible regardless of window size.
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const spawnRange = Math.min(width, height) * 0.35; // Use 35% of the smallest dimension
+
+    // Create Hashtags (Center-ish)
+    for (let i = 0; i < CONFIG.tagCount; i++) {
+        // Tighter cluster for tags
+        let ox = (Math.random() - 0.5) * (spawnRange * 0.5); 
+        let oy = (Math.random() - 0.5) * (spawnRange * 0.5);
+        nodes.push(new Node(`tag_${i}`, 'tag', centerX + ox, centerY + oy));
+    }
+
+    // Create Tweets (Outer)
+    for (let i = 0; i < CONFIG.tweetCount; i++) {
+        // Wider cluster for tweets
+        let ox = (Math.random() - 0.5) * (spawnRange * 1.5);
+        let oy = (Math.random() - 0.5) * (spawnRange * 1.5);
+        nodes.push(new Node(`tweet_${i}`, 'tweet', centerX + ox, centerY + oy));
+    }
+
+    // Connect Bipartite (Tweet <-> Tag)
+    const tweets = nodes.filter(n => n.type === 'tweet');
+    const tags = nodes.filter(n => n.type === 'tag');
+
+    tweets.forEach(tweet => {
+        // Connect to 1 random tag
+        let t1 = tags[Math.floor(Math.random() * tags.length)];
+        edges.push(new Edge(tweet, t1, 'bipartite'));
+        
+        // 50% chance to connect to a second tag
+        if (Math.random() > 0.5) {
+            let t2 = tags[Math.floor(Math.random() * tags.length)];
+            if (t1 !== t2) edges.push(new Edge(tweet, t2, 'bipartite'));
+        }
+    });
+
+    // Pre-calculate Projected Edges
+    for (let i = 0; i < tweets.length; i++) {
+        for (let j = i + 1; j < tweets.length; j++) {
+            let tA = tweets[i];
+            let tB = tweets[j];
+            
+            // Find shared tags
+            let tA_tags = edges.filter(e => e.source === tA).map(e => e.target);
+            let tB_tags = edges.filter(e => e.source === tB).map(e => e.target);
+            
+            let shared = tA_tags.filter(tag => tB_tags.includes(tag));
+            
+            if (shared.length > 0) {
+                let pEdge = new Edge(tA, tB, 'projected');
+                // Thicker if more shared context
+                pEdge.width = 1 + shared.length * 2; 
+                projectedEdges.push(pEdge);
+            }
+        }
+    }
+
+    changeState(1);
+}
+
+// --- PHYSICS ENGINE ---
+
+function applyPhysics() {
+    // Repulsion (All nodes repel)
+    for (let i = 0; i < nodes.length; i++) {
+        for (let j = i + 1; j < nodes.length; j++) {
+            let n1 = nodes[i];
+            let n2 = nodes[j];
+            let dx = n1.x - n2.x;
+            let dy = n1.y - n2.y;
+            let dist = Math.sqrt(dx*dx + dy*dy) || 1;
+            
+            // Stronger repulsion if too close
+            let force = CONFIG.physics.repulsion / (dist * dist);
+            let fx = (dx / dist) * force;
+            let fy = (dy / dist) * force;
+
+            n1.vx += fx;
+            n1.vy += fy;
+            n2.vx -= fx;
+            n2.vy -= fy;
+        }
+    }
+
+    // Spring (Edges attract)
+    // Only active edges exert force
+    [...edges, ...projectedEdges].forEach(e => {
+        if (e.currentAlpha < 0.1) return; // Invisible edges don't pull
+
+        let dx = e.target.x - e.source.x;
+        let dy = e.target.y - e.source.y;
+        let dist = Math.sqrt(dx*dx + dy*dy) || 1;
+        
+        let force = (dist - CONFIG.physics.springLength) * 0.005;
+        let fx = (dx / dist) * force;
+        let fy = (dy / dist) * force;
+
+        e.source.vx += fx;
+        e.source.vy += fy;
+        e.target.vx -= fx;
+        e.target.vy -= fy;
+    });
+
+    nodes.forEach(n => n.update());
+    [...edges, ...projectedEdges].forEach(e => e.update());
+}
+
+// --- STATE MACHINE ---
+
+function changeState(newState) {
+    currentState = newState;
+    stateTimer = 0;
+    
+    const tweets = nodes.filter(n => n.type === 'tweet');
+    const tags = nodes.filter(n => n.type === 'tag');
+
+    switch(currentState) {
+        case 1: // BIPARTITE VIEW
+            statusDiv.innerHTML = "PHASE 1: BIPARTITE NETWORK<br>[Tweets] connected to [Tags]";
+            tags.forEach(n => n.targetAlpha = 1);
+            edges.forEach(e => e.targetAlpha = 1);
+            projectedEdges.forEach(e => e.targetAlpha = 0);
+            break;
+
+        case 2: // FOLDING (INFERRING)
+            statusDiv.innerHTML = "PHASE 2: FOLDING<br>Inferring relationships via shared context...";
+            edges.forEach(e => e.targetAlpha = 0.3);
+            projectedEdges.forEach(e => e.targetAlpha = 1);
+            break;
+
+        case 3: // MONOPARTITE (COLLAPSE)
+            statusDiv.innerHTML = "PHASE 3: MONOPARTITE PROJECTION<br>Direct Tweet-to-Tweet Graph";
+            tags.forEach(n => n.targetAlpha = 0);
+            edges.forEach(e => e.targetAlpha = 0);
+            projectedEdges.forEach(e => e.targetAlpha = 1);
+            break;
+
+        case 4: // RESETTING
+            statusDiv.innerText = "RESETTING DATA...";
+            nodes.forEach(n => n.targetAlpha = 0);
+            [...edges, ...projectedEdges].forEach(e => e.targetAlpha = 0);
+            break;
+    }
+}
+
+function updateState() {
+    stateTimer++;
+    if (currentState === 1 && stateTimer > 200) changeState(2);
+    if (currentState === 2 && stateTimer > 150) changeState(3);
+    if (currentState === 3 && stateTimer > 250) changeState(4);
+    if (currentState === 4 && stateTimer > 60) {
+        resetGraph(); 
+    }
+}
+
+// --- RENDERING & DITHERING ---
+
+function drawScene(ctx) {
+    ctx.fillStyle = "#111"; 
+    ctx.fillRect(0, 0, width, height);
+
+    ctx.strokeStyle = "#FFF";
+    ctx.fillStyle = "#FFF";
+
+    // Draw Edges
+    [...edges, ...projectedEdges].forEach(e => {
+        if (e.currentAlpha <= 0.01) return;
+        
+        ctx.beginPath();
+        ctx.moveTo(e.source.x, e.source.y);
+        ctx.lineTo(e.target.x, e.target.y);
+        
+        let gray = Math.floor(e.currentAlpha * 255);
+        ctx.strokeStyle = `rgb(${gray},${gray},${gray})`;
+        
+        if (e.type === 'projected') {
+            ctx.setLineDash([4, 4]);
+        } else {
+            ctx.setLineDash([]);
+        }
+        ctx.lineWidth = e.width;
+        ctx.stroke();
+    });
+
+    // Draw Nodes
+    nodes.forEach(n => {
+        if (n.currentAlpha <= 0.01) return;
+
+        let gray = Math.floor(n.currentAlpha * 255);
+        ctx.fillStyle = `rgb(${gray},${gray},${gray})`;
+        
+        ctx.beginPath();
+        if (n.type === 'tweet') {
+            ctx.arc(n.x, n.y, n.radius, 0, Math.PI * 2);
+            ctx.fill();
+        } else {
+            ctx.fillRect(n.x - n.radius, n.y - n.radius, n.radius*2, n.radius*2);
+            ctx.strokeStyle = "#000"; 
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(n.x - n.radius + 2, n.y - n.radius + 2);
+            ctx.lineTo(n.x + n.radius - 2, n.y + n.radius - 2);
+            ctx.moveTo(n.x + n.radius - 2, n.y - n.radius + 2);
+            ctx.lineTo(n.x - n.radius + 2, n.y + n.radius - 2);
+            ctx.stroke();
+        }
+    });
+}
+
+function ditherAndDisplay() {
+    drawScene(bufferCtx);
+
+    const imageData = bufferCtx.getImageData(0, 0, width, height);
+    const data = imageData.data;
+    const w = width;
+
+    // Atkinson Dithering
+    for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+            const i = (y * w + x) * 4;
+            
+            const oldPixel = data[i]; 
+            const newPixel = oldPixel > 128 ? 255 : 0; 
+            const quantError = oldPixel - newPixel;
+
+            data[i] = newPixel; 
+            data[i+1] = newPixel;
+            data[i+2] = newPixel;
+
+            if (x + 1 < w)           data[((y)*w + x+1)*4] += quantError >> 3; 
+            if (x + 2 < w)           data[((y)*w + x+2)*4] += quantError >> 3;
+            if (y + 1 < height) {
+                if (x > 0)           data[((y+1)*w + x-1)*4] += quantError >> 3;
+                                     data[((y+1)*w + x)*4]   += quantError >> 3;
+                if (x + 1 < w)       data[((y+1)*w + x+1)*4] += quantError >> 3;
+            }
+            if (y + 2 < height)      data[((y+2)*w + x)*4]   += quantError >> 3;
+        }
+    }
+
+    // Colorize
+    for (let i = 0; i < data.length; i += 4) {
+        if (data[i] === 255) {
+            data[i] = CONFIG.colorOn[0];   
+            data[i+1] = CONFIG.colorOn[1]; 
+            data[i+2] = CONFIG.colorOn[2]; 
+            data[i+3] = 255;               
+        } else {
+            data[i] = CONFIG.colorOff[0];
+            data[i+1] = CONFIG.colorOff[1];
+            data[i+2] = CONFIG.colorOff[2];
+            data[i+3] = 255;
+        }
+    }
+
+    ctx.putImageData(imageData, 0, 0);
+}
+
+// --- LOOP ---
+
+function loop() {
+    updateState();
+    applyPhysics();
+    ditherAndDisplay();
+    requestAnimationFrame(loop);
+}
+
+function resize() {
+    // We render at half resolution for performance/style
+    // CSS stretches it to full screen
+    width = Math.ceil(window.innerWidth / 2);
+    height = Math.ceil(window.innerHeight / 2);
+    
+    canvas.width = width;
+    canvas.height = height;
+    
+    bufferCanvas.width = width;
+    bufferCanvas.height = height;
+    
+    // When resizing, we don't necessarily want to hard reset the graph
+    // but we should ensure existing nodes are within bounds.
+    // For simplicity here, we let physics handle the bounce back.
+}
+
+window.addEventListener('resize', resize);
+window.onload = init;
+
+</script>
+</body>
+</html>

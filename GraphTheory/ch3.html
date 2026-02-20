@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        CYPHER QUERY LANGUAGE & NEO4J
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <p>Testing Neo4j instance: <strong>HITHISISNEODOOM3</strong></p>
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                Basic Query Language
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <ul>
+                <li><strong>1. Nodes (Entities):</strong> Nodes represent entities and are wrapped in parentheses ().
+                    <div class="code-block">Syntax: (variable:Label {key: "value"})</div>
+                    <em>Variable:</em> A reference (e.g., p) used to access the node later in the statement.
+                    <em>Label:</em> Preceded by a colon (e.g., :Person).
+                </li>
+                <li><strong>2. Relationships (Edges):</strong> Relationships connect nodes and are wrapped in square brackets [] within arrows.
+                    <div class="code-block">Syntax: -[variable:TYPE]-></div>
+                    <em>Direction:</em> Defined by --> or <--. Use -- to query without direction.
+                    <em>Type:</em> Similar to labels, preceded by a colon (e.g., [:FRIEND]).
+                </li>
+                <li><strong>3. Properties:</strong> Metadata stored as key-value pairs inside curly brackets {}. These can be assigned to both nodes and relationships to add context.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        Primary Query Language Clauses
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Clause Definitions
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>MATCH:</strong> The most common clause; it searches for patterns in the graph that match the structure you’ve defined.</p>
+            <div class="code-block">Aerospace: MATCH (r:Rocket)-[:CARRIES]->(p:Payload)</div>
+
+            <p><strong>WHERE:</strong> Adds constraints to a MATCH or OPTIONAL MATCH to filter results based on specific property values or logic.</p>
+            <div class="code-block">Infrastructure: WHERE g.load > 0.85</div>
+
+            <p><strong>CREATE / MERGE:</strong> <em>CREATE</em> adds new nodes or relationships; <em>MERGE</em> ensures they exist (creating them only if they don't already).</p>
+            <div class="code-block">Defense: CREATE (s)-[:COMMUNICATES_WITH]->(c:CommandCenter)</div>
+
+            <p><strong>RETURN:</strong> Defines which data (nodes, relationships, or properties) should be output to the user.</p>
+            <div class="code-block">Healthcare: RETURN d.specialty, count(p)</div>
+
+            <p><strong>WITH:</strong> A powerful "pipe" that passes the results of one query part to the next, allowing for complex multi-step processing.</p>
+            <div class="code-block">Defense: MATCH (u:Unit) WITH u WHERE u.fuel < 0.2 MATCH (u)-[:NEAREST]->(b:Base) RETURN b.name</div>
+
+            <p><strong>SET:</strong> Property & Label Update. The SET clause is used to update properties on nodes and relationships, or to add new labels to existing nodes. It is the primary way to "mutate" your data.</p>
+            <div class="code-block">Infrastructure: MATCH (t:Transformer {id: 'TX-402'}) SET t.status = 'Maintenance Required'</div>
+
+            <p><strong>REMOVE:</strong> Property & Label Deletion. REMOVE is the inverse of SET. It is used to delete a specific property from an element or to strip a label from a node without deleting the node itself.</p>
+            <div class="code-block">Healthcare: MATCH (p:Patient) REMOVE p.temporary_id</div>
+
+            <p><strong>DELETE:</strong> Node & Relationship Removal. DELETE is used to remove nodes and relationships from the database. <em>Crucial Rule:</em> In Neo4j, you cannot delete a node if it still has existing relationships attached to it (this maintains referential integrity).</p>
+            <div class="code-block">Infrastructure: MATCH (s:Sensor)-[r:LINKED_TO]->(m:Monitor) DELETE r (Deletes only the connection).</div>
+
+            <p><strong>DETACH DELETE:</strong> The "Force" Removal. DETACH DELETE is a shortcut that first deletes all relationships connected to a node and then deletes the node itself. It is the standard way to "wipe" an entity from the graph entirely.</p>
+            <div class="code-block">Aerospace: MATCH (s:Satellite {status: 'De-orbited'}) DETACH DELETE s</div>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        Importing CSV files to Cypher
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Rules
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Integrity:</strong> The "No Dupes” Rule. Integrity ensures every real-world object has exactly one node in your graph. Without it, you might have two "Flight 101" nodes with different data. Constraints act as a guardrail, blocking duplicates to keep your data "the single source of truth."</li>
+                <li><strong>Performance:</strong> The "Fast Pass". Performance is about speed. Without a constraint (and its automatic index), Neo4j must search every node to find one ID. With it, the database uses a "map" to jump straight to the data, turning a slow, full-database crawl into a near-instant lookup.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                CSV SPLITTING
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Use different clauses for breaking apart the CSV, with columns being nodes, and relationships (edges) identified through different methods:</p>
+            
+            <p><strong>1. The "Wide Row" Method (Self-Contained)</strong></p>
+            <p>The CSV contains the Source ID and Target ID on the same row. First, you perform an initial pass to ensure all starting points exist; this uses <em>MERGE</em> to create a node for every entry in your "Source" column, preventing duplicates. Next, you run a second pass targeting the "Destination" column, performing the same <em>MERGE</em> operation to guarantee that every target entity is represented as a node in the database. Finally, you execute the third pass, which acts as the connector. In this step, you use <em>MATCH</em> to locate the existing source and target nodes defined in the first two passes and use <em>MERGE</em> to draw the relationship (the edge) between them. This separated approach ensures data integrity and prevents the database from creating redundant nodes while it tries to build connections.</p>
+            <p><em>Use Case:</em> A flight log: [Flight_ID, Origin_Airport, Destination_Airport].</p>
+
+            <p><strong>2. The "Bridge Table" Method (Mapping)</strong></p>
+            <p>The Bridge Table method is used when your nodes and your relationships live in separate files.</p>
+            <ul>
+                <li><strong>Step 1: The Entity Pass (Node Population)</strong> - You load the primary entity file (e.g., Airports.csv). You use the <em>MERGE</em> clause on a unique property, specifically the IATA code (e.g., JFK, LAX). The database creates a node for every airport. Descriptive metadata like "City Name" or "Number of Runways" are stored as properties within the node, but the IATA code serves as the primary unique identifier. You are pre-populating the graph with these indexed "anchor points."</li>
+                <li><strong>Step 2: The Mapping Pass (Instructional Input)</strong> - You switch to the Bridge CSV (e.g., Flight_Schedule.csv). This file represents the topological logic of your graph. It contains foreign keys: an origin_code column and a destination_code column. Cypher treats each row of this flight schedule as a set of instructions. It reads the IATA codes from the CSV and prepares to use them as search parameters to locate the specific Airport nodes created in Step 1.</li>
+                <li><strong>Step 3: The Assembly Pass (Relationship Execution)</strong> - This occurs in the same execution block as Step 2. Using the IATA codes retrieved from the schedule, Cypher performs a <em>MATCH</em> operation to locate the nodes in the database's memory. It searches for the existing node where code = CSV.origin_code. It searches for the existing node where code = CSV.destination_code. Once the pointers for these two specific nodes are identified, it executes a <em>MERGE</em> on the relationship: (origin)-[:FLIGHT_TO]->(destination).</li>
+            </ul>
+            <p><em>Use Case:</em> A hospital system where one file is Patients.csv and another is Doctor_Patient_Links.csv.</p>
+
+            <p><strong>How Cypher "Identifies" the Edge</strong></p>
+            <p>Regardless of the method, Cypher uses the <em>MATCH</em> clause to find the specific nodes you already imported and the <em>MERGE</em> clause to connect them.</p>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

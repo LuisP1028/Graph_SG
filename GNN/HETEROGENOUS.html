@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        HETEROGENOUS GRAPHS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Overview & MPNN Framework
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Represent general relationships between different entities using a mathematical generalization of the neighbor-enrichment process.</p>
+            <ul>
+                <li>Heterogeneous graphs are a powerful tool to represent general relationships between different entities.</li>
+                <li>MPNN framework is just the formal, mathematical generalization of that "neighbor-enrichment" process.</li>
+                <li>While earlier models (GCN, GAT) felt like different architectures, Gilmer et al. showed they are all just specific flavors of the same message passing framework:</li>
+            </ul>
+            <div class="code-block">
+Message: What information do I send? (Features, edge weights, etc.)
+Aggregate: How do I combine what I heard? (Sum, Mean, Max)
+Update: How do I merge this new "neighborhood gossip" with my own previous identity?
+            </div>
+            <p>The MPNN framework will be useful in transforming GNNs into heterogenous models.</p>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        HETEROGENOUS GRAPH CONSTRUCTION
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Node Pairs and HeteroData
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Consider node pairs and define relations between different entity types using <em>HeteroData</em>.</p>
+            <ul>
+                <li>In heterogeneous graphs, relations between nodes are essential, which is why we want to consider node pairs.</li>
+                <li>For example, instead of feeding nodes of type “x” alone to a GNN layer, we would consider a pair such as (nodes, node y).</li>
+                <li>This means we now need a GNN layer per relation; when relations are bidirectional, the number of layers grows doubly.</li>
+                <li><strong>Initializing HeteroData:</strong> The process begins by creating an instance of HeteroData. Unlike a standard graph object, which assumes all nodes are of a uniform type, HeteroData acts as a specialized dictionary.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Features & Relationships
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Defining Node Features (x):</strong> Nodes are categorized into distinct sets based on their real-world roles. Each set is assigned its own feature tensor, typically denoted as `x`.</li>
+                <li><em>Dimensional Independence:</em> A critical benefit of this approach is that different node types do not need to share the same feature dimensionality. For example, "Type A" nodes can have 10 features while "Type B" nodes have only 2.</li>
+                <li><strong>Establishing Relationships via Edge Triplets:</strong> To connect nodes, you define edge type triplets formatted as: ('source_node_type', 'relationship_name', 'destination_node_type').</li>
+                <li><strong>Edge Indices:</strong> Each triplet receives an edge_index tensor, which defines the specific connectivity.</li>
+                <li><strong>Integrating Edge Attributes (edge_attr):</strong> Relationships can carry metadata to store quantitative data about the interaction—such as strength, duration, or weight.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Structural Challenge: Dimensional Inconsistency
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Different node types use tensors of varying sizes, requiring specialized GNN architectures like <strong>HeteroConv</strong>.</p>
+            <ul>
+                <li><em>Relation-Specific Layers:</em> For every edge triplet, the model instantiates a dedicated GNN layer with its own independent weight matrix.</li>
+                <li><em>Bridging Information Silos:</em> We introduce "bridges" to prevent data isolation: Shared Layers, Skip-Connections, and Jumping Knowledge (JK).</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        Reducing Heterogenous Data -> Homogenous Data using a metapath
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Metapath Transformation
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Treat a heterogenous dataset like a homogenous dataset by mathematically collapsing multi-step jumps into a single adjacency matrix.</p>
+            <div class="code-block">
+The Path: ('author', 'paper') -> ('paper', 'author').
+The Result: This defines an "Author-to-Author" relationship.
+            </div>
+            <ul>
+                <li>A Meta-Path is a composite relation that connects nodes through intermediate nodes.</li>
+                <li>It mathematically collapses the two-step jump into a single adjacency matrix where an edge exists between two authors if they co-authored a paper.</li>
+                <li>This converts the complex heterogeneous graph into a homogeneous-style representation focusing solely on the new metapath_0 edges.</li>
+                <li><strong>Lazy Initialization (in_channels=-1):</strong> The author uses lazy initialization to not specify a vector of any size, allowing different sized inputs.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        HETEROGENOUS GAT
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                to_hetero() Transformation
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Keep all four node types as features and use <em>to_hetero</em> to replicate internal logic for every edge type.</p>
+            <ul>
+                <li>In the heterogeneous version, you keep all four node types as features (Authors, Papers, Terms, Conferences).</li>
+                <li><strong>Lazy Initialization (1, 1):</strong> The author now uses a tuple for lazy initialization to accommodate varying input dimensions for both source and destination nodes.</li>
+                <li><strong>The Heterogeneous Conversion:</strong> We pass the base model through to_hetero, which replicates internal logic for every edge type.</li>
+                <li><em>Unique Weight Matrices:</em> For a relationship like (author, writes, paper), the layer initializes a weight matrix specifically shaped for those specific features.</li>
+                <li><em>Attention Calculation:</em> This score determines how much the "paper" information should influence the "author's" new representation.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        HIERARCHICAL SELF ATTENTION NETWORK [HAN]
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Dual-Level Attention Mechanism
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Fuse weighted embeddings from node-level and semantic-level attention into a single node representation.</p>
+            <ul>
+                <li><strong>Node-Level Attention:</strong> For each meta-path, nodes are projected into a dedicated space. Self-attention evaluates node pairs to produce probabilistic attention scores used to aggregate neighbor features.</li>
+                <li><strong>Semantic-Level Attention:</strong> This layer evaluates the importance of different meta-paths (e.g., User–Game–User vs. User–Dev–User) to learn a semantic weight for each path.</li>
+                <li><strong>Multi-Head Aggregation:</strong> To make the model more robust, the attention process is run multiple times in parallel and results are concatenated.</li>
+                <li><strong>Semantic Fusion:</strong> The weights are used to combine the different meta-path embeddings into one final node representation, ensuring the model focuses on the most relevant structural stories.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

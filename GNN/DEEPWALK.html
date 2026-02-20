@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        NODE REPRESENTATIONS WITH DEEPWALK
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <p><em>&lt;PRECURSORS NECESSARY TO UNDERSTAND DEEPWALK:&gt;</em></p>
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                SKIPGRAMS
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Goal:</strong> Skip-gram is a "prediction" game.</p>
+            
+            <ul>
+                <li><strong>Key 01:</strong> You feed the model a "target" node (from a random walk) and task it with predicting its "context" nodes (the neighbors in that walk).</li>
+                <li><strong>Key 02:</strong> The number of skip grams for the same target word depends on a parameter called context size,</li>
+                <li><strong>Key 03:</strong> <em>Projection Layer (Input Embedding):</em> This acts as a Lookup Table.</li>
+                <li><strong>Key 04:</strong> It takes a node’s unique ID as input and retrieves its specific embedding in high dimensional space.</li>
+                <li><strong>Key 05:</strong> <em>Output Layer</em> You take a Target Vector (from the Projection Layer) and calculate its similarity against all Context Vectors (the Output Weight Matrix).</li>
+                <li><strong>Key 06:</strong> This tells you which nodes "belong" together.</li>
+                <li><strong>Key 07:</strong> By training the model to "guess" which nodes appear near each other, nodes with similar structural roles (neighbors) are forced to have similar mathematical vectors.</li>
+                <li><strong>Key 08:</strong> A random walk creates a “sentence” of nodes (e.g., node     ).</li>
+                <li><strong>Key 09:</strong> To “feed” the model, you pick one node as the target (e.g., ) and its neighbors in that specific walk as the context ( and ).</li>
+                <li><strong>Key 10:</strong> It adjusts its internal weights so that when it “sees” , it predicts  and  are nearby.</li>
+            </ul>
+
+            <div class="code-block">
+// Training Pair Generation
+Target: node_v 
+Context: {node_u1, node_u2}
+Pairs: (node_v, node_u1), (node_v, node_u2)
+            </div>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                SoftMax
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Softmax is a specific function that first exponentiates every value before normalizing.</p>
+            <ul>
+                <li><strong>Amplification:</strong> Exponentiation makes the largest number much larger relative to the others, forcing the model to pick a "winner.</li>
+                <li><strong>Differentiability:</strong> Unlike a simple "Max" function, Softmax is smooth and mathematically "calculus-friendly," allowing the model to learn via backpropagation.</li>
+                <li><strong>Application:</strong> Use Softmax when you need a neural network to learn categorical rankings.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Hierarchical Softmax (H-Softmax)
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> In a standard Softmax (the "flat" version), the model must calculate a probability for every single node in your graph to decide which one is the neighbor.</p>
+            <ul>
+                <li><strong>Structure:</strong> Instead of looking at a flat list, H-Softmax organizes all nodes into a Binary Tree where the nodes themselves are the "leaves" at the very bottom.</li>
+                <li><strong>The Path to Prediction:</strong> To predict a neighbor, the model doesn't check all nodes. It starts at the top (the root) and makes a series of binary choices (Left or Right?) until it reaches the correct node leaf.</li>
+                <li><strong>Logarithmic Speed:</strong> Because it uses a tree, it only performs a few calculations (proportional to the tree's height) rather than checking the entire vocabulary.</li>
+                <li><strong>The Huffman Advantage:</strong> To be even faster, it often uses a Huffman Tree, which puts frequently visited nodes (like "hubs" or common words) near the top of the tree and rare nodes deeper down.</li>
+                <li><strong>When to Use H-Softmax:</strong></li>
+                <li><strong>Massive Vocabulary/Graph:</strong> Use it when you have millions of nodes and a "flat" softmax makes training impossibly slow.</li>
+                <li><strong>Limited Hardware:</strong> Use it to reduce the memory and computational load if you aren't training on a massive cluster of GPUs.</li>
+                <li><strong>Static Frequency:</strong> It is most effective when some nodes appear much more often than others (power-law distribution), as the Huffman tree can exploit this imbalance.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        DEEPWALK
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.1</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Overview
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> While more performant architectures have been proposed since then, DeepWalk is a simple and reliable baseline that can be quickly implemented to solve a lot of problems,</p>
+            <ul>
+                <li><strong>Objective:</strong> The goal of DeepWalk is to produce high-quality feature representations of nodes in an unsupervised way.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

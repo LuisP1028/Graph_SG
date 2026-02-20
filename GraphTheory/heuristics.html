@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* --- INTEGRATED CRT CORE STYLES --- */
+:root {
+--bg-color: #000000;
+--text-color: #00ff41;
+--accent-color: #00ff41;
+--dim-color: #003b00;
+--border-color: #00ff41;
+--font-main: 'Courier New', Courier, monospace;
+--font-header: 'Arial Black', Impact, sans-serif;
+--crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+}
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-main);
+        margin: 0;
+        padding: 20px;
+        line-height: 1.5;
+    }
+
+    /* --- VISUAL EFFECTS --- */
+    .dither-layer {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1;
+        background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+        background-size: 4px 4px;
+        opacity: 0.4;
+    }
+
+    .scanlines {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 9999;
+    }
+
+    /* --- MODULE COMPONENTS --- */
+    strong { color: var(--accent-color); text-decoration: underline; }
+    em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+    details.section {
+        margin-bottom: 15px;
+        border: 1px solid var(--dim-color);
+        background: #050505;
+    }
+
+    details.section > summary {
+        font-weight: bold;
+        padding: 12px;
+        background: #0a0a0a;
+        cursor: pointer;
+        list-style: none;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    details.section[open] > summary {
+        border-bottom: 1px solid var(--dim-color);
+        color: var(--accent-color);
+        text-shadow: var(--crt-glow);
+    }
+
+    .section-content { padding: 20px; }
+
+    .subsection {
+        margin-bottom: 30px;
+        border-left: 4px solid var(--dim-color);
+        padding-left: 15px;
+    }
+
+    .subsection-title {
+        background: var(--dim-color);
+        color: var(--accent-color);
+        padding: 4px 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+    }
+
+    .code-block {
+        background: #020a02;
+        border: 1px dashed var(--dim-color);
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 0.85rem;
+        color: var(--accent-color);
+        overflow-x: auto;
+    }
+
+    .eye-btn {
+        background: none;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+        cursor: pointer;
+        padding: 2px 5px;
+        display: flex;
+        align-items: center;
+        opacity: 0.7;
+    }
+    .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+</style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+<summary>
+GRAPH MODEL DESIGN HEURISTICS
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+
+<div class="section-content">
+    
+    <div class="subsection">
+        <span class="subsection-title">
+            MODEL DESIGN QUESTIONS
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        
+        <p><strong>Goal:</strong> When I am designing a graph model, I am trying to answer the following questions:</p>
+        
+        <ul>
+            <li><strong>Node Quantity:</strong> How many different types of nodes are present?</li>
+            <li><strong>Node Attributes:</strong> What kind of properties do these nodes have?</li>
+            <li><strong>Unique Identifiers:</strong> Which property would you use to store the unique identifier of nodes?</li>
+            <li><strong>Relationship Types:</strong> What type of relationship are present?</li>
+            <li><strong>Domain Accuracy:</strong> Is a single relationship type enough to accurately describe your domain?</li>
+            <li><strong>Semantics:</strong> Does the relationship direction hold any semantic value?</li>
+            <li><strong>Qualification:</strong> How do properties qualify or quantify relationships?</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            DATABASE VS PROJECTION
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Stored Graph:</strong> Think of your database as a giant, messy warehouse of information</p>
+        <p><strong>Projecting a graph:</strong> Selecting a specific "subset" or "view" of your data and loading it into the computer's RAM so an algorithm can work with it.</p>
+    </div>
+
+</div>
+</details>
+
+<details class="section">
+<summary>
+GRAPH TOPOLOGY AND FEATURES
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+
+<div class="section-content">
+    
+    <div class="subsection">
+        <span class="subsection-title">
+            DIRECTIONALITY DYNAMICS
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        
+        <p><strong>Undirected Graph:</strong> In an undirected graph, relationships are binary: you are either connected or you aren't. There is only one possible link between any two nodes.</p>
+        
+        <p><strong>Directed Graph:</strong> In a directed graph, the "outline" is more complex because directionality adds layers. You have to account for:</p>
+        <ul>
+            <li><strong>Asymmetry:</strong> A can point to B without B pointing back.</li>
+            <li><strong>Reciprocity:</strong> A and B can both point to each other (two distinct links).</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            NODE FEATURES & ANALYSIS
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Node Features are quantitative properties derived from a node's position and behavior.</p>
+        
+        <ul>
+            <li><strong>Betweenness:</strong> Measures <em>control and flow</em>. In a corporate email network, this is the project manager connecting different departments. In global logistics, it is a major shipping canal like Suez.</li>
+            <li><strong>Degree:</strong> Measures <em>immediate connectivity</em>. In social media, this is a user’s follower count. In a power grid, it’s a substation with numerous outgoing lines.</li>
+            <li><strong>Graphlet Signature:</strong> Measures <em>local geometry</em>. In biology, specific patterns of protein interactions distinguish "master switches" from "worker" proteins. In banking, these patterns help flag automated bot-like transaction rings.</li>
+            <li><strong>Closeness:</strong> Measures <em>reach</em>. In epidemiology, this identifies "super-spreaders" who can infect a population in the fewest steps.</li>
+        </ul>
+    </div>
+
+</div>
+</details>
+
+</body>
+</html>

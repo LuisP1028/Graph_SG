@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+            white-space: pre-wrap;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        NAMED ENTITY DISAMBIGUATION
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                FOUNDATIONAL CONCEPTS
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Goal:</strong> Disambiguate mentions by connecting them to structured representations in a specific domain Knowledge base.</p>
+            
+            <ul>
+                <li><strong>NER:</strong> While Named Entity Recognition (NER) identifies that a word is a specific type (e.g., "Paris" is a Location), it doesn't specify which "Paris" it is—the city in France, the one in Texas, or Paris Hilton.</li>
+                <li><strong>Logic:</strong> To filter this, NED uses candidate selection, ranking, and ontology integration.</li>
+            </ul>
+
+            <div class="code-block">
+NER: "Found a Person named 'Jordan'."
+Candidate Gen: "Is it Michael Jordan (B-ball), Michael B. Jordan (Actor), or Jordan (Country)?"
+Ranking: "The text mentions 'slam dunk,' so Michael Jordan (B-ball) moves to #1."
+            </div>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                SciSpaCy Overview
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>1. Candidate Selection:</strong> <em>scispacy</em> utilizes a high-speed Approximate Nearest Neighbors (ANN) search based on character n-grams. It converts mentions into vectors of overlapping character sequences (e.g., "Zika" "zi", "ik", "ka") and compares them against the entire UMLS vocabulary.</p>
+            <p><strong>2. Candidate Ranking:</strong> Once candidates are selected, the EntityLinker computes a similarity score for each. In scispacy, the similarity score is a TF-IDF weighted overlap of character n-grams. It then calculates the cosine similarity between these vectors. Essentially, it mathematically measures how much the "spelling pattern" of your text matches the "spelling patterns" of entities in the knowledge base.</p>
+            <p><strong>3. Ontology Integration:</strong> This is the "hook" into the ontology. Scispacy moves beyond simple text matching and integrates the mention into a structured hierarchy. By connecting the term to an ontology, you can now broaden your search to that ontology's taxonomy.</p>
+        </div>
+
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        ONTOLOGY CREATION WORKFLOW
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.1</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                ONTOLOGY CREATION FROM DIFFERENT DATA SOURCES WORKFLOW
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Phase 1: Ingestion & Digitization (Data Harvesting)</strong></p>
+            <ul>
+                <li><strong>Extraction:</strong> Use OCR or PDF parsers to pull text from unstructured documents like shipping manifests, legal contracts, or news feeds.</li>
+                <li><strong>Structuring:</strong> Map that text into a standardized format (JSON). Here, you maintain Data Provenance by tagging every snippet with its origin (e.g., source: "Port_of_LA_Log_2025") for auditing.</li>
+            </ul>
+
+            <p><strong>Phase 2: Disambiguation (Entity Linking)</strong></p>
+            <ul>
+                <li><strong>Problem:</strong> Resolve the "same thing, different name" problem (e.g., "Apple Inc." vs "AAPL").</li>
+                <li><strong>NER:</strong> An NLP model (like an LLM or spaCy) identifies "Apple" as an Organization.</li>
+                <li><strong>Linking:</strong> Compare mention against an authoritative Knowledge Base (like Wikidata or a Corporate Master List) and assign a <em>CUI Assignment</em> unique ID (node fingerprint).</li>
+            </ul>
+
+            <p><strong>Phase 3: Loading & Integration (Graph Fusion)</strong></p>
+            <ul>
+                <li><strong>Specialized Load:</strong> Import specialized domain files (e.g., Global Shipping Lanes and Regional Port Laws) to establish Logistics and Regulatory Logic.</li>
+                <li><strong>Master Mapping:</strong> Apply Universal Industry Codes (e.g., HS Codes or UN/LOCODEs) to nodes so different data silos "speak" the same language.</li>
+                <li><strong>Unification:</strong> Merge nodes with identical Universal IDs to create a single, Unified Ontology.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        ADVANCED USE CASES
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.2</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                ENABLING ADVANCED USE CASES OF YOUR ONTOLOGY
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>1. Structured Knowledge-Based Search: Formalized Navigation</strong></p>
+            <p>In a unified ontology, search shifts from "looking for words" to "traversing predicates." The system navigates the formal path: <em>Product (Electric Vehicle) -> Component (Battery) -> Material (Lithium) -> Port (Shanghai) -> Status (Congested)</em>.</p>
+
+            <p><strong>KG-Based Interpretability & Discovery</strong></p>
+            <ul>
+                <li><strong>Interpretability:</strong> Interprets the sentence by providing a logical justification for why terms appear together. (Cargo Ship)-[:DOCKS_AT]->(Deep-water Port).</li>
+                <li><strong>Discovery:</strong> Reveals hidden context that text ignored by finding "bridge nodes." Example: Finding a biological link between "AIDS" and "Lupus" via the <em>[:FINDING_SITE]</em> in the Immune System.</li>
+            </ul>
+
+            <p><strong>3. Uncovering New Knowledge: Proactive Discovery Engine</strong></p>
+            <p>This predictive layer identifies relationships by reversing the flow: using Text to repair and expand the Ontology. It identifies a <em>Logical Gap</em> where a high-frequency "Green Edge" (co-occurrence in live news) exists without a corresponding "Blue Edge" (formal ontological path) in the Knowledge Graph.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                4. Graph-Based Filtering (Ontology Pruning)
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Step 1: Garbage Collection (Weakly Connected Components)</strong></p>
+            <p>Algorithm: Weakly Connected Components (WCC). Eliminates isolated "islands" typically caused by parsing errors or irrelevant text fragments.</p>
+            
+            <p><strong>Step 2: Contextual Scoping (Community Detection)</strong></p>
+            <p>Algorithm: Louvain or Leiden. Optimizes modularity to group nodes into densely connected clusters (e.g., separating "Immunology" from "Hospital Billing").</p>
+
+            <p><strong>Step 3: Hub Removal (Centrality Scoring)</strong></p>
+            <p>Algorithm: Degree Centrality or Betweenness Centrality. Identifies and suppresses "Super-Nodes" (e.g., "Disease," "Location") that create the "Fan-Out Effect" and noise.</p>
+
+            <p><strong>Step 4: Influence Filtering (PageRank)</strong></p>
+            <p>Algorithm: PageRank. Deprioritize generic "background" knowledge. Filter out nodes with high Global PageRank but low Local Specificity.</p>
+
+            <p><strong>Step 5: Constrained Pathfinding (The Discovery Query)</strong></p>
+            <p>Algorithm: Shortest Path or Yen’s K-Shortest Paths. Finds the semantic link between two entities (e.g., "Zika" and "Rash") while excluding blacklisted hub nodes.</p>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

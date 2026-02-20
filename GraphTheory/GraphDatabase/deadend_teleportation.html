@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PageRank: The Dead End & The Rain</title>
+    <style>
+        /* RESET & BASE STYLES */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background-color: #000;
+            color: #00FF00;
+            font-family: 'Courier New', Courier, monospace;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        /* CANVAS LAYOUT */
+        /* We render to a low-res canvas and scale it up for the retro feel + performance */
+        canvas {
+            image-rendering: pixelated; /* Crucial for sharp retro scaling */
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        /* UI OVERLAY */
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #00FF00;
+            padding: 15px;
+            max-width: 300px;
+            pointer-events: none; /* Let clicks pass through to canvas if needed */
+        }
+
+        h1 {
+            font-size: 16px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #00FF00;
+            padding-bottom: 5px;
+        }
+
+        p {
+            font-size: 12px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .stat {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            margin-top: 5px;
+        }
+
+        /* CONTROLS */
+        button {
+            pointer-events: auto;
+            background: #000;
+            color: #00FF00;
+            border: 1px solid #00FF00;
+            padding: 8px 12px;
+            font-family: inherit;
+            font-size: 12px;
+            cursor: pointer;
+            text-transform: uppercase;
+            width: 100%;
+            margin-top: 10px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        button:hover {
+            background: #00FF00;
+            color: #000;
+        }
+
+        button.active {
+            background: #00FF00;
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* SCANLINE EFFECT OVERLAY */
+        .scanlines {
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(
+                to bottom,
+                rgba(255,255,255,0),
+                rgba(255,255,255,0) 50%,
+                rgba(0,0,0,0.2) 50%,
+                rgba(0,0,0,0.2)
+            );
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 5;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="ui">
+        <h1>// SYSTEM STATUS</h1>
+        <p id="mode-desc">Initializing...</p>
+        
+        <div class="stat">
+            <span>TOTAL SYSTEM RANK:</span>
+            <span id="total-rank">1.00</span>
+        </div>
+        
+        <button id="toggle-btn" onclick="toggleMode()">Enable Teleportation</button>
+    </div>
+
+    <canvas id="simCanvas"></canvas>
+    <div class="scanlines"></div>
+
+<script>
+/**
+ * PAGERANK VISUALIZATION: DITHERPUNK EDITION
+ * * Core Concept:
+ * - Nodes share a finite amount of "Rank" (Liquid).
+ * - Dead Ends act as sinks (Rank enters, never leaves).
+ * - Naive Mode: Rank leaks out of the dead end, destroying the system.
+ * - Teleport Mode: Damping factor "taxes" rank and rains it back down, keeping system alive.
+ */
+
+// --- CONFIGURATION ---
+const C = {
+    green: [0, 255, 0],
+    black: [0, 0, 0],
+    nodeBaseRadius: 5,
+    rankScale: 100, // How much rank affects radius
+    damping: 0.85,  // The "Teleportation" factor
+    simSpeed: 0.05, // Speed of rank transfer per frame
+    resX: 640,      // Internal resolution (low res for retro feel)
+    resY: 360
+};
+
+// --- STATE ---
+let mode = 'NAIVE'; // 'NAIVE' or 'TELEPORT'
+let nodes = [];
+let links = [];
+let particles = [];
+let totalSystemRank = 0;
+
+// --- SETUP CANVAS ---
+const canvas = document.getElementById('simCanvas');
+const ctx = canvas.getContext('2d', { willReadFrequently: true });
+
+// Set internal resolution
+canvas.width = C.resX;
+canvas.height = C.resY;
+
+// --- CLASS DEFINITIONS ---
+
+class Node {
+    constructor(id, x, y, label) {
+        this.id = id;
+        this.x = x;
+        this.y = y;
+        this.label = label;
+        this.rank = 1.0; // Current rank
+        this.nextRank = 0; // buffer for calc
+        this.isDeadEnd = false;
+    }
+
+    draw() {
+        // Radius based on Rank
+        // Math.sqrt for area-proportional scaling
+        let r = C.nodeBaseRadius + Math.sqrt(this.rank * C.rankScale * 20);
+        
+        // Draw Circle (Outline)
+        ctx.strokeStyle = '#00FF00';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.arc(this.x, this.y, r, 0, Math.PI * 2);
+        ctx.stroke();
+
+        // Draw Fill (Dither pattern via lines for now, pixel dither later)
+        // We'll just fill it black to cover background lines
+        ctx.fillStyle = '#000';
+        ctx.fill();
+        ctx.stroke();
+
+        // Label
+        ctx.fillStyle = '#00FF00';
+        ctx.font = '10px Courier New';
+        ctx.fillText(this.label, this.x - 5, this.y - r - 5);
+        
+        // Rank Value
+        ctx.font = '8px Courier New';
+        ctx.fillText(this.rank.toFixed(3), this.x - 10, this.y + 3);
+        
+        if (this.isDeadEnd) {
+            ctx.fillStyle = '#00FF00';
+            ctx.fillText("!! DEAD END !!", this.x - 30, this.y + r + 10);
+        }
+    }
+}
+
+// --- INITIALIZATION ---
+
+function initGraph() {
+    nodes = [];
+    links = [];
+    
+    // Create Layout
+    // A Cycle (0-1-2-0) feeding into a chain (2-3-4) ending in a Dead End (5)
+    
+    const cx = C.resX / 2;
+    const cy = C.resY / 2;
+
+    // The Cycle Group (Left)
+    nodes.push(new Node(0, cx - 150, cy - 50, "A"));
+    nodes.push(new Node(1, cx - 200, cy + 50, "B"));
+    nodes.push(new Node(2, cx - 100, cy + 50, "C"));
+
+    // The Chain (Middle)
+    nodes.push(new Node(3, cx, cy, "D"));
+    nodes.push(new Node(4, cx + 100, cy, "E"));
+
+    // The Dead End (Right)
+    let deadEnd = new Node(5, cx + 200, cy, "SINK");
+    deadEnd.isDeadEnd = true;
+    nodes.push(deadEnd);
+
+    // Initial Rank Distribution (Uniform)
+    let startRank = 1.0 / nodes.length;
+    nodes.forEach(n => n.rank = startRank);
+
+    // Create Links
+    links.push({ s: 0, t: 1 });
+    links.push({ s: 1, t: 2 });
+    links.push({ s: 2, t: 0 }); // Cycle close
+    links.push({ s: 2, t: 3 }); // Leak from cycle
+    links.push({ s: 3, t: 4 });
+    links.push({ s: 4, t: 5 }); // Into the void
+    // Node 5 has NO outgoing links
+
+    // Helper to find node by ID
+    links.forEach(l => {
+        l.sourceNode = nodes[l.s];
+        l.targetNode = nodes[l.t];
+    });
+}
+
+// --- PHYSICS & LOGIC ---
+
+function updatePageRank() {
+    let N = nodes.length;
+    
+    // 1. Calculate Out-Degrees
+    let outDegrees = new Array(N).fill(0);
+    links.forEach(l => outDegrees[l.s]++);
+
+    // 2. Prepare next step buffer
+    nodes.forEach(n => n.nextRank = 0);
+
+    // 3. Distribute Rank (The Flow)
+    // We simulate continuous flow rather than discrete steps for animation smoothness
+    // But logically, we follow the formula
+    
+    // In Simulation, we move a fraction of rank per frame
+    let flowRate = C.simSpeed; 
+
+    // CALCULATE TRANSFERS
+    if (mode === 'NAIVE') {
+        // Pure flow. Rank moves from A to B.
+        // If A has no neighbors, rank is trapped inside A (or lost, see below).
+        // To visualize "Leak", we treat dead ends as having nowhere to go, 
+        // so the rank stays in the node but doesn't multiply? 
+        // Actually, the "Leak" in matrix math implies the column sum is 0. 
+        // So the rank simply disappears from the calculation in the next step.
+        // Let's visualize "Leak" as: Rank leaves node, finds no edge, and vanishes.
+        
+        // Step 1: Evaporate current rank from everyone
+        nodes.forEach((n, i) => {
+            let contribution = n.rank; 
+            // In naive PR, you give away all your rank to neighbors.
+            
+            if (outDegrees[i] > 0) {
+                // Distribute to neighbors
+                let share = contribution / outDegrees[i];
+                links.forEach(l => {
+                    if (l.s === i) {
+                        l.targetNode.nextRank += share;
+                        // Spawn particle
+                        if (Math.random() < share * 2) spawnParticle(l.s, l.t);
+                    }
+                });
+            } else {
+                // DEAD END: No neighbors.
+                // In Naive mode, this rank vanishes (The Leak).
+                // n.nextRank remains 0 (unless someone feeds it, but this logic is for *outgoing*)
+                // Wait, n.nextRank accumulates *incoming*.
+                // The rank *held* by this node is gone because it tried to leave but couldn't.
+                // Result: Total System Rank decreases.
+            }
+        });
+
+        // Apply new ranks (smooth interpolation)
+        nodes.forEach(n => {
+            n.rank = lerp(n.rank, n.nextRank, 0.1);
+        });
+
+    } else { 
+        // TELEPORT MODE
+        // Formula: PR(A) = (1-d)/N + d * (Sum of incoming)
+        // PLUS: Dead End handling (The Surfer Jumps)
+        
+        let damping = C.damping;
+        let randomJumpProb = (1 - damping) / N; // The Rain
+
+        // Base Rain for everyone
+        nodes.forEach(n => n.nextRank = randomJumpProb);
+
+        nodes.forEach((n, i) => {
+            let rankToDistribute = n.rank * damping; // The 85% flow
+            
+            if (outDegrees[i] > 0) {
+                // Normal Node: Distribute along edges
+                let share = rankToDistribute / outDegrees[i];
+                links.forEach(l => {
+                    if (l.s === i) {
+                        l.targetNode.nextRank += share;
+                        if (Math.random() < share * 2) spawnParticle(l.s, l.t);
+                    }
+                });
+            } else {
+                // DEAD END FIX:
+                // If it's a dead end, the surfer gets bored and jumps anywhere.
+                // So the rank is distributed to EVERYONE.
+                let share = rankToDistribute / N;
+                nodes.forEach(target => {
+                    target.nextRank += share;
+                });
+            }
+        });
+
+        // Apply (smooth)
+        nodes.forEach(n => {
+            n.rank = lerp(n.rank, n.nextRank, 0.1);
+        });
+    }
+
+    // Calc Total Rank for UI
+    totalSystemRank = nodes.reduce((sum, n) => sum + n.rank, 0);
+}
+
+// Particle System for Visualization
+function spawnParticle(startIdx, endIdx) {
+    let s = nodes[startIdx];
+    let t = nodes[endIdx];
+    particles.push({
+        sx: s.x, sy: s.y,
+        tx: t.x, ty: t.y,
+        x: s.x, y: s.y,
+        progress: 0,
+        speed: 0.05 + Math.random() * 0.05
+    });
+}
+
+function updateParticles() {
+    for (let i = particles.length - 1; i >= 0; i--) {
+        let p = particles[i];
+        p.progress += p.speed;
+        p.x = lerp(p.sx, p.tx, p.progress);
+        p.y = lerp(p.sy, p.ty, p.progress);
+        
+        if (p.progress >= 1) {
+            particles.splice(i, 1);
+        }
+    }
+}
+
+function lerp(start, end, amt) {
+    return (1 - amt) * start + amt * end;
+}
+
+// --- RENDERING & DITHERING ---
+
+function draw() {
+    // 1. Draw Scene
+    ctx.fillStyle = '#000';
+    ctx.fillRect(0, 0, C.resX, C.resY);
+
+    // Draw Links
+    ctx.strokeStyle = '#004400';
+    ctx.lineWidth = 1;
+    links.forEach(l => {
+        // Draw Line
+        ctx.beginPath();
+        ctx.moveTo(l.sourceNode.x, l.sourceNode.y);
+        ctx.lineTo(l.targetNode.x, l.targetNode.y);
+        ctx.stroke();
+
+        // Arrowhead
+        let angle = Math.atan2(l.targetNode.y - l.sourceNode.y, l.targetNode.x - l.sourceNode.x);
+        let headLen = 5;
+        let tx = l.targetNode.x - Math.cos(angle) * (C.nodeBaseRadius + 5);
+        let ty = l.targetNode.y - Math.sin(angle) * (C.nodeBaseRadius + 5);
+        
+        ctx.beginPath();
+        ctx.moveTo(tx, ty);
+        ctx.lineTo(tx - headLen * Math.cos(angle - Math.PI / 6), ty - headLen * Math.sin(angle - Math.PI / 6));
+        ctx.lineTo(tx - headLen * Math.cos(angle + Math.PI / 6), ty - headLen * Math.sin(angle + Math.PI / 6));
+        ctx.stroke();
+    });
+
+    // Draw Particles (The Flow)
+    ctx.fillStyle = '#00FF00';
+    particles.forEach(p => {
+        ctx.fillRect(p.x, p.y, 2, 2);
+    });
+
+    // Draw Nodes
+    nodes.forEach(n => n.draw());
+
+    // Draw "Rain" (Teleportation Visual)
+    if (mode === 'TELEPORT') {
+        ctx.fillStyle = 'rgba(0, 255, 0, 0.3)';
+        // Draw random pixels to simulate the ubiquity of teleportation
+        for(let i=0; i<50; i++) {
+            let rx = Math.random() * C.resX;
+            let ry = Math.random() * C.resY;
+            ctx.fillRect(rx, ry, 1, 1);
+        }
+    }
+
+    // 2. APPLY ATKINSON DITHERING
+    // Get pixel data
+    let imageData = ctx.getImageData(0, 0, C.resX, C.resY);
+    let data = imageData.data;
+    let w = C.resX;
+
+    // Iterate
+    for (let y = 0; y < C.resY; y++) {
+        for (let x = 0; x < C.resX; x++) {
+            let i = (y * w + x) * 4;
+            
+            // Greyscale roughly (using Green channel mainly since it's green on black)
+            let oldPixel = data[i+1]; // G channel
+            let newPixel = oldPixel > 128 ? 255 : 0; // 1-bit threshold
+            
+            let quantError = oldPixel - newPixel;
+            
+            // Set Color (Monochrome Green)
+            data[i] = 0;
+            data[i+1] = newPixel;
+            data[i+2] = 0;
+            // Alpha stays 255
+            
+            // Distribute Error (Atkinson: 1/8 to neighbors)
+            //     X   1   1 
+            // 1   1   1
+            //     1
+            
+            if (quantError !== 0) {
+                let err = Math.floor(quantError / 8);
+                
+                // Helper to add error safely
+                const addErr = (dx, dy) => {
+                    let ni = ((y + dy) * w + (x + dx)) * 4;
+                    if (x + dx < w && x + dx >= 0 && y + dy < C.resY) {
+                        data[ni+1] += err;
+                    }
+                };
+
+                addErr(1, 0);
+                addErr(2, 0);
+                addErr(-1, 1);
+                addErr(0, 1);
+                addErr(1, 1);
+                addErr(0, 2);
+            }
+        }
+    }
+    
+    ctx.putImageData(imageData, 0, 0);
+}
+
+// --- MAIN LOOP ---
+
+function loop() {
+    updatePageRank();
+    updateParticles();
+    draw();
+    
+    // UI Update
+    document.getElementById('total-rank').innerText = totalSystemRank.toFixed(4);
+    
+    requestAnimationFrame(loop);
+}
+
+// --- CONTROLS ---
+
+function toggleMode() {
+    const btn = document.getElementById('toggle-btn');
+    const desc = document.getElementById('mode-desc');
+    
+    if (mode === 'NAIVE') {
+        mode = 'TELEPORT';
+        btn.innerText = "Disable Teleportation";
+        btn.classList.add('active');
+        desc.innerHTML = "MODE: TELEPORTATION ACTIVE<br>Damping factor (0.85) applied.<br>Dead End leaks are redistributed globally.<br>System is STABLE.";
+    } else {
+        mode = 'NAIVE';
+        btn.innerText = "Enable Teleportation";
+        btn.classList.remove('active');
+        desc.innerHTML = "MODE: NAIVE (NO DAMPING)<br>Rank flows only via links.<br>Dead End acts as a LEAK.<br>System is DYING.";
+    }
+    
+    // Reset Ranks for drama
+    let startRank = 1.0 / nodes.length;
+    nodes.forEach(n => n.rank = startRank);
+}
+
+// Initialize
+initGraph();
+// Set initial text
+document.getElementById('mode-desc').innerHTML = "MODE: NAIVE (NO DAMPING)<br>Rank flows only via links.<br>Dead End acts as a LEAK.<br>System is DYING.";
+loop();
+
+</script>
+</body>
+</html>

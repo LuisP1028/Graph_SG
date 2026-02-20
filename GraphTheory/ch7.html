@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        HOW TO PROJECT MULTIPARTITE TO MONOPARTITE
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Orientation key
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Goal:</strong> Redefine how edges are stored in the local projection without altering the underlying database.</p>
+            
+            <ul>
+                <li><strong>NATURAL:</strong> The edge maintains its original direction ($A \to B$). This follows the "source-to-target" flow exactly as written in Cypher.</li>
+                <li><strong>REVERSE:</strong> The edge direction is flipped ($B \to A$). This is useful when you want to analyze <em>incoming influence</em> as <em>outgoing flow</em>.</li>
+                <li><strong>UNDIRECTED:</strong> The edge is projected in both directions ($A \leftrightarrow B$). This treats the relationship as a bidirectional link, effectively doubling the edge count in memory for algorithms like PageRank or WCC that require traversing paths in any direction.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        CO-OCCURRENCE NETWORK ANALYSIS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                <Co-occurrence networks>
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Link entities (nodes) that appear together within a defined scope—like the same sentence, article, or a set word distance.</p>
+            <ul>
+                <li><strong>Proximity Mapping:</strong> By mapping these pairs, the network reveals how frequently concepts share context, defining their relationship through proximity.</li>
+                <li><strong>Connection Strength:</strong> The more times a pair of is present in the same “window”, the stronger the connection between the two.</li>
+                <li><strong>Bioinformatics Use Case:</strong> Nodes represent medical codes (ICD-10), symptoms, or genetic markers. An edge connects two symptoms or diseases if they frequently appear in the same patient’s longitudinal record.</li>
+            </ul>
+            <div class="code-block">
+// Logic: Drug Repurposing
+If a genetic marker (Switch A) frequently co-occurs with a protein (Light Bulb B) 
+targeted by an existing heart medication, the drug is a candidate for treating 
+the rare disease caused by Switch A.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                <Analyzing co-occurrence network>
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>1. MATCH:</strong> Find the Connection. The database looks for any two items that are linked to the same "parent" record or event. It treats the common container as a bridge to find every instance where two distinct entities overlap (e.g. two hash tags in one tweet).</li>
+                <li><strong>2. WHERE:</strong> Clean the List. This step ensures your results are unique and relevant. It prevents the database from pairing an item with itself or counting the same relationship twice from different directions (like A-B and B-A).</li>
+                <li><strong>3. WITH & count():</strong> Do the Math. The database groups every unique pairing it discovered and calculates the total number of shared connections. It converts raw individual links into a clear frequency count for each pair (e.g. count how many individual tweets contain the pair of hashtags).</li>
+                <li><strong>4. ORDER BY & LIMIT:</strong> Pick the Winners. The database sorts the final list so the pairs with the highest frequency appear first. It then trims the results to show only the top few, highlighting the strongest relationships in the data.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                <Simulating an undirected network>
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Note:</strong> GDS uses directed vectors for performance. This architecture is designed for high-performance processing, but it means the engine fundamentally cannot "read" an edge that lacks a direction. By <em>projecting reciprocal edges</em> to create a symmetric adjacency matrix, you ensure algorithmic traversal is possible from either node without computational dead ends.</p>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        NETWORK CHARACTERIZATION PIPELINE
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                <Co-Occurence Network Characterization: Node Similarity -> Degree Centrality -> WCC—> PageRank>
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Node Similarity creates the links (local-view), while Degree Centrality looks at a node's immediate neighborhood (micro-view) and WCC defines the reachability boundaries of your entire system (macro-view).</p>
+            <ul>
+                <li><strong>Degree Centrality:</strong> Used to analyze the "connectedness" of nodes. Out-degree reveals how many other source nodes a specific node is similar to (limited by topK). In-degree reveals how many other nodes consider this node as one of their top matches.</li>
+                <li><strong>Hubs:</strong> A high in-degree node acts as a <em>hub</em>—a core topic that many others gravitate toward—helping you identify the most influential "anchor" terms in each community.</li>
+                <li><strong>WCC (Weakly Connected Components):</strong> Your "global visibility" check. It identifies "Giant Components"—dense clusters of shared behavior—versus "Isolated Components" that represent outliers or niche artifacts.</li>
+                <li><strong>PageRank:</strong> Running PageRank on the identified communities individually zooms into a specific community to find the "Authority" or most influential node within that localized group.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        LABEL PROPAGATION ALGORITHMS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                <Label Propagation Algorithm>
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Unsupervised LPA ignores what a node "is" and focuses only on who it "knows."</p>
+            <ul>
+                <li><strong>Initialization:</strong> Every node starts with a unique, arbitrary label.</li>
+                <li><strong>Communication:</strong> Each node $i$ polls its immediate neighbors to identify their current labels.</li>
+                <li><strong>The Majority Rule:</strong> The node adopts the label that appears most frequently among its neighbors.</li>
+                <li><strong>Convergence:</strong> This repeats until labels stabilize and no further changes occur across the network.</li>
+                <li><strong>Consensus:</strong> Labels spread fastest through high-density connections, causing communities to "self-organize" around a single dominant label.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Semi-Supervised LPA
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> "Coloring in" a map where only a few landmarks are known by using a small set of labeled data (the seeds) and a large amount of unlabeled data.</p>
+            <ul>
+                <li><strong>Hard-Coding the Seeds:</strong> You start by manually assigning labels to a few specific nodes (e.g., "Scammer" vs "Legitimate" accounts).</li>
+                <li><strong>The "Freeze" Rule:</strong> These seed labels are permanent. They never change during the update steps.</li>
+                <li><strong>Propagation:</strong> Unlabeled nodes perform the "majority rule" check. If an unlabeled account is frequently transacting with "Scammer" seeds, it will eventually adopt the "Scammer" label through proximity.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                <Label Propagation Algorithm for Community Structure Inspection>
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Component:</strong> Defined by reachability; if any path exists between nodes, they belong to the same component. It is a <em>binary, structural state</em>.</li>
+                <li><strong>Community:</strong> Defined by density; it is a cluster where nodes are more tightly linked to each other than to the rest of the network. While a component is one solid "island," a community is a "neighborhood" within that island.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        NODE SIMILARITY ALGORITHM
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                <Node Similarity Algorithm: (Jaccard Similarity)>
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Goal:</strong> Jaccard similarity identifies nodes with similar connectivity patterns within a network.</p>
+            
+            <div class="code-block">
+J(A,B) = [(A intersection B) / (A union B)]
+            </div>
+
+            <ul>
+                <li><strong>Bipartite Logic:</strong> The algorithm treats U as the source nodes (the items being compared) and V as the target nodes (the features or neighbors). No internal connections exist within a set.</li>
+                <li><strong>similarityCutoff:</strong> Acts as a <em>quality filter</em>. It sets a minimum threshold (e.g., 0.5); pairs below this are discarded. Higher values result in a sparser, more "certain" network.</li>
+                <li><strong>topK:</strong> Acts as a <em>quantity limit</em>. It restricts each node to only its $ K $ most similar neighbors. This prevents "super-nodes" from creating too many edges.</li>
+                <li><strong>Low topK (Narrow):</strong> Produces a sparse network with many small, tightly-knit communities. Ideal for niche targeting.</li>
+                <li><strong>High topK (Broad):</strong> Creates a dense, highly interconnected "hairball." Merges smaller clusters into large, inclusive communities.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        LANGGRAPH
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <p>What makes <strong>LangGraph</strong> distinctive is its approach to component communication: rather than passing data directly between components, each one interacts with a shared state, similar to a whiteboard where each agent can read previous work and add their result. [Similar to event bus architecture]</p>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Architecture using LangGraph:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> To create a modular, state-based system for non-linear, complex tasks.</p>
+            <ul>
+                <li><strong>Nodes:</strong> Each task—like intent detection or query generation—is a Node (agent) that updates a shared State.</li>
+                <li><strong>Providers:</strong> A Schema Provider feeds the AI database context, while a Configuration Provider manages prompts.</li>
+                <li><strong>Interface:</strong> A Processing Interface then streams these updates to the user in real-time.</li>
+                <li><strong>Use Case:</strong> This "expert-emulating" method is best for non-linear, complex tasks (like KG querying) requiring transparency and task-specialization. If your app needs the AI to pivot based on intermediate results or "show its work" via an event stream, this modular, state-based approach is superior to simple linear chains.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                CONFIGURATION COMPONENT
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Configuration Component is a central vault for prompt templates and Knowledge Graph (KG) metadata. It decouples lengthy text from your code to ensure maintainability.</p>
+            <ul>
+                <li><strong>Components:</strong> This setup uses Operational Notes (domain rules), Few-shot Examples (pattern matching), and Prompt Templates (modular logic).</li>
+                <li><strong>Declarative Control:</strong> By decoupling these, you gain Declarative Control: you can tune the LLM's "knowledge" (notes/examples) without touching its "instructions" (templates).</li>
+                <li><strong>When to use:</strong> Choose this Externalized Config method for complex systems (like KG/RAG) where prompts and schema annotations evolve faster than the core logic. It allows you to tune the AI's "instructions" without redeploying the entire backend.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                CONCEPTUAL SCHEMA PROVIDER
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Schema Provider acts as a translator between the Technical Schema (the raw, messy database structure) and the Conceptual Schema (the business-friendly version the LLM can actually reason with).</p>
+            <ul>
+                <li><strong>Step 1: Automated Technical Extraction:</strong> The process begins by programmatically pulling the "Raw Schema" directly from the database. In Neo4j, this is typically done using the apoc.meta.schema procedure. This returns a dictionary of every node label, relationship type, and property key currently existing in the graph, including technical metadata like internal IDs and timestamps.</li>
+                <li><strong>Step 2: Skip-List Filtering:</strong> The extracted schema is passed through a Skip List defined in your YAML configuration. This list identifies "technical noise"—nodes or properties that are implementation-specific (e.g., _created_at, __system_id__) or redundant. By stripping these away, you prevent the LLM from hallucinating queries that target internal system overhead rather than business data.</li>
+                <li><strong>Step 3: Semantic Enrichment:</strong> The "clean" schema is then matched against an Enrichment Section in the YAML. Here, you map technical names to human-readable descriptions (e.g., mapping a CIT node to "Citation source for philosophical text"). This provides the LLM with the Ontology—the meaning and constraints of the data—ensuring it understands how entities actually relate in the real world.</li>
+                <li><strong>Step 4: Final Prompt Assembly:</strong> The Provider combines the filtered structure and semantic notes into a structured text block (often JSON or Markdown). This Conceptual Schema is then injected into the LLM’s system prompt. Instead of seeing a raw database dump, the LLM receives a curated, high-level map, allowing it to generate accurate Cypher queries without needing to know the underlying database's "plumbing."</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                STATE MANAGEMENT:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>In a multi-agent system, agents don't talk to each other directly; they only talk to the State. This ensures that even if you have ten different agents, they all stay aligned on the "current truth" of the task.</p>
+            <ul>
+                <li><strong>Question Input (question):</strong> The immutable anchor. It ensures the system never loses sight of what the user actually asked, even after five rounds of internal processing.</li>
+                <li><strong>Intent Detection (output_type, output_type_reason):</strong> This categorizes the goal (e.g., "Are we making a chart or just answering a question?"). Storing the reasoning here allows later agents to understand the "why" behind the categorization.</li>
+                <li><strong>Schema Context (schema):</strong> The "Map." By keeping the cleaned, enriched schema in the state, every agent (Query Gen, Summary Gen) has immediate access to the database's rules without re-fetching them.</li>
+                <li><strong>Query Generation (query, query_reasoning, query_message):</strong> The "Drafting Room." This stores the actual Cypher/SQL code. If a query is malformed, the system can inspect the query_reasoning to see where the logic went off the rails.</li>
+                <li><strong>Error Handling & Retries (results_error, retries, information):</strong> The "Self-Correction" loop. If the database rejects a query, the error is written here. A "Refinement Agent" can then read that error and the previous query to attempt a fix, incrementing the retry counter.</li>
+                <li><strong>Summary & Analysis (summary, summary_analysis):</strong> The "Final Report." This captures the LLM’s final interpretation of the data results before they are streamed to the frontend.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                PIPELINE AGENT IMPLEMENTATION:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>1. ) <strong>Intent Classification:</strong> Analyzes the User’s Question to decide the structural goal of the response. By committing to an output_type (Table, Graph, or Map) early, it constrains the logic for every agent that follows.
+            <br><em>Input:</em> Reads only the question from the State.
+            <br><em>Logic:</em> The agent retrieves the intent detection prompt template from the configuration, executes it with the user’s question, and processes the LLM’s response.
+            <br><em>State Update:</em> Writes the output_type and output_reason back to the State.</p>
+
+            <p>2. ) <strong>Schema Extraction:</strong> It connects the physical database to the AI pipeline. It retrieves nodes, relationships, and properties.
+            <br><em>Transformation:</em> It applies the Skip Lists (to hide technical clutter) and Annotations (to add business context), turning "code" into "concepts."
+            <br><em>Pipeline Setup:</em> Crucially, it initializes the retries counter to zero. This prepares the State for the "Query Agent," ensuring the system is ready to track and fix mistakes if the upcoming database call fails.</p>
+
+            <p>3.) <strong>Text-to-Cypher:</strong> It converts natural language into executable database code by merging the User’s Question with three critical layers of context: the Schema (the map), Annotations (the rules), and the Selection State (what the user is currently clicking on).
+            <br><em>State Synthesis:</em> The agent merges the AgentState with Annotations (rules) and the Selection State (UI clicks). This provides the LLM with the full "world state."
+            <br><em>Referential Resolution:</em> Including "Selections" allows the LLM to resolve pronouns. It maps "this philosopher" to a specific ID from the user's active UI highlight.
+            <br><em>Triad Output:</em> It writes a Query (code), Reasoning (logic), and Message (debug logs) to the state. This makes the system's "thought process" transparent and fixable.</p>
+
+            <p>3.) <strong>Query Execution Agent:</strong> It runs the generated cypher queries against the database and handles the messy reality of results or failures.
+            <br>1. <em>Format Conversion:</em> Tabular (Pandas) is superior for analytical UIs where users need filtering, aggregation, or exports. However, for large-scale Graph/Map exploration, Native Records (JSON) are more memory-efficient.
+            <br>2. <em>Failure Logging:</em> Effective logging categorizes errors into a Taxonomy: Syntax (LLM fixed), Semantic (missing schema), or Resource (timeouts). By storing these in the State, a downstream "Correction Agent" can decide if a query is worth rewriting or if it should ask the user for clarification.
+            <br>3. <em>Resilient Execution:</em> This implements a "Try-Heal-Retry" loop. It is mandatory for brittle tasks like SQL/Cypher generation where the first "draft" often fails.</p>
+
+            <p>4.) <strong>Post Query Agent:</strong> Dynamic Edge (Router). It acts as the pipeline’s controller, deciding where the workflow should go next based on the current data in the State.
+            <br>1. <em>Recursive Correction (The "Heal" Loop):</em> While the author uses a "3-retry" limit for database queries, this is a universal pattern for brittle tasks. In a coding assistant, this loop doesn't just retry; it passes the compiler error back to the "Generator" to perform Self-Reflection. Mandatory for Non-Deterministic Tasks like code generation, structured data extraction, or complex API orchestration where the first "draft" has a high probability of syntax failure.
+            <br>2. <em>Strategic Branching (How should we talk to the user?):</em> If the query was successful, the router looks at the output_type to decide if the data needs a "voiceover."
+            Maps & Graphs: These are visually complex. The router sends the data to the Summarization Agent to add narrative context (e.g., "I've highlighted these three philosophers because...").
+            Tables: Because tables are self-explanatory, the router sends the flow directly to END to save time and compute costs.
+            High Urgency: Routes to a "Human-in-the-Loop" node.
+            Technical Query: Routes to a specialized "RAG Agent" for documentation.
+            Casual Chat: Routes to an "Engagement Agent" to maintain persona.
+            <br>3. <em>Quality-Gate Routing:</em> This is an "Evaluation" step where the system routes based on Confidence Scores. If a "Summarization Agent" produces a response with a low factual grounding score, the router forces a "Re-Plan" rather than ending the workflow. Appropriate for: Medical, Legal, or Financial apps where the cost of hallucination is catastrophic.</p>
+
+            <p>5.) <strong>Generate Summary Agent:</strong> It creates a "Super Context" by cross-referencing the raw evidence (Query Results) with the user's active focus (Schema Selection).
+            <br><em>Enrichment:</em> It writes the Summary, the Reasoning behind it, and an Analysis Flag to the State.
+            <br><em>The Query Results:</em> This is the "What"—the raw list of nodes and relationships returned by the database.
+            <br><em>The Schema Selection:</em> This is the "Where"—it identifies which specific parts of the graph the user is currently interacting with in the UI.
+            <br><em>The Synthesis:</em> The agent iterates through the results and "hydrates" them with selection data. If the query returns ID:123, the agent uses the Selection context to tell the LLM, "This ID refers to the 'Stoicism' node the user just clicked."</p>
+
+            <p>6.) <strong>Pipeline Assembly:</strong> Pipeline Assembly is the process of wiring independent "experts" (Nodes) into a single, cohesive brain. Instead of building one giant, confusing prompt, you build small, specialized agents that focus on one job—like just identifying intent or just writing a query. Assembly works by defining three architectural elements that turn a collection of scripts into a Functional System:
+            <br><em>The Shared State (The "Handover"):</em> This is the system's memory. Every agent reads the state to see what’s happened and writes their work back into it. This allows agents to be "independent" because they don't need to know who came before them; they only need to know what’s currently in the State.
+            <br><em>Nodes (The Agents):</em> You add each agent as a Node. Because they are modular, you can swap out a "Query Agent" for a better version without breaking the "Summary Agent."
+            <br><em>Edges (The "Control Flow"):</em> These define the paths. Static Edges create a reliable sequence (A always goes to B). Conditional Edges allow the system to "think" about its own progress (e.g., "If the query failed, go back to the specialist to fix it").</p>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        PIPELINE INTEGRATION (LOADING SCREENS)
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.1</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                The Generator Function
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Instead of one big "answer" at the end (Invoke Mode), this layer uses a Generator to "yield" a sequence of triplets: (Type, Payload, State).</p>
+            <ul>
+                <li><strong>Update Events:</strong> High-level status bars (e.g., "Detecting intent...").</li>
+                <li><strong>Result Events:</strong> The AI’s "thoughts" (e.g., reasoning, error messages).</li>
+                <li><strong>Visualization Events:</strong> The actual data (e.g., the final Graph or Table).</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        MESSAGE HISTORY & USER ROUTING:
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.2</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                System Ledger
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>It acts as a cumulative ledger that decouples data storage from rendering logic. Instead of just "printing" text, it maintains a structured list of dictionaries, where each dictionary represents a full interaction state (input, reasoning, active query, and final output).</p>
+            
+            <ul>
+                <li><strong>Step 1: State Initialization (The Blank Slate):</strong> The MessageHistory class initializes a list called self.messages with a single empty dictionary {}. This creates a ready-to-fill container for the current turn's incoming data stream.</li>
+                <li><strong>Step 2: Real-Time Routing:</strong> The Input Handler iterates through the generator's event stream. It uses st.empty() placeholders to display transient updates (e.g., "detecting intent") without permanently committing them to the history log yet.</li>
+                <li><strong>Step 3: Incremental Aggregation:</strong> Simultaneously, the Handler calls state.messages.update(current_state). This progressively fills the active dictionary in MessageHistory with every piece of data (intent classification, schema, query, etc.) as it arrives.</li>
+                <li><strong>Step 4: Polymorphic Rendering (The Translator):</strong> The display_message method checks the dictionary keys. If it finds map, it draws a Folium map; if table, a dataframe, etc. This decouples the data type from the visual widget used to show it.</li>
+                <li><strong>Step 5: Session Finalization (The Commit):</strong> On the "END" signal, the Handler calls update(finalize=True). This locks the current dictionary as history, appends a new empty one for the next turn, and triggers st.rerun() to refresh the UI.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

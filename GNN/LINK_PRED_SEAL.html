@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        LINK PREDICTION
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <p><strong>Node embeddings:</strong> Link prediction is framed as matrix factorization, where the likelihood of a connection is calculated based on their dimension similarity (cosine distance).</p>
+        <p><strong>Subgraph representation:</strong> Uses the local topography around each node to check if they're similar.</p>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                CORE METHODS OF LINK PREDICTION
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Measure the similarity between two nodes by considering their local neighborhoods or the entire network.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                1.HEURISTICS
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Local Heuristics:</strong></p>
+            <ul>
+                <li><strong>Common neighbors:</strong> Simply counts the number of neighbors two nodes have in common (1-hop neighbors).</li>
+                <li><strong>Jaccard’s coefficient:</strong> Measures the proportion of neighbors shared by two nodes (1-hop neighbors). It relies on the same idea as common neighbors but normalizes the result by the total number of neighbors. This rewards nodes with few interconnected neighbors instead of nodes with high degrees.</li>
+                <li><strong>Adamic–Adar index:</strong> Quantifying shared neighbors being <em>"exclusive."</em> If you and I both know a celebrity (high degree), it doesn't mean we’re likely to be friends. But if we both know the same obscure person (low degree), we’re much more likely to be connected.</li>
+            </ul>
+            <p><strong>Global Heuristics:</strong> Considering an entire network instead of a local neighborhood.</p>
+            <ul>
+                <li><strong>Katz Index:</strong> Measures the total "influence" between two nodes by counting every possible path that connects them. To keep it realistic, it uses a decay factor. Short, direct paths are weighted heavily, while long, winding paths are "penalized" and count for very little.</li>
+                <li><strong>Random Walk with Restart:</strong> Performs random walks, starting from a target node. After each walk, it increases the visit count of the current node. With an `α` probability, it restarts the walk at the target node. Otherwise, it continues its random walk. After a predefined number of iterations, we stop the algorithm, and we can suggest links between the target node and nodes with the highest visit counts.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                2. MATRIX FACTORIZATION
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Matrix Factorization aims to minimize the "gap" between the actual adjacency matrix and the predicted scores from node embeddings.</p>
+            <ul>
+                <li><strong>Logic:</strong> If Node A and Node B have a link in the real data, their dot product is high. If there is no link, it pushes their vectors apart. Eventually, the model predicts links because nodes are forced to share "coordinates" based on their common connections.</li>
+                <li><strong>Example:</strong> If Node A is linked to Node B, and Node C is also linked to Node B, the model adjusts all three vectors so they "cluster" near each other to satisfy those known links. Even if A and C have no direct link yet, their vectors end up close together in space because they both need to "point" toward B. When you later calculate the dot product between A and C, the score is high because of this shared proximity. That high score is the "predicted link".</li>
+                <li><strong>DRAWBACKS:</strong> 
+                    <ul>
+                        <li><em>Feature Blindness:</em> They only "see" the network structure, ignoring any actual data (like a user's age or a protein's function) attached to the nodes.</li>
+                        <li><em>No Inductive Logic:</em> They are "transductive," meaning they can't handle new nodes. If a new node joins the graph, the whole model must often be retrained because it hasn't learned a general rule for embedding.</li>
+                        <li><em>Structural Ignorance:</em> Two nodes that play the exact same role (like "hubs") but are in different parts of the graph might end up with completely different embeddings because the model only cares about direct proximity, not structural similarity.</li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                GRAPH AUTOENCODER AND VARIATIONAL GRAPH AUTOENCODER:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>GAE and VGAE are GNN architectures that automate matrix factorization. They use a GNN to "encode" nodes into vectors, then a decoder to "reconstruct" the graph by predicting links based on vector similarity.</p>
+            <p><strong>Graph Autoencoder (GAE):</strong></p>
+            <ul>
+                <li><em>The Encoder:</em> Takes node features (`X`) and the adjacency matrix (`A`) to produce node embeddings (`Z`). Unlike basic matrix factorization, this allows the model to use actual node properties.</li>
+                <li><em>The Decoder:</em> This module reconstructs the adjacency matrix (`A'`) by calculating the dot product between embeddings (`Z`) and applying a sigmoid function to output link probabilities between 0 and 1.</li>
+                <li><em>Weighted Loss:</em> This modifies the loss function by adding a weight parameter that scales the importance of positive links. By making the penalty for missing a real connection much higher than the penalty for a false alarm, the model is forced to focus on the rare existing links rather than the abundant empty spaces.</li>
+                <li><em>Negative Sampling:</em> Sampling fewer zero-value entries (non-links) during training to create a more balanced dataset.</li>
+            </ul>
+
+            <p><strong>Variational Graph Autoencoder (VGAE):</strong></p>
+            <p>Unlike a standard GAE that outputs a fixed vector for each node, the VGAE encoder outputs a mean (`μ`) and standard deviation (`σ`). This means each node is represented as a distribution in the latent space, accounting for uncertainty.</p>
+            <ul>
+                <li><em>The Probabilistic Encoder:</em> Outputs two distinct vectors for every node: `μ` (Mean vector): A d-length vector acting as the coordinate center, and `σ` (Standard deviation vector): A d-length vector representing the “uncertainty” or spread.</li>
+                <li><em>The Sampling Decoder:</em> 
+                    <ol>
+                        <li>Sampling: To obtain a concrete coordinate `Z` for each node, it computes dimension-by-dimension. It takes random noise (`ϵ`), scales it by the dimension's uncertainty (`σ`), then adds the mean (`μ`). This element-wise operation produces a distinct d-dimensional vector `Z`.</li>
+                        <li>Reconstruction: It stacks every node's `Z` vector into a latent matrix `Z`. By computing the inner product `ZZ^T`, it measures similarity between all pairs of coordinates to predict edges, yielding a matrix of predicted probabilities `A'`. In the end, we obtain the approximated adjacency matrix.</li>
+                    </ol>
+                </li>
+                <li><strong>The ELBO loss:</strong> How to balance accuracy with generalization. It has two competing parts: 
+                    <ol>
+                        <li>Binary Cross-Entropy (`_BCE`): This rewards the model for making high link predictions between nodes that actually have links.</li>
+                        <li>KL Divergence: This penalizes the model if the learned embedding distributions (`μ and σ²`) do not look like a standard normal distribution.</li>
+                    </ol>
+                </li>
+            </ul>
+
+            <p><strong>Implementing (VGAE):</strong></p>
+            <ol>
+                <li><em>Data Preparation:</em> Use T.RandomLinkSplit to divide your edges into training, validation, and testing sets. Crucially, set add_negative_train_samples=False. This is because the VGAE class performs its own negative sampling internally during loss calculation.</li>
+                <li><em>The Encoder Architecture:</em> The Encoder class requires a shared base followed by two "heads": <em>conv_mu</em> (Learns the mean vector `μ`) and <em>conv_logstd</em> (Learns the log-standard deviation log `σ`). Note: We predict log `σ` rather than `σ` for numerical stability; it ensures the standard deviation is always positive when exponentiated.</li>
+                <li><em>Training & the ELBO Objective:</em> During training, the `model.encode()` function samples a specific `Z` using the reparameterization trick. The ELBO loss is then calculated as: <em>recon_loss</em> (Reconstructs adjacency matrix) and <em>kl_loss</em> (Regularizes latent space). Scaling this by 1/N is standard practice.</li>
+            </ol>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        PREDICTING LINKS WITH SEAL
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                PREDICTING LINKS WITH SEAL:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Goal:</strong> Subgraphs, Embeddings, and Attributes for Link prediction.</p>
+            
+            <ol>
+                <li><strong>Data Preparation & Link Splitting:</strong> We begin with a standard graph (e.g., Cora). Unlike node classification, link prediction requires splitting the edges into Positive edges, Negative edges, and using a Transform (RandomLinkSplit) to withhold a percentage for validation and testing.</li>
+                <li><strong>The Core Preprocessing: Enclosing Subgraphs:</strong> The “magic” of SEAL is that for every potential link (u, v), we extract a k-hop enclosing subgraph.
+                    <ul>
+                        <li>Extraction: Find all neighbors within k hops (usually k = 1 or 2).</li>
+                        <li>Sub-indexing: Relabel the nodes within this small subgraph.</li>
+                        <li>Edge removal: Crucially, we remove the direct edge between the source and destination if it exists. We want the model to predict the link based on the surrounding structure.</li>
+                    </ul>
+                </li>
+                <li><strong>Node Labeling via DRNL:</strong> To help the GNN distinguish roles, we use Double Radius Node Labeling (DRNL). This assigns an integer label `z` based on distance to the two target nodes.
+                    <ul>
+                        <li>The target nodes u and v are assigned label 1.</li>
+                        <li>Purpose: These labels provide a structural “coordinate system,” allowing the GNN to understand which nodes are “bridges”.</li>
+                    </ul>
+                </li>
+                <li><strong>Feature Construction:</strong> Each node in the subgraph receives a feature vector: Structural labels (DRNL `z` values converted into one-hot encoded vectors) and Node attributes (concatenated if available).</li>
+                <li><strong>Architecture: DGCNN:</strong> SEAL typically uses the Deep Graph Convolutional Neural Network (DGCNN).
+                    <ul>
+                        <li>SortPooling: This is the defining feature. It sorts nodes based on structural importance and picks the top k nodes. This converts a variable-sized graph into a fixed-size tensor.</li>
+                        <li>1D Conv & MLP: Standard deep learning layers process the sorted graph features to output a probability (0 to 1).</li>
+                    </ul>
+                </li>
+                <li><strong>Training and Evaluation:</strong> Uses Binary Cross-Entropy (BCE) as the loss function and monitors ROC AUC and Average Precision (AP).</li>
+            </ol>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

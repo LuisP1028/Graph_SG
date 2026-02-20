@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        TEMPORAL GRAPH NEURAL NETWORKS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                Static Graphs with Temporal Signals
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>In these systems, the <strong>topological structure is invariant</strong>; the set of nodes and their relational links remain constant. Complexity arises solely from the <em>time-evolving state</em> of those components. While the connectivity backbone is rigid, the feature vectors and labels associated with nodes or edges shift across time intervals.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Dynamic Graphs with Temporal Signals
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Here, the entire <strong>graph architecture is transient</strong>. Both the existence of entities (nodes) and their relationships (edges) appear, vanish, or reform over time. This <em>structural fluidity</em> occurs in parallel with evolving attribute data, requiring models that account for a non-stationary skeleton alongside shifting feature distributions.</p>
+        </div>
+
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        EvolveGCN
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                Overview
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>In standard GCNs, the <strong>weight matrix is static</strong> once trained; the model applies the exact same transformation rules regardless of how the graph changes over time. EvolveGCN sets itself apart by making the <em>GCN weights the hidden state of a GRU</em>.</p>
+            <ul>
+                <li><strong>Temporal Storage:</strong> The GRU doesn't just store "data"; it stores the evolving logic of the model.</li>
+                <li><strong>Logic:</strong> It takes the previous weight matrix ($W_{t-1}$) and the current graph state ($G_t$) to "re-calibrate" the weight matrix for the current moment ($W_t$). This produces node embeddings that are deeply context-aware of both structural transitions and feature shifts.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                EvolveGCN-H
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Updates weights using both the previous weights (history) AND current node features.</p>
+            <ul>
+                <li><strong>Adjacency Matrix ($A_t$):</strong> An input defining the topological structure (node connectivity) at a specific discrete time step $t$.</li>
+                <li><strong>Node Features ($H_t$):</strong> The internal state or attributes of the entities (e.g., user data, gene expression) at time step $t$.</li>
+                <li><strong>Evolved Weights ($W_t$):</strong> The transformation logic that adapts to the graph snapshot at time $t$.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Extensions Necessary
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Matrix-Based Weight Evolution:</strong> In standard RNNs, the hidden state is a 1D vector. EvolveGCN re-engineers the GRU gates to treat the <em>2D weight matrix (W)</em> as the hidden state. This prevents flattening the weights, which would destroy the meaningful row-column relationships (input-to-output units) of the GCN layer.</p>
+            <p><strong>Node Embedding Summarization:</strong> The GRU requires its input to align with its internal state dimensions. While the weight matrix has fixed dimensions, the node embedding matrix (H) has a variable count of nodes. To bridge this gap, the model summarizes H—condensing the node data into a <em>fixed representation</em> that matches the column dimension of the hidden state.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Implementation
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>1. <strong>Parameter Recurrence (Weight Continuity):</strong> The model uses an RNN (typically a GRU) to pass the weight matrix from $t-1$ to $t$. <em>Utility:</em> This maintains temporal consistency, ensuring the model's relational logic is an informed evolution of historical states.</p>
+            <p>2. <strong>State Integration (Data-Driven Adaptation):</strong> In the EvolveGCN-H variant, the GRU ingests the current node embeddings $H_t$ to update the weights. <em>Utility:</em> This allows the model's "brain" to change based on the content of the data.</p>
+            <p>3. <strong>Weight Generation (Dynamic Filtering):</strong> The GRU outputs a tailored weight matrix $W_t$ for the specific graph snapshot. <em>Utility:</em> This provides flexibility for non-stationary systems.</p>
+            <div class="code-block">
+4. Graph Convolution (Structural Processing)
+The GCN applies the evolved weights to the current adjacency matrix $A_t$ using the operation:
+$H^{t+1} = GCN(A_t, H_t, W_t)$.
+            </div>
+            <p><em>Utility:</em> This is where spatial and temporal dimensions merge. It performs message-passing across the current topology using updated temporal logic.</p>
+        </div>
+
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        EvolveGCN-O
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                Core Components
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Updates weights using only the previous weights via an LSTM.</p>
+            <ul>
+                <li><strong>Adjacency Matrix ($A_t$):</strong> The input defining the topological structure at time $t$. In dynamic graphs, nodes and edges in $A_t$ may appear or disappear between snapshots.</li>
+                <li><strong>Node Features ($H_t$):</strong> The attributes of the entities at time $t$.</li>
+                <li><strong>Evolved Weights ($W_t$):</strong> The transformation logic generated by an LSTM that remembers previous weight states.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                Implementation Steps
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>1. <strong>Parameter Recurrence (Internal Memory):</strong> Unlike the -H variant, EvolveGCN-O utilizes an LSTM network to model the weight evolution. The LSTM cell acts as a dedicated <em>memory unit</em> that “remembers” previous values of the weights ($W_{t-1}$) automatically.</p>
+            <p>2. <strong>Weight Evolution (Autonomous Logic):</strong> The weight update is governed by the function $W_t = LSTM(W_{t-1})$. In this variant, the model does not ingest current node embeddings ($H_t$) into the recurrent unit. <em>Utility:</em> This significantly simplifies the update step.</p>
+            <p>3. <strong>Weight Generation (Dynamic Filtering):</strong> The LSTM outputs the updated weight matrix ($W_t$) for the current snapshot. <em>Utility:</em> Even though it doesn’t “see” the current features, the evolved weights are still dynamic.</p>
+            <div class="code-block">
+4. Graph Convolution (Structural Processing)
+The final step applies these evolved weights to the current topology:
+$H^{t+1} = GCN(A_t, H_t, W_t)$
+            </div>
+            <p><em>Utility:</em> This performs message-passing using the current structure ($A_t$) but the evolved logic ($W_t$). It allows the model to handle dynamic graphs where the number of nodes or edges changes.</p>
+        </div>
+
+    </div>
+</details>
+
+</body>
+</html>

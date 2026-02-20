@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        GRAPH PROJECTION OF MULTI-PARTITE NETWORKS
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                Overview
+                <button class="eye-btn" onclick="window.parent.openViewport('path/to/visualization.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Goal:</strong> Essentially, you are "collapsing" the graph's middle layer to reveal hidden connections.</p>
+            
+            <ul>
+                <li><strong>Key 01:</strong> You translate a <em>multipartite structure</em> into a monopartite one so that algorithms like PageRank can calculate "importance" based on these inferred relationships.</li>
+                <li><strong>Key 02:</strong> e.g.  : Instead of     , you project    to find which supplier is most critical to the final output.</li>
+                <li><strong>Key 03:</strong> Medical Research: Instead of     , you project    to cluster people with similar health profiles.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        Translating Indirect Multi-Hop to Direct Relationship
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                &lt;Cypher Projection&gt;
+                <button class="eye-btn" onclick="window.parent.openViewport('path/to/visualization.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Goal:</strong> Cypher Projection works like a "select and transform" query that builds a temporary workspace in your RAM.</p>
+            
+            <ul>
+                <li><strong>Key 01:</strong> It requires three specific instructions: The Name: A label for your workspace (e.g., 'retweet-graph').</li>
+                <li><strong>Key 02:</strong> Node Query: A list of every node you want to include. You must provide the internal id so the system knows which specific entities to grab.</li>
+                <li><strong>Key 03:</strong> You can also pull in labels or properties if the algorithm needs them (like user categories or scores).</li>
+                <li><strong>Key 04:</strong> Relationship Query: The "links" between those nodes. You define a source (start node) and a target (end node).</li>
+                <li><strong>Key 05:</strong> The power here is that your Relationship Query doesn't have to follow existing lines in your database; you are "collapsing" the graph's middle layer to reveal hidden connections, by transforming an indirect interaction into a direct association.</li>
+            </ul>
+
+            <div class="code-block">
+Crucially, you use count(*) AS weight during this transformation. 
+Instead of creating multiple redundant links for every individual interaction, 
+the query aggregates them into a single relationship.
+            </div>
+            
+            <p>This "weights" the connection, telling the algorithm not just that two entities are linked, but how strongly they are connected based on the frequency of their interactions.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                &lt;Degree Centrality&gt;
+                <button class="eye-btn" onclick="window.parent.openViewport('path/to/impl_viz.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Stats Mode: Generates a summary of the distribution (minimum, maximum, and average connections) across the network.</p>
+            <ul>
+                <li><strong>Out-degree:</strong> Measures the count of outgoing links. In a projection, this represents how many times a node initiated an interaction.</li>
+                <li><strong>In-degree:</strong> Measures the count of incoming links. This represents how many times a node was the recipient or "target" of an interaction.</li>
+            </ul>
+            <p>You can use the stats mode of the algorithm to examine the node degree distribution. In practice, choosing the direction of an interaction determines whether you are measuring a node's Active Output or its Passive Reception.</p>
+            <ul>
+                <li><strong>NATURAL (Out-Degree):</strong> Measures the Distributors. In a supply chain, this identifies "hubs" that push parts to many factories. In a data network, it finds servers that broadcast info to many clients. It answers: "Who is the most active source?"</li>
+                <li><strong>REVERSE (In-Degree):</strong> Measures the Attractors. In an academic network, this identifies papers with the most citations. In a medical graph, it finds "common comorbidities" that many different symptoms lead back to. It answers: "Who is the most referenced or 'high-demand' target?"</li>
+                <li><strong>UNDIRECTED (Sum):</strong> Measures Total Connectivity. This ignores the flow of the interaction and simply identifies the most "busy" nodes regardless of their role. It answers: "Who is the most connected, for any reason?"</li>
+            </ul>
+            <p>By combining these orientations with Weights, you move from simply counting "how many connections" to calculating the "total volume" of flow. This allows you to distinguish between a node that is popular with many small entities (High Degree) and a node that has a massive, high-volume relationship with just one or two partners (High Weight).</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                &lt;Weakly Connected Components&gt;
+                <button class="eye-btn" onclick="window.parent.openViewport('path/to/impl_viz.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> The Weakly Connected Components algorithm should be part of almost every network analysis.</p>
+            <ul>
+                <li><strong>Baseline:</strong> With it, you can evaluate how connected the network is and identify disconnected components. Establishing a Baseline: You run WCC to find the "Giant Component." In healthy real-world networks (like power grids or social circles), one massive cluster usually contains the majority of nodes.</li>
+                <li><strong>Anomalies:</strong> Spotting Anomalies: Use percentiles to identify nodes with no/little connections.</li>
+                <li><strong>Debugging:</strong> Debugging Logic: This mismatch between expected topology (everyone should be linked) and actual results (isolated orphans) signals a bug in the data pipeline or filtering criteria.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                &lt;WEIGHTED PAGERANK&gt;
+                <button class="eye-btn" onclick="window.parent.openViewport('path/to/impl_viz.html')">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>Goal:</strong> Weighted PageRank differentiates between node importance (the total "influence" a node possesses) and edge distribution (how it shares that influence).</p>
+            <ul>
+                <li><strong>Standard PR:</strong> In Standard PageRank, an influential node must distribute its authority equally—if it has four connected neighbors, each receives 25%.</li>
+                <li><strong>Weighted Variant:</strong> In the weighted variant, the node distributes its authority proportionally based on the specific "strength" of the connection (edge weight).</li>
+                <li><strong>Node Importance:</strong> Node Importance (The "Bucket"): Like standard PR, a node's score is determined recursively by the importance of the nodes pointing to it.</li>
+                <li><strong>Edge Distribution:</strong> Edge Distribution (The "Pour"): Unlike standard PR, you use external metrics (e.g., transaction value, frequency of contact) to determine the "width" of the pipe to each neighbor.</li>
+            </ul>
+        </div>
+
+    </div>
+</details>
+
+</body>
+</html>

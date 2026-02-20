@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        GRAPH RAG: INFORMATION RETRIEVAL
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        
+        <div class="subsection">
+            <span class="subsection-title">
+                VECTOR BASED RAG LIMITATIONS
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p>GRAPH RAG: Vector based RAG has limitations:</p>
+            <ul>
+                <li><strong>Context Fragmentation:</strong> Chunking breaks multi-hop logic and ignores inter-document relationships.</li>
+                <li><strong>Scalability:</strong> Large-scale vector search is expensive and often forces accuracy trade-offs.</li>
+                <li><strong>Embedding Constraints:</strong> Fixed vectors oversimplify semantics and struggle with niche or evolving terminology.</li>
+                <li><strong>Noise & Misses:</strong> Retrieval often includes irrelevant "distractions" or misses facts entirely, especially for global queries (e.g., "summarize themes") where similarity search fails to capture the big picture.</li>
+                <li><strong>KG RAG</strong> overcomes these limitations.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                GRAPH TYPES
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Text-Attributed:</strong> The text is a property (metadata) belonging to a node. You find the node first, then read its attributes.</li>
+                <li><strong>Text-Paired:</strong> The node acts as a pointer or index to a separate document. You use the graph to navigate to the correct "descendant" text chunk, which lives outside the core entity definition.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                KG-ENHANCED DOCUMENT RETRIEVER
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>A schema-based approach acts as a structural map, transforming a chaotic web of data into a navigable landscape.</p>
+            <p><strong>Why Schema & Traversals Matter:</strong></p>
+            <ul>
+                <li><strong>Precision Mapping:</strong> A schema translates natural language (e.g., "red Camaro") into technical reality (e.g., (:Car {color: 'Red', model: 'Camaro'})). It ensures queries target the correct node labels and relationship types.</li>
+                <li><strong>Predictable Relationships:</strong> Knowing that a Car is CAPTURED_BY an ANPR_Camera allows you to build logical paths rather than guessing how data points connect.</li>
+                <li><strong>Efficiency through Constraints:</strong> Constrained traversals act as filters. By applying specific conditions (time, location, attributes) during the "walk" through the graph, you eliminate irrelevant data early, preventing "state explosion" and ensuring fast, accurate results.</li>
+            </ul>
+        </div>
+
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        INTENT DETECTION
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                &lt;DATA RELATED QUERIES&gt;
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>We need to understand the user’s intent so that we can identify the appropriate type of presentation and the right pipeline or chain to choose.</p>
+            <ol>
+                <li><strong>Define Output Classes:</strong> Identify how your system displays data (e.g., Interactive Graphs, GIS Maps, or Statistical Charts).</li>
+                <li><strong>Map Intent to UI:</strong> Categorize questions based on the required visualization. A query about "locations" triggers a Map intent; "relationships" triggers a Graph intent.</li>
+                <li><strong>Deploy a Classification Prompt:</strong> Use an LLM to categorize the query.</li>
+            </ol>
+            <p><strong>An effective prompt requires:</strong></p>
+            <ul>
+                <li><strong>Explicit Task Instructions:</strong> Start with a clear directive (e.g., "Categorize this query into one of four visualization types"). This sets the "mental model" for the LLM.</li>
+                <li><strong>Granular Category Definitions:</strong> Don't just list names. Define what constitutes a "Map" intent versus a "Graph" intent to avoid overlap.</li>
+                <li><strong>Strategic Few-Shot Examples:</strong> Provide 3–5 pairs of "Query + Category." This anchors the model’s logic in your specific domain.</li>
+                <li><strong>Boundary Case Resolution:</strong> Include "near-miss" examples—queries that look like one category but belong to another—to teach the model nuance (e.g., "Show me the path between cities" is a Graph intent, not a Map intent).</li>
+                <li><strong>Strict Output Formatting:</strong> Require JSON or specific labels (e.g., INTENT: TABLE) to ensure the downstream code can parse the result without error.</li>
+                <li><strong>Fallback "Unknown" Class:</strong> Always include a "None of the above" category. This prevents the model from "hallucinating" a category when a user asks a nonsensical or out-of-scope question.</li>
+                <li><strong>Extra:</strong> Additionally, the expected output format includes a reason field, which is important for identifying potential misclassifications and understanding the model’s reasoning.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                &lt;SYSTEM RELATED QUERIES&gt;
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li><strong>Documentation-led:</strong> Resolved via manuals or help guides (e.g., "How do I export this?").</li>
+                <li><strong>Schema-led:</strong> Technical inquiries into data modeling and structure (e.g., "Why is Car a node and not a property?").</li>
+            </ul>
+            <p>Integrating these into your Intent Detection allows the LLM to route queries to specialized pipelines. Including a "Reason" field in the output ensures the model justifies its classification, which is vital for debugging and user transparency.</p>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        SCHEMA EXTRACTION
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                CONCEPTUAL SCHEMA
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Better understood as defining the schema for an LLM to understand the fields available. Conceptual Schema: Telling your LLM where data is. A Conceptual Schema is a "denoised" version of your database map. The schema without conceptual refinement contains ALL nodes, labels, etc. By applying a refinement on the schema, we prune the schema for different pipelines.</p>
+            <p><strong>Why it’s essential for LLMs:</strong></p>
+            <ul>
+                <li><strong>Token Efficiency:</strong> By stripping administrative bloat (logs, helper nodes), you save valuable context window space and reduce costs.</li>
+                <li><strong>Reduced Hallucination:</strong> A cleaner ontology limits the "search space," preventing the LLM from inventing relationships or using internal properties that don't serve the user's intent.</li>
+                <li><strong>Semantic Alignment:</strong> It maps technical labels to human-readable concepts, ensuring the LLM understands the meaning of a relationship rather than just its technical name.</li>
+                <li><strong>Path Simplification:</strong> It hides complex "under-the-hood" joins, allowing the LLM to focus on the logical traversals an expert would actually take.</li>
+                <li><strong>Prompt Stability:</strong> A distilled schema is more consistent, leading to more reliable Cypher generation across different model versions.</li>
+            </ul>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                SCHEMA ANNOTATION
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>Telling your LLM what data means and how it is formatted. Systematically annotating the KG’s schema, documenting node classes, relationship types, and properties with descriptions that capture these nuances.</p>
+            <p><strong>Why Annotations Are Critical:</strong></p>
+            <ul>
+                <li><strong>Handling Cryptic Data:</strong> If your database stores "Low-Income" as LI_2024, an LLM will never find it by searching for the full string. Annotations provide the mapping so the model knows LI_2024 = "Low-Income."</li>
+                <li><strong>Choosing the Right Path:</strong> If you have two relationships like INFLUENCED and CRITICIZED, an annotation clarifies the nuance. It tells the LLM: "Use CRITICIZED only when the philosopher explicitly refutes a peer’s logic."</li>
+                <li><strong>Enforcing Logic Constraints:</strong> You can annotate a property to explain its valid values (e.g., "The tone property only accepts 'villainous' or 'stoic'"). This prevents the LLM from hallucinating invalid filters.</li>
+            </ul>
+            <p><em>In short: the schema is the map, but the annotation is the legend that explains what the symbols actually mean in the real world.</em></p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                PRACTICAL REPRESENTATION
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>YAML-driven configuration:</strong></p>
+            <ul>
+                <li><strong>The Skip List (Pruning):</strong> You explicitly list technical or redundant node classes, relationship types, and properties to ignore. This keeps the LLM focused on the Conceptual Schema and saves tokens.</li>
+                <li><strong>The Descriptions (Annotating):</strong> You provide a data dictionary for the remaining elements. This provides the LLM with the "tribal knowledge" needed to understand abbreviations, specific relationship nuances, and valid property values.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        UNDERSTANDING LLM REASONING
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                REASONING FOUNDATIONS
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>LLMs function through sequential token generation, meaning every word produced becomes a fixed constraint for the next. If a model provides an answer first, it creates a "commitment" that forces all subsequent logic to rationalize that specific outcome. Alternatively, reasoning-first prompts utilize cumulative context to build a logical foundation before reaching a conclusion.</p>
+            <ul>
+                <li><strong>Chain-of-Thought (CoT):</strong> This structures the output to reflect a human-like step-by-step argument. It uses the model's pattern-recognition to ensure each logical "link" follows the previous one, leading to a more reliable conclusion. Best for: General reasoning, word problems, and explainable decision-making.</li>
+                <li><strong>Scratchpad:</strong> This creates a dedicated "workspace" for the model to perform raw computations, track variables, or store sub-results before generating the final response. It acts as an external memory buffer. Best for: Algorithmic tasks, multi-step math, and code execution simulation.</li>
+                <li><strong>Reasoning-First (Pre-computation):</strong> Forces the model to build a logical foundation. Use this for problem-solving where accuracy is the priority, ensuring the answer is a derivative of the logic.</li>
+                <li><strong>Answer-First (Post-hoc Justification):</strong> Forces the model to rationalize a choice. Use this for classification or auditing, where you want to reveal the model’s internal biases or "debug" why it mislabeled a specific data point.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        HAVING THE LLM BUILD CYPHER QUERIES
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                PROMPT COMPONENTS
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p><strong>1. A brief task description and question:</strong> We use an HTML-like tag to wrap the user’s question, which will help the model clearly understand the boundaries of the question and separate it from the rest of the instructions. This acts as a structural delimiter.</p>
+            <p><strong>2. A schema definition with annotations:</strong> Consists of Structural Delimiters (e.g., &lt;schema&gt;...&lt;/schema&gt;), Markdown Hierarchy (# headers), and Semantic Metadata (/* code comments */).</p>
+            <p><strong>3. Intent-dependent requirements:</strong> Triggered by the specific pipeline. It injects a specialized template of rules based on the user's intent.</p>
+            <p><strong>4. Examples:</strong> Provide few-shot examples with a focus on Structural Isomorphism and Targeted Guidance. Use Partial Examples with "..." (Freedom Placeholder) to signal that logic must be generated fresh.</p>
+            <p><strong>5. Optional user selection:</strong> Injects real-time UI state (e.g., "this person" or "the selected node"). Best for interactive dashboards.</p>
+            <p><strong>6. KG-specific annotations:</strong> Define local business logic (e.g., "User.id actually refers to legacy employee numbers").</p>
+            <p><strong>7. A reminder of the question/requirements:</strong> Leverages Recency Bias by repeating the &lt;QUESTION&gt; or &lt;REQUIREMENTS&gt; at the very end. Information Injection (Error Feedback) turns a static prompt into a Feedback Loop.</p>
+            <p><strong>8. Output format specification:</strong> Specify response as a valid JSON object.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                OUTPUT STRUCTURING
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>In-Context Verifiability and Plan-to-Action sequencing:</p>
+            <ul>
+                <li><strong>Relationship Listing (Constraint Declaration):</strong> Acts as a Schema Audit. By forcing the LLM to name the relationships "out loud," you check its alignment with the provided schema before it starts coding.</li>
+                <li><strong>Reasoning Field (Plan-of-Attack):</strong> A Chain-of-Thought buffer. Allows the model to map out the JOINs or traversals in plain English first.</li>
+                <li><strong>Final Query (The Execution):</strong> The Coherent Conclusion. Because of Sequential Token Generation, the model is now bound to use the relationships and logic it just "committed" to.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        RESPONSE SUMMARIZATION
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                SUMMARIZATION PROMPT STRUCTURE
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <ul>
+                <li>The original question provides the user’s intent.</li>
+                <li>The executed Cypher query shows how we interpreted that intent.</li>
+                <li>The query results represent our raw data.</li>
+                <li>The current selection (if any) maintains user context.</li>
+            </ul>
+            <p><strong>Key Strategies:</strong></p>
+            <ul>
+                <li><strong>Multi-Modal Context Awareness:</strong> Instruct the LLM to complement visual data rather than redundantly narrating it.</li>
+                <li><strong>Context Distillation:</strong> Command the model to filter out structural metadata and isolate only factual data.</li>
+                <li><strong>Conditional Reasoning:</strong> Prevent rambling by forcing the model to evaluate the user's intent first.</li>
+                <li><strong>Recency Anchoring:</strong> Re-inject the original user query immediately before the final output instructions.</li>
+                <li><strong>Progressive Structuring:</strong> Force a logical generation sequence: decision flag -> reasoning scratchpad -> formatted summary.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

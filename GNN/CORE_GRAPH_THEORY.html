@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* --- INTEGRATED CRT CORE STYLES --- */
+:root {
+--bg-color: #000000;
+--text-color: #00ff41;
+--accent-color: #00ff41;
+--dim-color: #003b00;
+--border-color: #00ff41;
+--font-main: 'Courier New', Courier, monospace;
+--font-header: 'Arial Black', Impact, sans-serif;
+--crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+}
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-main);
+        margin: 0;
+        padding: 20px;
+        line-height: 1.5;
+    }
+
+    /* --- VISUAL EFFECTS --- */
+    .dither-layer {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1;
+        background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+        background-size: 4px 4px;
+        opacity: 0.4;
+    }
+
+    .scanlines {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 9999;
+    }
+
+    /* --- MODULE COMPONENTS --- */
+    strong { color: var(--accent-color); text-decoration: underline; }
+    em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+    details.section {
+        margin-bottom: 15px;
+        border: 1px solid var(--dim-color);
+        background: #050505;
+    }
+
+    details.section > summary {
+        font-weight: bold;
+        padding: 12px;
+        background: #0a0a0a;
+        cursor: pointer;
+        list-style: none;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    details.section[open] > summary {
+        border-bottom: 1px solid var(--dim-color);
+        color: var(--accent-color);
+        text-shadow: var(--crt-glow);
+    }
+
+    .section-content { padding: 20px; }
+
+    .subsection {
+        margin-bottom: 30px;
+        border-left: 4px solid var(--dim-color);
+        padding-left: 15px;
+    }
+
+    .subsection-title {
+        background: var(--dim-color);
+        color: var(--accent-color);
+        padding: 4px 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+    }
+
+    .code-block {
+        background: #020a02;
+        border: 1px dashed var(--dim-color);
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 0.85rem;
+        color: var(--accent-color);
+        overflow-x: auto;
+    }
+
+    .eye-btn {
+        background: none;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+        cursor: pointer;
+        padding: 2px 5px;
+        display: flex;
+        align-items: center;
+        opacity: 0.7;
+    }
+    .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+</style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+<summary>
+GRAPH PROPERTIES
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+
+<div class="section-content">
+    
+    <div class="subsection">
+        <span class="subsection-title">
+            Directed graphs
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Also called digraphs, each edge has a direction or orientation.</p>
+        <ul>
+            <li><strong>Key 01:</strong> This means that the edge connects two nodes in a particular direction, where one node is the source and the other is the destination.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Undirected graph
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Where the edges have no direction.</p>
+        <ul>
+            <li><strong>Key 01:</strong> This means that the edge between two vertices can be traversed in either direction, and the order in which we visit the nodes does not matter.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Weighted Graphs
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> In a weighted graph, each edge has a weight or cost associated with it.</p>
+        <ul>
+            <li><strong>Key 01:</strong> These weights can represent various factors, such as distance, travel time, or cost.</li>
+            <li><strong>Key 02:</strong> For example, in a transportation network, the weights of edges might represent the distances between different cities or the time it takes to travel between them.</li>
+            <li><strong>Key 03:</strong> In contrast, <em>unweighted graphs</em> have no weight associated with their edges.</li>
+            <li><strong>Key 04:</strong> These types of graphs are commonly used in situations where the relationships between nodes are binary, and the edges simply indicate the presence or absence of a connection between them.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Connected and Disconnected Graphs
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Define the reachability between vertices within the graph topology.</p>
+        <ul>
+            <li><strong>Connected:</strong> In connected graphs, there is a path between any two vertices in the graph.</li>
+            <li><strong>Disconnected:</strong> In disconnected graphs, at least two vertices are not connected by a path.</li>
+        </ul>
+    </div>
+</div>
+</details>
+
+<details class="section">
+<summary>
+GRAPH TYPES
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+<div class="section-content">
+<div class="subsection">
+<span class="subsection-title">
+Tree
+<button class="eye-btn">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+<circle cx="12" cy="12" r="3"></circle>
+</svg>
+</button>
+</span>
+<p><strong>Goal:</strong> A connected, undirected graph with no cycles.</p>
+<ul>
+<li><strong>Key 01:</strong> Since there is only one path between any two nodes in a tree, a tree is a special case of a graph.</li>
+<li><strong>Key 02:</strong> Trees are often used to model hierarchical structures, such as family trees, organizational structures, or classification trees.</li>
+</ul>
+</div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Rooted Tree
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> A tree in which one node is designated as the root, and all other vertices are connected to it by a unique path.</p>
+        <ul>
+            <li><strong>Key 01:</strong> Rooted trees are often used in computer science to represent hierarchical data structures.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Directed acyclic graph (DAG)
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> A directed graph that has no cycles.</p>
+        <ul>
+            <li><strong>Key 01:</strong> This means that the edges can only be traversed in a particular direction, and there are no loops or cycles.</li>
+            <li><strong>Key 02:</strong> DAGs are often used to model dependencies between tasks or events – for example in computing the critical path of a job.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Bipartite graph
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Graph in which the vertices can be divided into two types, such that all edges connect vertices in different sets.</p>
+        <ul>
+            <li><strong>Key 01:</strong> Bipartite graphs are often used to model relationships between two different types of objects, such as buyers and sellers, or employees and projects.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Complete Graph
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Graph in which every pair of vertices is connected by an edge.</p>
+        <ul>
+            <li><strong>Key 01:</strong> Complete graphs are often used in combinatorics to model problems involving all possible pairwise connections.</li>
+        </ul>
+    </div>
+</div>
+</details>
+
+<details class="section">
+<summary>
+GRAPH MEASURES
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+<div class="section-content">
+<div class="subsection">
+<span class="subsection-title">
+Degree centrality
+<button class="eye-btn">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+<circle cx="12" cy="12" r="3"></circle>
+</svg>
+</button>
+</span>
+<p><strong>Goal:</strong> One of the simplest and most commonly used measures of centrality.</p>
+<ul>
+<li><strong>Key 01:</strong> It is simply defined as the degree of the node.</li>
+<li><strong>Key 02:</strong> A high degree centrality indicates that a vertex is highly connected to other vertices in the graph, and thus significantly influences the network.</li>
+</ul>
+</div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Closeness centrality
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Measures how close a node is to all other nodes in the graph.</p>
+        <ul>
+            <li><strong>Key 01:</strong> It corresponds to the average length of the shortest path between the target node and all other nodes in the graph.</li>
+            <li><strong>Key 02:</strong> A node with high closeness centrality can quickly reach all other vertices in the network.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Betweenness centrality
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Measures the number of times a node lies on the shortest path between pairs of other nodes in the graph.</p>
+        <ul>
+            <li><strong>Key 01:</strong> A node with high betweenness centrality acts as a bottleneck or bridge between different parts of the graph.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Density
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Density measures how saturated a network is with connections compared to its theoretical maximum.</p>
+        <ul>
+            <li><strong>Key 01:</strong> It represents the "compactness" of the topology: a density of 1.0 is a complete graph where everyone is connected to everyone else; a density near 0 is a sparse graph.</li>
+            <li><strong>Key 02:</strong> Generally, a graph is considered dense if its density is greater than 0.5 and sparse if its density is less than 0.1.</li>
+        </ul>
+    </div>
+</div>
+</details>
+
+<details class="section">
+<summary>
+CORE METHODS TO REPRESENT GRAPHS
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+<div class="section-content">
+<div class="subsection">
+<span class="subsection-title">
+ADJACENCY MATRIX
+<button class="eye-btn">
+<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+<circle cx="12" cy="12" r="3"></circle>
+</svg>
+</button>
+</span>
+<p><strong>Goal:</strong> A matrix that represents the edges in a graph, where each cell indicates whether there is an edge between two nodes.</p>
+<ul>
+<li><strong>Key 01:</strong> The matrix is a square matrix of size N × N, where N is the number of nodes in the graph.</li>
+<li><strong>Key 02:</strong> A value of 1 in the cell (i, j) indicates that there is an edge between node i and node j.</li>
+<li><strong>Advantages:</strong> Checking if two nodes are connected is O(1) constant time. Enables efficient matrix operations for algorithms (e.g., shortest paths via matrix powers).</li>
+<li><strong>Drawbacks:</strong> Space complexity is O(N²), where N is the number of nodes – N grows quadratically. Adding/removing nodes is costly (requires resizing or shifting the matrix). Inefficient for large or sparse graphs due to high memory use. Poor for dynamically changing graphs.</li>
+</ul>
+</div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            SYMMETRY & ASYMMETRY
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Distinguish between Undirected and Directed matrix properties.</p>
+        <ul>
+            <li><strong>SYMMETRY:</strong> Undirected graph connections are two-way streets. If Node A is connected to Node B, then Node B is automatically connected to Node A. In the adjacency matrix, this means the value at row A, column B must be identical to the value at row B, column A. This creates a mirror image across the diagonal, making the matrix mathematically symmetric. Symmetry guarantees real eigenvalues and orthogonal eigenvectors.</li>
+            <li><strong>ASYMMETRY:</strong> Directed graph relationships are "one-way" arrows. Node A can point to Node B (a 1 in the matrix) without Node B pointing back (a 0 in the matrix). This breaks the mirror, resulting in an asymmetric matrix. Used for causal inference or knowledge graphs.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            EDGE LIST
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> An edge list is a registry of active connections.</p>
+        <ul>
+            <li><strong>Key 01:</strong> It ignores the "voids" where no edge exists, making it memory-efficient for sparse data.</li>
+            <li><strong>Key 02:</strong> Edge lists prioritize storage efficiency; matrices prioritize computational speed and mathematical manipulation.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            ADJACENCY LISTS
+            <button class="eye-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> Adjacency lists store a mapping of each node to a list of its immediate neighbors.</p>
+        <ul>
+            <li><strong>Advantages:</strong> Space complexity O(V + E), where V = nodes, E = edges – very efficient for sparse graphs. Adding nodes or edges is typically O(1) constant time. Easy and fast to iterate over a node’s neighbors (great for traversal algorithms like DFS/BFS).</li>
+            <li><strong>Drawbacks:</strong> Checking if two nodes are connected is O(degree) – slower than O(1) in adjacency matrix (can be O(V) in worst case). Less cache-friendly and slower for dense graphs compared to matrix. Requires more complex implementation (e.g., hash maps or lists per node).</li>
+        </ul>
+    </div>
+</div>
+</details>
+
+</body>
+</html>

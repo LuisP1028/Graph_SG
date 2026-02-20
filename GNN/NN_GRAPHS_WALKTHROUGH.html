@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        /* --- INTEGRATED CRT CORE STYLES --- */
+        :root {
+            --bg-color: #000000;
+            --text-color: #00ff41;
+            --accent-color: #00ff41;
+            --dim-color: #003b00;
+            --border-color: #00ff41;
+            --font-main: 'Courier New', Courier, monospace;
+            --font-header: 'Arial Black', Impact, sans-serif;
+            --crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        /* --- VISUAL EFFECTS --- */
+        .dither-layer {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+            background-size: 4px 4px;
+            opacity: 0.4;
+        }
+
+        .scanlines {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+            background-size: 100% 4px;
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- MODULE COMPONENTS --- */
+        strong { color: var(--accent-color); text-decoration: underline; }
+        em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+        details.section {
+            margin-bottom: 15px;
+            border: 1px solid var(--dim-color);
+            background: #050505;
+        }
+
+        details.section > summary {
+            font-weight: bold;
+            padding: 12px;
+            background: #0a0a0a;
+            cursor: pointer;
+            list-style: none;
+            text-transform: uppercase;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        details.section[open] > summary {
+            border-bottom: 1px solid var(--dim-color);
+            color: var(--accent-color);
+            text-shadow: var(--crt-glow);
+        }
+
+        .section-content { padding: 20px; }
+
+        .subsection {
+            margin-bottom: 30px;
+            border-left: 4px solid var(--dim-color);
+            padding-left: 15px;
+        }
+
+        .subsection-title {
+            background: var(--dim-color);
+            color: var(--accent-color);
+            padding: 4px 10px;
+            font-weight: bold;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+        }
+
+        .code-block {
+            background: #020a02;
+            border: 1px dashed var(--dim-color);
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 0.85rem;
+            color: var(--accent-color);
+            overflow-x: auto;
+        }
+
+        .eye-btn {
+            background: none;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
+            cursor: pointer;
+            padding: 2px 5px;
+            display: flex;
+            align-items: center;
+            opacity: 0.7;
+        }
+        .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+    </style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+    <summary>
+        Phase 1: Data Preparation & Extraction
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Data Extraction
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            
+            <p><strong>Goal:</strong> Treat the graph as a table of isolated entities.</p>
+            
+            <ul>
+                <li><strong>Key 01:</strong> You extract <em>data.x</em> (node features) and <em>data.y</em> (labels).</li>
+                <li><strong>Key 02:</strong> Key Insight: At this stage, you ignore <em>edge_index</em>.</li>
+                <li><strong>Key 03:</strong> The model only "sees" the features of a single node, not its relationships.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        Phase 2: Architecture Selection & Output Tuning
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                A. Architecture Types (The "Engines”)
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </span>
+            <p>The "Middle" (Hidden Layers) extracts patterns; the "End" (Output Layer) must match your task’s math.</p>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                1. MLP: The Feature Compressor
+            </span>
+            <p>The Multi-Layer Perceptron is the primary "engine" for Graph-Agnostic learning.</p>
+            <ul>
+                <li><strong>Operation:</strong> It treats each node as an isolated data point, ignoring the $edge\_index$.</li>
+                <li><strong>Role:</strong> In GNN pipelines, MLPs act as Encoders—reducing high-dimensional, sparse raw data into dense, meaningful vectors (embeddings) that a GNN can process more efficiently.</li>
+                <li><strong>When to use:</strong> Use this when node attributes are rich but the graph structure is noisy, unknown, or potentially irrelevant. It serves as your "Baseline" to prove that the graph structure actually adds value.</li>
+                <li><strong>Example:</strong> User Profiling. In a social network, you might use an MLP to classify a user's interests based solely on their bio text and clickstream data. If the MLP gets 70% accuracy and adding graph edges (GNN) only gets you to 71%, the "relational" data isn't providing much signal.</li>
+            </ul>
+            <div class="code-block">
+Most Appropriate Representation: Feature Matrix ($X \in \mathbb{R}^{N \times F}$). 
+It ignores edges entirely, processing only the $N \times F$ tabular dataset of isolated node attributes.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                2. CNN: The Spatial Filter
+            </span>
+            <p>A Convolutional Neural Network is specialized for data with a fixed, Euclidean grid structure (like pixels in an image or voxels in 3D space).</p>
+            <ul>
+                <li><strong>Concept:</strong> In graph terms, an image is just a very regular Lattice Graph. We repurpose CNN logic when we want to extract local spatial patterns through "sliding windows" (kernels).</li>
+                <li><strong>When to use:</strong> Use this when your graph has a fixed, grid-like topology or when node features themselves are images.</li>
+                <li><strong>Example:</strong> Medical Imaging on Meshes. If you are analyzing a 3D scan of a human organ (represented as a geometric mesh/graph), you might use a CNN-inspired "Graph Convolution" to detect tumors. The "engine" looks at a node and its immediate physical neighbors to find structural anomalies.</li>
+            </ul>
+            <div class="code-block">
+Most Appropriate Representation: Grid Adjacency Matrix. 
+Requires fixed, ordered neighborhood structures (like 2D/3D lattices) to apply sliding spatial kernels.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                3. RNN/LSTM: The Temporal Memory
+            </span>
+            <p>Recurrent Neural Networks (RNNs) and Long Short-Term Memory (LSTM) units are the engines of "Memory."</p>
+            <ul>
+                <li><strong>Concept:</strong> They are designed to process sequences where the order of data points matters. In graph learning, we use them for Evolving/Dynamic Graphs to capture how a node's state changes over time.</li>
+                <li><strong>When to use:</strong> Use this when the "Snapshot" of the graph at Time A is significantly different from Time B, and you need to predict Time C.</li>
+                <li><strong>Example:</strong> Traffic Flow Prediction. Intersections are nodes and roads are edges. The "node features" (number of cars) change every minute. You use an LSTM at each intersection to remember the morning rush hour patterns, while the GNN layers handle the "spillover" effect.</li>
+            </ul>
+            <div class="code-block">
+Most Appropriate Representation: Temporal Snapshots or Random Walks.
+Processes ordered sequences of node features over time ($X^{(t)}$) or path-based node lists.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                4. GNN: The Relational Engine
+            </span>
+            <p>The Graph Neural Network is the only engine that treats the $edge\_index$ as a first-class citizen.</p>
+            <ul>
+                <li><strong>Mechanism:</strong> It uses Message Passing to allow nodes to "talk" to one another. It is the appropriate choice when the identity of a node is defined by its relationships rather than just its individual attributes.</li>
+                <li><strong>When to use:</strong> Use this when the data is "Non-Euclidean" (no fixed grid) and the connections provide the primary context.</li>
+                <li><strong>Example:</strong> Drug Discovery. In a molecule graph, nodes are atoms and edges are chemical bonds. A carbon atom's properties change entirely depending on what it is bonded to. A GNN "passes messages" between atoms.</li>
+            </ul>
+            <div class="code-block">
+Most Appropriate Representation: Edge Index (COO format). 
+Pairs perfectly with node features to enable memory-efficient, localized message passing without dense matrices.
+            </div>
+        </div>
+
+        <div class="subsection">
+            <span class="subsection-title">
+                B. Output Layer Edits (The "Nozzle")
+            </span>
+            <p>The number of neurons in your final Linear layer and the Activation Function change per task:</p>
+            <ul>
+                <li><strong>Multi-Class Classification (Cora):</strong> out_channels = num_classes. Use LogSoftmax to get a probability distribution.</li>
+                <li><strong>Binary Classification:</strong> out_channels = 1. Use Sigmoid to get a value between 0 and 1.</li>
+                <li><strong>Regression (Predicting Node "Temperature"):</strong> out_channels = 1. Use No Activation (identity) to allow for any real number output.</li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        Phase 3: The Masked Training Loop
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Implementation Details
+            </span>
+            <p>Because all nodes (Train/Val/Test) exist in the same data.x matrix, you use <strong>Masks</strong> to prevent "cheating."</p>
+            <div class="code-block">
+1. Forward Pass: Calculate predictions for all nodes.
+2. Masking: Apply data.train_mask to the output and the ground truth.
+3. Loss: Calculate the error (e.g., CrossEntropy or MSE) only on the training subset.
+4. Step: Update weights via the optimizer.
+            </div>
+        </div>
+    </div>
+</details>
+
+<details class="section">
+    <summary>
+        Phase 4: Benchmarking the Baseline
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
+    
+    <div class="section-content">
+        <div class="subsection">
+            <span class="subsection-title">
+                Final Evaluation
+            </span>
+            <p>Evaluate using <strong>val_mask</strong> and <strong>test_mask</strong>. This accuracy is your "Graph-Agnostic Baseline."</p>
+            <ul>
+                <li>It tells you how much information is in the features alone.</li>
+                <li>When you eventually add Message Passing (GNN), any jump in accuracy represents the <em>"Value of Topology."</em></li>
+            </ul>
+        </div>
+    </div>
+</details>
+
+</body>
+</html>

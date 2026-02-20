@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+/* --- INTEGRATED CRT CORE STYLES --- */
+:root {
+--bg-color: #000000;
+--text-color: #00ff41;
+--accent-color: #00ff41;
+--dim-color: #003b00;
+--border-color: #00ff41;
+--font-main: 'Courier New', Courier, monospace;
+--font-header: 'Arial Black', Impact, sans-serif;
+--crt-glow: 0px 0px 8px rgba(0, 255, 65, 0.4);
+}
+
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: var(--font-main);
+        margin: 0;
+        padding: 20px;
+        line-height: 1.5;
+    }
+
+    /* --- VISUAL EFFECTS --- */
+    .dither-layer {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        z-index: -1;
+        background-image: radial-gradient(circle, #003b00 1px, transparent 1px);
+        background-size: 4px 4px;
+        opacity: 0.4;
+    }
+
+    .scanlines {
+        position: fixed;
+        top: 0; left: 0; width: 100%; height: 100%;
+        background: linear-gradient(to bottom, rgba(0, 255, 65, 0), rgba(0, 255, 65, 0) 50%, rgba(0, 20, 0, 0.2) 50%, rgba(0, 20, 0, 0.2));
+        background-size: 100% 4px;
+        pointer-events: none;
+        z-index: 9999;
+    }
+
+    /* --- MODULE COMPONENTS --- */
+    strong { color: var(--accent-color); text-decoration: underline; }
+    em { font-style: normal; color: #50c878; border-bottom: 1px dotted var(--dim-color); }
+
+    details.section {
+        margin-bottom: 15px;
+        border: 1px solid var(--dim-color);
+        background: #050505;
+    }
+
+    details.section > summary {
+        font-weight: bold;
+        padding: 12px;
+        background: #0a0a0a;
+        cursor: pointer;
+        list-style: none;
+        text-transform: uppercase;
+        font-size: 1.1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    details.section[open] > summary {
+        border-bottom: 1px solid var(--dim-color);
+        color: var(--accent-color);
+        text-shadow: var(--crt-glow);
+    }
+
+    .section-content { padding: 20px; }
+
+    .subsection {
+        margin-bottom: 30px;
+        border-left: 4px solid var(--dim-color);
+        padding-left: 15px;
+    }
+
+    .subsection-title {
+        background: var(--dim-color);
+        color: var(--accent-color);
+        padding: 4px 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+    }
+
+    .code-block {
+        background: #020a02;
+        border: 1px dashed var(--dim-color);
+        padding: 10px;
+        margin: 10px 0;
+        font-size: 0.85rem;
+        color: var(--accent-color);
+        overflow-x: auto;
+    }
+
+    .eye-btn {
+        background: none;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+        cursor: pointer;
+        padding: 2px 5px;
+        display: flex;
+        align-items: center;
+        opacity: 0.7;
+    }
+    .eye-btn:hover { opacity: 1; background: var(--accent-color); color: black; }
+</style>
+</head>
+<body>
+
+<div class="dither-layer"></div>
+<div class="scanlines"></div>
+
+<details class="section" open>
+<summary>
+EXPLORATORY GRAPH ANALYSIS
+<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+</summary>
+
+<div class="section-content">
+    
+    <div class="subsection">
+        <span class="subsection-title">
+            COUNTS
+            <button class="eye-btn" onclick="window.parent.openViewport('path/to/visualization.html')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Goal:</strong> The count() function in Cypher is an aggregation tool used to quantify results returned by a query.</p>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            COUNTING ACROSS FEATURES
+            <button class="eye-btn" onclick="window.parent.openViewport('path/to/visualization.html')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        
+        <p><strong>Goal:</strong> It operates in two distinct ways:</p>
+        
+        <ul>
+            <li><strong>Key 01:</strong> <em>count(*)</em>: Counts every row produced, including those containing null values.</li>
+            <li><strong>Key 02:</strong> <em>count(expression)</em>: Counts only non-null values for a specific property or variable.</li>
+            <li><strong>Key 03:</strong> <em>Summarizers (Aggregations)</em>: These are math operations like count(), sum(), or avg(). They collapse data into a single number.</li>
+            <li><strong>Key 04:</strong> <em>Organizers (Grouping Keys)</em>: These are any raw properties or labels (e.g., Category, Status, UserType).</li>
+            <li><strong>Key 05:</strong> Cypher treats every <em>Organizer</em> as a "bucket label." If you list an Organizer, the engine creates a separate bucket for every unique value it finds.</li>
+            <li><strong>Key 06:</strong> The <em>Summarizers</em> then perform their math inside each of those specific buckets.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            COUNTING RELATIONSHIP TYPES
+            <button class="eye-btn" onclick="window.parent.openViewport('path/to/impl_viz.html')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p>Use size() accesses the relationship store, where Neo4j keeps pre-calculated metadata on the node— Using MATCH requires traversal, where the engine visits every relationship, increasing cardinality.</p>
+        <p>One counts by doing work; the other just reads the saved total. To count relationships by type, you use a generic pattern without specifying labels.</p>
+        
+        <div class="code-block">
+MATCH ()-[r]->()
+</div>
+
+        <p>In the RETURN list, the <strong>type(r)</strong> function extracts the name of the relationship (the Organizer), while <strong>count(*)</strong> provides the math (the Summarizer). If you don’t use a Summarizer (like count()), Cypher doesn't know you want a total; it thinks you want a list. If you just RETURN type(r), the engine outputs the type for every single relationship it finds—meaning thousands of repetitive rows.</p>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            TIME COUNTS (DISTRIBUTION OF DATA)
+            <button class="eye-btn" onclick="window.parent.openViewport('path/to/impl_viz.html')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Temporal boundaries:</strong> Identify the range of time covered by its entries.</p>
+        <ul>
+            <li>By applying aggregation functions—specifically <em>min()</em> and <em>max()</em>—to a timestamp property on a set of nodes, you can isolate the earliest and latest data points in the graph.</li>
+            <li>To understand the distribution of data, you should group these nodes into discrete intervals, such as years or months.</li>
+            <li>To filter isolate a temporal moment, use a <strong>WHERE</strong> clause to filter by date.</li>
+            <li>Placing both year and month in the <strong>RETURN</strong> clause, Cypher uses them as grouping keys— This means the database organizes all matching nodes into "buckets" based on their shared year and month before performing the final tally.</li>
+        </ul>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            FILTERING GRAPH PATTERNS
+            <button class="eye-btn" onclick="window.parent.openViewport('path/to/impl_viz.html')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Cardinality</strong> is the total number of rows in the input stream— counting input size, not unique entities.</p>
+    </div>
+
+    <div class="subsection">
+        <span class="subsection-title">
+            Existential Subqueries
+            <button class="eye-btn" onclick="window.parent.openViewport('path/to/impl_viz.html')">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                    <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+            </button>
+        </span>
+        <p><strong>Complex Filtering:</strong> You can use <em>EXISTS { MATCH ... WHERE ... }</em> to filter nodes based on a relationship that must also meet a specific property.</p>
+        <ul>
+            <li>This lets you check for the existence of a qualified pattern without bringing those extra nodes into your main result set.</li>
+            <li><strong>Relationship Absence (True Negation):</strong> Use <em>NOT EXISTS { (u)-[:FRIEND]->() }</em> to find "lonely" nodes.</li>
+            <li>This is the only way to effectively filter for the total absence of a relationship type.</li>
+            <li>While MATCH finds what is there, <strong>NOT EXISTS {}</strong> allows you to filter out nodes that satisfy a specific pattern of negating some "match" query.</li>
+            <li><strong>Multi-Level Validation:</strong> You can nest patterns to validate a chain of existence (e.g. User posted a message that has a specific tag) while keeping the main query's cardinality focused solely on the User.</li>
+        </ul>
+
+        <div class="code-block">
+EXISTS { MATCH ... WHERE ... }
+NOT EXISTS { (u)-[:FRIEND]->() }
+</div>
+</div>
+
+</div>
+</details>
+
+</body>
+</html>

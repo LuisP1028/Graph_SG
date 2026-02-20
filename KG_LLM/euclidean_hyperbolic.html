@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SYS.VIS // GEOMETRY_ANALYSIS_V6 (FLUID)</title>
+    
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --term-green: #33ff00;
+            --term-dim: #1a8000;
+            --term-alert: #ff3300;
+            --term-calm: #00ccff;
+            --bg-color: #000000;
+            --font-main: 'VT323', 'Courier New', monospace;
+            
+            /* Fluid Spacing Variables */
+            --spacing-sm: 0.5vmin;
+            --spacing-md: 1vmin;
+            --spacing-lg: 2vmin;
+        }
+
+        /* --- GLOBAL RESET & TYPOGRAPHY --- */
+        * { box-sizing: border-box; }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--term-green);
+            font-family: var(--font-main);
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh; /* Fallback */
+            height: 100dvh; /* Mobile dynamic viewport height */
+            overflow: hidden; /* Prevent scrolling */
+            display: flex;
+            flex-direction: column;
+            user-select: none;
+            -webkit-font-smoothing: none;
+        }
+
+        /* Fluid Font Sizing Strategy */
+        h1 { font-size: clamp(14px, 2.5vmin, 24px); margin: 0; white-space: nowrap; }
+        .status { font-size: clamp(10px, 1.5vmin, 14px); }
+        .label-text { font-size: clamp(10px, 1.75vmin, 16px); }
+        .desc-text { font-size: clamp(10px, 1.5vmin, 14px); }
+        .hud-text { font-size: clamp(10px, 1.5vmin, 14px); }
+
+        /* --- EFFECTS --- */
+        .crt-overlay {
+            position: absolute; inset: 0; pointer-events: none; z-index: 50;
+            background: 
+                linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            background-size: 100% 2px, 3px 100%;
+        }
+        .scanline {
+            width: 100%; height: 20%; z-index: 51; pointer-events: none;
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(33, 255, 0, 0.04) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1; position: absolute; bottom: 100%;
+            animation: scanline 8s linear infinite;
+        }
+        @keyframes scanline { 0% { bottom: 100%; } 100% { bottom: -20%; } }
+        .blink { animation: blink 1s step-end infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        /* --- LAYOUT STRUCTURE --- */
+        header {
+            flex-shrink: 0;
+            border-bottom: 1px solid var(--term-green);
+            padding: var(--spacing-md) var(--spacing-lg);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #000500;
+            z-index: 20;
+        }
+
+        /* MAIN: Orientation Aware Layout */
+        main {
+            flex-grow: 1; /* Take all available space */
+            display: flex;
+            position: relative;
+            min-height: 0; /* Crucial for flex scrolling/resizing */
+            min-width: 0;
+        }
+
+        /* Landscape: Side-by-Side */
+        @media (orientation: landscape) {
+            main { flex-direction: row; }
+            .panel { border-right: 1px solid var(--term-dim); }
+            .panel:last-child { border-right: none; }
+        }
+
+        /* Portrait: Stacked */
+        @media (orientation: portrait) {
+            main { flex-direction: column; }
+            .panel { border-bottom: 1px solid var(--term-dim); }
+            .panel:last-child { border-bottom: none; }
+        }
+
+        .panel {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            min-width: 0;
+            min-height: 0;
+            background: radial-gradient(circle, transparent 20%, #000 130%);
+        }
+
+        /* --- CANVAS --- */
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+            cursor: crosshair;
+        }
+
+        /* --- OVERLAYS --- */
+        .panel-ui {
+            position: absolute;
+            pointer-events: none; /* Let clicks pass through to canvas */
+            padding: var(--spacing-sm);
+            z-index: 10;
+        }
+
+        .top-left { top: 0; left: 0; }
+        .bottom-center { 
+            bottom: var(--spacing-md); 
+            left: 0; right: 0; 
+            text-align: center;
+            background: rgba(0,0,0,0.6); /* Readability backdrop */
+        }
+
+        .tag {
+            border: 1px solid var(--term-green);
+            padding: 2px 6px;
+            background: rgba(0,0,0,0.8);
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        /* MathJax Override */
+        mjx-container { font-size: 110% !important; color: inherit !important; }
+
+        /* --- FOOTER / HUD --- */
+        footer {
+            flex-shrink: 0;
+            border-top: 1px solid var(--term-green);
+            background: #000500;
+            z-index: 20;
+            padding: var(--spacing-sm) var(--spacing-lg);
+            display: flex;
+            flex-wrap: wrap; /* Wrap on very small screens */
+            gap: var(--spacing-lg);
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .hud-group {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: max-content;
+        }
+
+        .hud-label {
+            color: #fff;
+            border-bottom: 1px solid var(--term-dim);
+            margin-bottom: 2px;
+            text-transform: uppercase;
+        }
+
+        /* Slider Styling */
+        .slider-container {
+            flex: 1;
+            min-width: 150px;
+            max-width: 400px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        input[type="range"] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+            margin: var(--spacing-sm) 0;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: clamp(12px, 2vmin, 20px);
+            width: clamp(6px, 1vmin, 10px);
+            background: var(--term-green);
+            cursor: pointer;
+            border: 1px solid var(--bg-color);
+            margin-top: -0.6vmin;
+            box-shadow: 0 0 5px var(--term-green);
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 2px;
+            cursor: pointer;
+            background: var(--term-dim);
+        }
+
+        /* Alerts */
+        .alert-box {
+            border: 1px solid var(--term-alert);
+            color: var(--term-alert);
+            padding: 2px 6px;
+            display: none;
+            text-align: center;
+            animation: blink 0.5s step-end infinite;
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="crt-overlay"></div>
+    <div class="scanline"></div>
+
+    <header>
+        <h1>SYS.VIS // GEOMETRY_ANALYSIS_V6</h1>
+        <div class="status">STATUS: <span class="blink">ONLINE</span></div>
+    </header>
+
+    <main>
+        <div class="panel">
+            <div class="panel-ui top-left">
+                <div class="tag label-text" style="color: var(--term-green); border-color: var(--term-green);">
+                    SPACE: EUCLIDEAN
+                </div>
+            </div>
+            <canvas id="canvasLeft"></canvas>
+            <div class="panel-ui bottom-center desc-text">
+                GROWTH: POLYNOMIAL \( r^d \)<br>
+                Capacity exhausted. Nodes crowd at surface.
+            </div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-ui top-left">
+                <div class="tag label-text" style="color: var(--term-calm); border-color: var(--term-calm);">
+                    SPACE: HYPERBOLIC
+                </div>
+            </div>
+            <canvas id="canvasRight"></canvas>
+            <div class="panel-ui bottom-center desc-text">
+                GROWTH: EXPONENTIAL \( e^r \)<br>
+                Infinite room at boundary. Structure preserved.
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="hud-group hud-text">
+            <div class="hud-label">CONTROLS</div>
+            <div style="color: var(--term-dim);">L-CLICK: ROTATE • R-CLICK: PAN</div>
+            <div style="color: var(--term-dim);">SCROLL: DEEP ZOOM</div>
+        </div>
+
+        <div class="slider-container hud-text">
+            <div style="display: flex; justify-content: space-between;">
+                <span>TREE DEPTH: <span id="depth-val">3</span></span>
+                <span>NODES: <span id="node-count">40</span></span>
+            </div>
+            <input type="range" id="depth-slider" min="1" max="6" value="3" step="1">
+        </div>
+
+        <div class="hud-group hud-text" style="text-align: right;">
+            <div id="stat-euc">EUC: <span style="font-weight:bold; color: var(--term-dim)">OK</span></div>
+            <div id="stat-hyp">HYP: <span style="font-weight:bold; color: var(--term-calm)">OPTIMAL</span></div>
+            <div id="alert-msg" class="alert-box hud-text">! LIMIT REACHED !</div>
+        </div>
+    </footer>
+
+    <script>
+        /**
+         * SYS.VIS v6.0 - FLUID RESPONSIVE ENGINE
+         * Window-Agnostic 3D Visualization of Geometric Crowding
+         */
+
+        const canvasLeft = document.getElementById('canvasLeft');
+        const ctxLeft = canvasLeft.getContext('2d');
+        const canvasRight = document.getElementById('canvasRight');
+        const ctxRight = canvasRight.getContext('2d');
+
+        // --- STATE ---
+        const STATE = {
+            depth: 3,
+            branching: 3,
+            rotation: { x: 0.5, y: 0.5 },
+            camera: {
+                zoom: 1.0,
+                offset: { x: 0, y: 0 }
+            },
+            isDragging: false,
+            dragMode: 'ROTATE',
+            lastMouse: { x: 0, y: 0 }
+        };
+
+        // --- 3D MATH HELPERS ---
+        function Point3(x, y, z) { return {x,y,z}; }
+
+        function generateTreeData(depth, branching) {
+            let nodes = [];
+            nodes.push({ id: 0, parent: null, layer: 0, children: [] });
+            let currentLayer = [0];
+            let idCounter = 1;
+
+            for (let d = 1; d <= depth; d++) {
+                let nextLayer = [];
+                currentLayer.forEach(parentId => {
+                    const parentNode = nodes[parentId];
+                    for (let b = 0; b < branching; b++) {
+                        let newNode = { id: idCounter++, parent: parentId, layer: d, children: [] };
+                        nodes.push(newNode);
+                        parentNode.children.push(newNode.id);
+                        nextLayer.push(newNode.id);
+                    }
+                });
+                currentLayer = nextLayer;
+            }
+            return nodes;
+        }
+
+        // --- LAYOUTS (Abstract Units) ---
+        // We define a standard model unit radius of 140.
+        // The render engine handles scaling this to the screen.
+        const MODEL_RADIUS = 140;
+
+        function layoutEuclidean(nodes) {
+            let positions = new Array(nodes.length);
+            positions[0] = Point3(0,0,0);
+            const nodesPerLayer = {};
+            nodes.forEach(n => {
+                if(!nodesPerLayer[n.layer]) nodesPerLayer[n.layer] = [];
+                nodesPerLayer[n.layer].push(n.id);
+            });
+            Object.keys(nodesPerLayer).forEach(layer => {
+                const layerIdx = parseInt(layer);
+                if (layerIdx === 0) return;
+                const layerNodes = nodesPerLayer[layer];
+                const count = layerNodes.length;
+                // Linear growth
+                const radius = layerIdx * (MODEL_RADIUS / 3.5); 
+                const phi = Math.PI * (3 - Math.sqrt(5));
+                layerNodes.forEach((nodeId, i) => {
+                    const y = 1 - (i / (count - 1)) * 2;
+                    const radiusAtY = Math.sqrt(1 - y * y);
+                    const theta = phi * i;
+                    positions[nodeId] = Point3(
+                        Math.cos(theta) * radiusAtY * radius, 
+                        y * radius, 
+                        Math.sin(theta) * radiusAtY * radius
+                    );
+                });
+            });
+            return positions;
+        }
+
+        function layoutHyperbolic(nodes) {
+            let positions = new Array(nodes.length);
+            positions[0] = Point3(0,0,0);
+            const nodesPerLayer = {};
+            nodes.forEach(n => {
+                if(!nodesPerLayer[n.layer]) nodesPerLayer[n.layer] = [];
+                nodesPerLayer[n.layer].push(n.id);
+            });
+            Object.keys(nodesPerLayer).forEach(layer => {
+                const layerIdx = parseInt(layer);
+                if (layerIdx === 0) return;
+                const layerNodes = nodesPerLayer[layer];
+                const count = layerNodes.length;
+                // Hyperbolic Tanh growth (Limit 140)
+                const visualRadius = MODEL_RADIUS * Math.tanh(layerIdx * 0.5); 
+                const phi = Math.PI * (3 - Math.sqrt(5));
+                layerNodes.forEach((nodeId, i) => {
+                    const y = 1 - (i / (count - 1)) * 2;
+                    const radiusAtY = Math.sqrt(1 - y * y);
+                    const theta = phi * i;
+                    positions[nodeId] = Point3(
+                        Math.cos(theta) * radiusAtY * visualRadius, 
+                        y * visualRadius, 
+                        Math.sin(theta) * radiusAtY * visualRadius
+                    );
+                });
+            });
+            return positions;
+        }
+
+        // --- RESPONSIVE RENDER ENGINE ---
+
+        function rotatePoint(p, rotX, rotY) {
+            let x = p.x * Math.cos(rotY) - p.z * Math.sin(rotY);
+            let z = p.x * Math.sin(rotY) + p.z * Math.cos(rotY);
+            let y = p.y;
+            let y2 = y * Math.cos(rotX) - z * Math.sin(rotX);
+            let z2 = y * Math.sin(rotX) + z * Math.cos(rotX);
+            return { x: x, y: y2, z: z2 };
+        }
+
+        function project(p, width, height, camera) {
+            // DYNAMIC SCALE: Fit 90% of smallest dimension
+            const minDim = Math.min(width, height);
+            const targetRadius = minDim * 0.45; // 90% coverage
+            const responsiveScale = targetRadius / MODEL_RADIUS;
+
+            // Perspective
+            const fov = 300;
+            const dist = fov + p.z;
+            if (dist < 1) return null;
+
+            // Base scale adjusted by Zoom and Window Size
+            const baseScale = fov / dist;
+            const effectiveScale = baseScale * camera.zoom * responsiveScale;
+
+            // Pan + Center
+            const centerX = (width / 2) + camera.offset.x;
+            const centerY = (height / 2) + camera.offset.y;
+
+            return {
+                x: centerX + (p.x * effectiveScale),
+                y: centerY + (p.y * effectiveScale),
+                scale: effectiveScale,
+                dist: dist
+            };
+        }
+
+        function renderScene(ctx, width, height, type) {
+            // Clean slate
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(0, 0, width, height);
+
+            const treeNodes = generateTreeData(STATE.depth, STATE.branching);
+            let positions;
+            let isCrowded = false;
+            let themeColor = '#33ff00';
+
+            // Calculate center projection for Boundary Circle
+            const centerProj = project(Point3(0,0,0), width, height, STATE.camera);
+            
+            if (type === 'EUCLIDEAN') {
+                positions = layoutEuclidean(treeNodes);
+                if (centerProj) {
+                    ctx.strokeStyle = '#1a8000';
+                    ctx.lineWidth = Math.max(1, 2 * centerProj.scale);
+                    ctx.beginPath(); 
+                    // Draw boundary at MODEL_RADIUS scaled
+                    ctx.arc(centerProj.x, centerProj.y, MODEL_RADIUS * centerProj.scale, 0, Math.PI*2); 
+                    ctx.stroke();
+                }
+                if (STATE.depth > 4) {
+                    isCrowded = true;
+                    themeColor = '#ff3300';
+                }
+            } else {
+                positions = layoutHyperbolic(treeNodes);
+                if (centerProj) {
+                    ctx.strokeStyle = '#004455';
+                    ctx.lineWidth = Math.max(1, 2 * centerProj.scale);
+                    ctx.beginPath(); 
+                    ctx.arc(centerProj.x, centerProj.y, MODEL_RADIUS * centerProj.scale, 0, Math.PI*2); 
+                    ctx.stroke();
+                }
+                themeColor = '#00ccff';
+            }
+
+            // Transform & Project
+            let renderList = [];
+            treeNodes.forEach(n => {
+                const rawPos = positions[n.id];
+                const rotPos = rotatePoint(rawPos, STATE.rotation.x, STATE.rotation.y);
+                const screen = project(rotPos, width, height, STATE.camera);
+                
+                if (screen) {
+                    renderList.push({
+                        x: screen.x, y: screen.y, z: rotPos.z,
+                        scale: screen.scale,
+                        id: n.id, parent: n.parent,
+                        rawX: rawPos.x, rawY: rawPos.y, rawZ: rawPos.z
+                    });
+                }
+            });
+
+            // Sort Z
+            renderList.sort((a, b) => b.z - a.z);
+
+            // Draw Links
+            ctx.strokeStyle = type === 'EUCLIDEAN' ? '#1a8000' : '#004455';
+            const map = {};
+            renderList.forEach(r => map[r.id] = r);
+
+            renderList.forEach(node => {
+                if (node.parent !== null && map[node.parent]) {
+                    const p = map[node.parent];
+                    ctx.lineWidth = Math.max(0.5, 1.5 * node.scale);
+                    ctx.beginPath();
+                    ctx.moveTo(p.x, p.y);
+                    ctx.lineTo(node.x, node.y);
+                    ctx.stroke();
+                }
+            });
+
+            // Draw Nodes
+            renderList.forEach(node => {
+                let baseSize = 4;
+                if (type === 'HYPERBOLIC') {
+                    // Infinity shrinking effect
+                    const d = Math.sqrt(node.rawX**2 + node.rawY**2 + node.rawZ**2);
+                    const normD = d / MODEL_RADIUS;
+                    baseSize = 5 * (1 - normD*0.8);
+                } else {
+                    baseSize = isCrowded ? 3 : 4;
+                }
+                const finalSize = Math.max(1, baseSize * node.scale); 
+                
+                ctx.fillStyle = themeColor;
+                if(isCrowded && Math.random() > 0.8) ctx.fillStyle = "#fff"; // Glitch
+                ctx.fillRect(node.x - finalSize/2, node.y - finalSize/2, finalSize, finalSize);
+            });
+
+            return isCrowded;
+        }
+
+        // --- LOOP ---
+        function animate() {
+            if (!STATE.isDragging) STATE.rotation.y += 0.005;
+
+            // Responsive Canvas Resize Logic
+            // We use clientWidth/Height to detect CSS Flexbox changes automatically
+            if (canvasLeft.width !== canvasLeft.clientWidth || canvasLeft.height !== canvasLeft.clientHeight) {
+                canvasLeft.width = canvasLeft.clientWidth;
+                canvasLeft.height = canvasLeft.clientHeight;
+            }
+            if (canvasRight.width !== canvasRight.clientWidth || canvasRight.height !== canvasRight.clientHeight) {
+                canvasRight.width = canvasRight.clientWidth;
+                canvasRight.height = canvasRight.clientHeight;
+            }
+
+            const crowded = renderScene(ctxLeft, canvasLeft.width, canvasLeft.height, 'EUCLIDEAN');
+            renderScene(ctxRight, canvasRight.width, canvasRight.height, 'HYPERBOLIC');
+
+            // UI Updates
+            const alertBox = document.getElementById('alert-msg');
+            const statEuc = document.getElementById('stat-euc');
+            if (crowded) {
+                alertBox.style.display = 'block';
+                statEuc.innerHTML = "EUC: <span style='color:var(--term-alert)'>CRITICAL</span>";
+            } else {
+                alertBox.style.display = 'none';
+                statEuc.innerHTML = "EUC: <span style='color:var(--term-dim)'>NOMINAL</span>";
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        // --- INPUTS ---
+        
+        // Touch/Mouse Handlers
+        function handleStart(x, y, button, shift) {
+            STATE.isDragging = true;
+            STATE.lastMouse = { x, y };
+            STATE.dragMode = (button === 2 || shift) ? 'PAN' : 'ROTATE';
+            document.body.style.cursor = STATE.dragMode === 'PAN' ? 'move' : 'grabbing';
+        }
+
+        function handleMove(x, y) {
+            if (!STATE.isDragging) return;
+            const dx = x - STATE.lastMouse.x;
+            const dy = y - STATE.lastMouse.y;
+            
+            if (STATE.dragMode === 'ROTATE') {
+                STATE.rotation.y += dx * 0.01;
+                STATE.rotation.x += dy * 0.01;
+            } else {
+                STATE.camera.offset.x += dx;
+                STATE.camera.offset.y += dy;
+            }
+            STATE.lastMouse = { x, y };
+        }
+
+        function handleEnd() {
+            STATE.isDragging = false;
+            document.body.style.cursor = 'default';
+        }
+
+        // Event Listeners
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('mousedown', e => handleStart(e.clientX, e.clientY, e.button, e.shiftKey));
+        document.addEventListener('mousemove', e => handleMove(e.clientX, e.clientY));
+        document.addEventListener('mouseup', handleEnd);
+
+        // Touch Support
+        document.addEventListener('touchstart', e => {
+            if (e.target.tagName !== 'INPUT') {
+                e.preventDefault();
+                const t = e.touches[0];
+                handleStart(t.clientX, t.clientY, 0, false);
+            }
+        }, {passive: false});
+        document.addEventListener('touchmove', e => {
+            if (STATE.isDragging) {
+                e.preventDefault();
+                const t = e.touches[0];
+                handleMove(t.clientX, t.clientY);
+            }
+        }, {passive: false});
+        document.addEventListener('touchend', handleEnd);
+
+        // Zoom
+        window.addEventListener('wheel', e => {
+            e.preventDefault();
+            const delta = -e.deltaY * 0.001;
+            let newZoom = STATE.camera.zoom + (STATE.camera.zoom * delta * 2);
+            STATE.camera.zoom = Math.max(0.2, Math.min(newZoom, 10.0));
+        }, { passive: false });
+
+        // Slider
+        const slider = document.getElementById('depth-slider');
+        const depthVal = document.getElementById('depth-val');
+        const nodeCount = document.getElementById('node-count');
+
+        slider.addEventListener('input', (e) => {
+            STATE.depth = parseInt(e.target.value);
+            depthVal.innerText = STATE.depth;
+            const total = (Math.pow(STATE.branching, STATE.depth + 1) - 1) / (STATE.branching - 1);
+            nodeCount.innerText = total;
+        });
+
+        // Init
+        animate();
+
+    </script>
+</body>
+</html>
