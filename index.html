@@ -147,6 +147,47 @@
 
     .section-content { padding: 20px; }
 
+    /* --- INJECTED MODULE STYLES (EYE-BTN) --- */
+    .subsection {
+        margin-bottom: 30px;
+        border-left: 4px solid var(--dim-color);
+        padding-left: 15px;
+    }
+
+    .subsection-title {
+        background: var(--dim-color);
+        color: var(--accent-color);
+        padding: 4px 10px;
+        font-weight: bold;
+        text-transform: uppercase;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 15px;
+        font-size: 0.95rem;
+    }
+
+    .eye-btn {
+        background: none;
+        border: 1px solid var(--accent-color);
+        color: var(--accent-color);
+        cursor: pointer;
+        padding: 2px 5px;
+        display: flex;
+        align-items: center;
+        opacity: 0.7;
+    }
+    .eye-btn:hover { 
+        opacity: 1; 
+        background: var(--accent-color); 
+        color: black; 
+    }
+    .eye-btn svg {
+        width: 18px;
+        height: 18px;
+        stroke: currentColor;
+    }
+
     /* UI COMPONENTS */
     .retro-viewport {
         position: fixed;
