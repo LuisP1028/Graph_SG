@@ -293,8 +293,99 @@
 
     <details class="part">
         <summary>Part II: KNOWLEDGE GRAPHS & LLMS</summary>
-        <div class="part-content" data-include="optimizations.html">
-            <span class="loading-txt">[ESTABLISHING DATALINK...]</span>
+        <div class="part-content">
+
+            <details class="section">
+                <summary>MODULE_01: KNOWLEDGE GRAPH CORE</summary>
+                <div class="section-content" data-include="KG_LLM/KG.html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
+            <details class="section">
+                <summary>MODULE_02: ONTOLOGY-DRIVEN EXTRACTION</summary>
+                <div class="section-content" data-include="KG_LLM/KG_from_ontology.html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
+            <details class="section">
+                <summary>MODULE_03: PROMPT ENGINEERING & NER</summary>
+                <div class="section-content" data-include="KG_LLM/prompt_eng_NER.html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
+            <details class="section">
+                <summary>MODULE_04: ENTITY RECOGNITION (LLM)</summary>
+                <div class="section-content" data-include="KG_LLM/NER_NED_LLM.html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
+            <details class="section">
+                <summary>MODULE_05: ENTITY DISAMBIGUATION</summary>
+                <div class="section-content" data-include="KG_LLM/NED_NER.html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
+            <details class="section">
+                <summary>MODULE_06: TAXONOMY & NODE GRAPHS</summary>
+                <div class="section-content" data-include="KG_LLM/MLKG_NODE_GRAPH_TA....html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
+            <details class="section">
+                <summary>MODULE_07: GEOMETRIC EMBEDDINGS</summary>
+                <div class="section-content" data-include="KG_LLM/euclidean_hyperbolic.html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
+            <details class="section">
+                <summary>MODULE_08: GRAPH NEURAL NETWORKS I</summary>
+                <div class="section-content" data-include="KG_LLM/GNN1.html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
+            <details class="section">
+                <summary>MODULE_09: GRAPH NEURAL NETWORKS II</summary>
+                <div class="section-content" data-include="KG_LLM/GNN2.html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
+            <details class="section">
+                <summary>MODULE_10: REASONING PATHS</summary>
+                <div class="section-content" data-include="KG_LLM/paths.html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
+            <details class="section">
+                <summary>MODULE_11: CHATBOT ARCHITECTURE</summary>
+                <div class="section-content" data-include="KG_LLM/chatbot_build.html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
+            <details class="section">
+                <summary>MODULE_12: MULTI-AGENT SYSTEMS</summary>
+                <div class="section-content" data-include="KG_LLM/LANGRAPH.html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
+            <details class="section">
+                <summary>MODULE_13: SYSTEM CONSTRAINTS</summary>
+                <div class="section-content" data-include="KG_LLM/constraints.html">
+                    <span class="loading-txt">[PULLING MODULE...]</span>
+                </div>
+            </details>
+
         </div>
     </details>
 
@@ -343,6 +434,8 @@
                 const htmlText = await response.text();
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlText, 'text/html');
+                
+                // Content targeting logic
                 const content = doc.querySelector('.section-content') || doc.querySelector('.part-content') || doc.body;
                 container.innerHTML = content.innerHTML;
             } catch (error) {
