@@ -263,11 +263,15 @@
 
 <details class="section">
     <summary>
-        &lt;&lt;&lt; EXTRACTION &gt;&gt;&gt;
+        Extraction:
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
     </summary>
     <div class="section-content">
-        <p>Data Storage: Separate/Within Node When choosing between storing data as node properties or separate nodes, the decision rests on your query goals and scalability. The Trade-off Node Properties: Storing a list of URLs directly on a node is simple but slow for discovery. To find nodes sharing a link, the database must scan every node's list property—essentially a costly search. Separate Nodes: Use Separate Nodes for shared data to leverage index-free adjacency over property scanning. Standardization Separate nodes work best when data is standardized. For example, "NYC" and "New York City" should point to the same node to ensure your graph remains unified and searchable.</p>
+        <p>Data Storage: Separate/Within Node When choosing between storing data as node properties or separate nodes, the decision rests on your query goals and scalability. 
+            <p>The Trade-offs:</p> 
+            <li>Node Properties: Storing a list of URLs directly on a node is simple but slow for discovery. To find nodes sharing a link, the database must scan every node's list property—essentially a costly search.</li>
+             <li>Separate Nodes: Use Separate Nodes for shared data to leverage index-free adjacency over property scanning. Standardization Separate nodes work best when data is standardized. For example, "NYC" and "New York City" should point to the same node to ensure your graph remains unified and searchable.</li>
+             </p>
 
         <div class="subsection">
             <span class="subsection-title">
