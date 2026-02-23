@@ -513,8 +513,22 @@
                 const htmlText = await response.text();
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlText, 'text/html');
-                const content = doc.querySelector('.section-content') || doc.querySelector('.part-content') || doc.body;
-                container.innerHTML = content.innerHTML;
+
+                /** * IMPROVED EXTRACTION LOGIC:
+                 * 1. Get all children of the child file's body.
+                 * 2. Filter out visual overlay layers to prevent opacity stacking.
+                 * 3. Join the outerHTML of all valid top-level nodes to capture multiple modules.
+                 */
+                const validElements = Array.from(doc.body.children).filter(el => {
+                    return !el.classList.contains('dither-layer') && !el.classList.contains('scanlines');
+                });
+
+                if (validElements.length > 0) {
+                    container.innerHTML = validElements.map(el => el.outerHTML).join('');
+                } else {
+                    container.innerHTML = `<p style="color:var(--dim-color)">[MODULE_EMPTY]</p>`;
+                }
+
             } catch (error) {
                 console.error('Import Failed:', error);
                 container.innerHTML = `<p style="color:red">ERROR: COULD NOT LOAD MODULE [${file}].</p>`;
