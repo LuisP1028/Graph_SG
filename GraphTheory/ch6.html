@@ -162,7 +162,7 @@
         
         <div class="subsection">
             <span class="subsection-title">
-                &lt;Cypher Projection&gt;
+                Cypher Projection
                 <button class="eye-btn" onclick="window.parent.openViewport('path/to/visualization.html')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -192,7 +192,7 @@ the query aggregates them into a single relationship.
 
         <div class="subsection">
             <span class="subsection-title">
-                &lt;Degree Centrality&gt;
+                Degree Centrality
                 <button class="eye-btn" onclick="window.parent.openViewport('path/to/impl_viz.html')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -200,7 +200,7 @@ the query aggregates them into a single relationship.
                     </svg>
                 </button>
             </span>
-            <p><strong>Goal:</strong> Stats Mode: Generates a summary of the distribution (minimum, maximum, and average connections) across the network.</p>
+            <p><strong>Goal:</strong> Generates a summary of the distribution (minimum, maximum, and average connections) across the network.</p>
             <ul>
                 <li><strong>Out-degree:</strong> Measures the count of outgoing links. In a projection, this represents how many times a node initiated an interaction.</li>
                 <li><strong>In-degree:</strong> Measures the count of incoming links. This represents how many times a node was the recipient or "target" of an interaction.</li>
@@ -214,27 +214,10 @@ the query aggregates them into a single relationship.
             <p>By combining these orientations with Weights, you move from simply counting "how many connections" to calculating the "total volume" of flow. This allows you to distinguish between a node that is popular with many small entities (High Degree) and a node that has a massive, high-volume relationship with just one or two partners (High Weight).</p>
         </div>
 
-        <div class="subsection">
-            <span class="subsection-title">
-                &lt;Weakly Connected Components&gt;
-                <button class="eye-btn" onclick="window.parent.openViewport('path/to/impl_viz.html')">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                </button>
-            </span>
-            <p><strong>Goal:</strong> The Weakly Connected Components algorithm should be part of almost every network analysis.</p>
-            <ul>
-                <li><strong>Baseline:</strong> With it, you can evaluate how connected the network is and identify disconnected components. Establishing a Baseline: You run WCC to find the "Giant Component." In healthy real-world networks (like power grids or social circles), one massive cluster usually contains the majority of nodes.</li>
-                <li><strong>Anomalies:</strong> Spotting Anomalies: Use percentiles to identify nodes with no/little connections.</li>
-                <li><strong>Debugging:</strong> Debugging Logic: This mismatch between expected topology (everyone should be linked) and actual results (isolated orphans) signals a bug in the data pipeline or filtering criteria.</li>
-            </ul>
-        </div>
 
         <div class="subsection">
             <span class="subsection-title">
-                &lt;WEIGHTED PAGERANK&gt;
+                WEIGHTED PAGERANK
                 <button class="eye-btn" onclick="window.parent.openViewport('path/to/impl_viz.html')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
