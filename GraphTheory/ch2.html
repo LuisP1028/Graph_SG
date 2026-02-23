@@ -126,7 +126,7 @@
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
     </summary>
     <div class="section-content">
-        <p><strong><<Basic Graph Representations>></strong></p>
+        <p><strong>&lt;&lt;Basic Graph Representations&gt;&gt;</strong></p>
         
         <div class="subsection">
             <span class="subsection-title">
@@ -138,11 +138,8 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Goal:</strong> The most basic graph representation is the mathematical data structure adjacency matrix.</p>
-                        <ul>
-                <li><strong>Structure:</strong> An adjacency matrix is a square matrix, where the matrix elements indicate whether pairs of nodes are connected or not in the graph.</li>
-                <li><strong>Dimensions:</strong> The adjancency matrix dimensions are equal to the number of nodes in the graph.</li>
-            </ul>
+            
+            <p>The most basic graph representation is the mathematical data structure adjacency matrix. An adjacency matrix is a square matrix, where the matrix elements indicate whether pairs of nodes are connected or not in the graph. The adjancency matrix dimensions are equal to the number of nodes in the graph.</p>
         </div>
 
         <div class="subsection">
@@ -155,18 +152,14 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Goal:</strong> Simple data structure where each row represents a relationship of a given network.</p>
-            <ul>
-                <li><strong>Weight:</strong> The value of the relationship weight is stored in a separate column.</li>
-                <li><strong>Metadata:</strong> You could also store additional information about the relationship in the edge list.</li>
-            </ul>
+            <p>Simple data structure where each row represents a relationship of a given network. The value of the relationship weight is stored in a separate column. You could also store additional information about the relationship in the edge list.</p>
         </div>
     </div>
 </details>
 
 <details class="section">
     <summary>
-        Cypher Query Language and Graph Query Language
+        &lt;&lt;Cypher Query Language and Graph Query Language&gt;&gt;
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
     </summary>
     <div class="section-content">
@@ -180,22 +173,14 @@
                     </svg>
                 </button>
             </span>
-            <p>To represent this via text, the Cypher language uses "ASCII-art" to make the code look like the graph it describes:</p>
-            <ul>
-                <li><strong>Nodes ( ):</strong> Parentheses represent the circle of a node. Inside, you define the Type (e.g., :Person) and Properties (e.g., {name: "Thomas"}).</li>
-                <li><strong>Relationships -[]->:</strong> Brackets inside an arrow represent the link. Relationships must have a source and target; they cannot exist in a vacuum.</li>
-            </ul>
-            <div class="code-block">
-// Example Cypher Syntax
-(:Person {name: "Thomas"})-[:WORKS_AT]->(:Company {name: "TechCorp"})
-            </div>
+            <p>To represent this via text, the Cypher language uses "ASCII-art" to make the code look like the graph it describes: • Nodes ( ): Parentheses represent the circle of a node. Inside, you define the Type (e.g., :Person) and Properties (e.g., {name: "Thomas"}). • Relationships -[]->: Brackets inside an arrow represent the link. Relationships must have a source and target; they cannot exist in a vacuum.</p>
         </div>
     </div>
 </details>
 
 <details class="section">
     <summary>
-        Graph Databases:
+        &lt;&lt;Graph Databases: &gt;&gt;
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
     </summary>
     <div class="section-content">
@@ -209,11 +194,7 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Goal:</strong> A native graph database is typically a type of NoSQL database designed to store graph representations.</p>
-            <ul>
-                <li><strong>Index free adjacency:</strong> Instead of an index, which would require O(1) pointers, keeping speed constant as the graph grows.</li>
-                <li><strong>Traversal:</strong> each node has pointers to other nodes it has a relationship with, facilitating traversal across query nodes.</li>
-            </ul>
+            <p>A native graph database is typically a type of NoSQL database designed to store graph representations. Index free adjacency: Instead of an index, which would require O(1) pointers, keeping speed constant as the graph grows. each node has pointers to other nodes it has a relationship with, facilitating traversal across query nodes.</p>
         </div>
 
         <div class="subsection">
@@ -226,12 +207,7 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Goal:</strong> Structured as a triple is a data entity that consists of subject, predicate, and object.</p>
-                        <ul>
-                <li><strong>Ontologies:</strong> RDF is particularly suitable for creating ontologies that describe a specific domain of knowledge.</li>
-                <li><strong>Function:</strong> Functioning like a basic sentence: Subject: The resource being described (an IRI or blank node). Predicate: The specific relationship or property (an IRI). Object: The value (Literal) or related entity (IRI/blank node).</li>
-                <li><strong>Nodes:</strong> Internationalized resource identifier (IRI): Denotes any realworld entity or concept. An IRI is used to identify nodes in the graph in an unambiguous way. It is like an ID. Literal: Literals are values used to represent datatypes like strings, numbers, or dates. Blank node: Blank nodes are nodes without an identifier used in special RDF modeling scenarios.</li>
-            </ul>
+            <p>Structured as a triple is a data entity that consists of subject, predicate, and object. RDF is particularly suitable for creating ontologies that describe a specific domain of knowledge. Functioning like a basic sentence: Subject: The resource being described (an IRI or blank node). Predicate: The specific relationship or property (an IRI). Object: The value (Literal) or related entity (IRI/blank node). Nodes in an RDF graph: Internationalized resource identifier (IRI): Denotes any realworld entity or concept. An IRI is used to identify nodes in the graph in an unambiguous way. It is like an ID. Literal: Literals are values used to represent datatypes like strings, numbers, or dates. Blank node: Blank nodes are nodes without an identifier used in special RDF modeling scenarios.</p>
         </div>
 
         <div class="subsection">
@@ -244,23 +220,10 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Logic:</strong> Unlike simpler models, both nodes (the objects) and relationships (the connections) can store extra data as key-value pairs (properties). Labels categorize nodes (e.g., "Person" or "Product"). Properties provide details (e.g., "Name: Alice"). This internal structure makes the graph highly flexible for modeling complex real-world data.</p>
-            
-            <p><strong>1. Monopartite Networks: Homogeneous Flows</strong><br>
-            Definition: A graph where all nodes belong to a single category (e.g., $Node_A \to Node_A$).<br>
-            When to use: When you are modeling a peer-to-peer system where the "nature" of the entity doesn't change, only the direction of the influence.<br>
-            Logic: Use this for recursive importance (like PageRank). Influence flows through a single "type" of pipe, making it ideal for ranking, community detection, or pathfinding within a single domain (e.g., bank accounts, web pages, or social peers).</p>
-
-            <p><strong>2. Bipartite (and K-Partite) Networks: Heterogeneous Mapping</strong><br>
-            Definition: Edges can only exist between a node in one set and a node in the other. You cannot have an edge connecting two nodes within the same set. (e.g., $Node_A \to Node_B$).<br>
-            <br>
-            When to use: Use this to model ownership, consumption, or authorship. It separates the "actor" from the "object."<br>
-            Ontological Precision: By using specific labels (rather than generic ones), you "future-proof" the model against data collision when merging diverse datasets. It ensures that $Node_B$ and $Node_C$ don't get blurred into a single, unmanageable category.</p>
-
-            <p><strong>3. Reified Interactions (Nodes as Actions)</strong><br>
-            Definition: Turning a relationship into a standalone node (Reification).<br>
-            When to use: Use this when an interaction must be interactable. If you need to "like," "tag," or "comment" on an action that happened between two other nodes, that action must be a node.<br>
-            Logic: Since most graph models cannot point an edge at another edge, reifying the interaction allows you to attach metadata and incoming connections to the action itself without losing the history of the original event.</p>
+            <p>Unlike simpler models, both nodes (the objects) and relationships (the connections) can store extra data as key-value pairs (properties) Labels categorize nodes (e.g., "Person" or "Product") Properties provide details (e.g., "Name: Alice"). This internal structure makes the graph highly flexible for modeling complex real-world data.</p>
+            <p>1. Monopartite Networks: Homogeneous Flows Definition: A graph where all nodes belong to a single category (e.g., $Node_A \to Node_A$). When to use: When you are modeling a peer-to-peer system where the "nature" of the entity doesn't change, only the direction of the influence. Logic: Use this for recursive importance (like PageRank). Influence flows through a single "type" of pipe, making it ideal for ranking, community detection, or pathfinding within a single domain (e.g., bank accounts, web pages, or social peers).</p>
+            <p>2. Bipartite (and K-Partite) Networks: Heterogeneous Mapping Definition: Edges can only exist between a node in one set and a node in the other. You cannot have an edge connecting two nodes within the same set. (e.g., $Node_A \to Node_B$). When to use: Use this to model ownership, consumption, or authorship. It separates the "actor" from the "object." Ontological Precision: By using specific labels (rather than generic ones), you "future-proof" the model against data collision when merging diverse datasets. It ensures that $Node_B$ and $Node_C$ don't get blurred into a single, unmanageable category.</p>
+            <p>3. Reified Interactions (Nodes as Actions) Definition: Turning a relationship into a standalone node (Reification). When to use: Use this when an interaction must be interactable. If you need to "like," "tag," or "comment" on an action that happened between two other nodes, that action must be a node. Logic: Since most graph models cannot point an edge at another edge, reifying the interaction allows you to attach metadata and incoming connections to the action itself without losing the history of the original event.</p>
         </div>
 
         <div class="subsection">
@@ -273,30 +236,18 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Definition:</strong> Uses directed edges to track the origin of information. A Derivative Node (the copy or mention) has an outgoing relationship pointing to the Source Node (the original).</p>
-            <ul>
-                <li><strong>When to use:</strong> Use this to preserve the Source of Truth.</li>
-                <li><strong>Logic:</strong> Outgoing (Derivative): The new/derived node points "back" to indicate where it came from. Incoming (Source): The original entity only receives links, marking it as the definitive target. This allows you to measure an object's reach or popularity simply by counting its "in-degree" (incoming links).</li>
-            </ul>
+            <p>Definition: Uses directed edges to track the origin of information. A Derivative Node (the copy or mention) has an outgoing relationship pointing to the Source Node (the original). When to use: Use this to preserve the Source of Truth. Logic: Outgoing (Derivative): The new/derived node points "back" to indicate where it came from. Incoming (Source): The original entity only receives links, marking it as the definitive target. This allows you to measure an object's reach or popularity simply by counting its "in-degree" (incoming links).</p>
         </div>
     </div>
 </details>
 
 <details class="section">
     <summary>
-        EXTRACTION
+        &lt;&lt;&lt; EXTRACTION &gt;&gt;&gt;
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
     </summary>
     <div class="section-content">
-        <p><strong>Data Storage: Separate/Within Node</strong><br>
-        When choosing between storing data as node properties or separate nodes, the decision rests on your query goals and scalability.</p>
-        
-        <p><strong>The Trade-off</strong><br>
-        Node Properties: Storing a list of URLs directly on a node is simple but slow for discovery. To find nodes sharing a link, the database must scan every node's list property—essentially a costly search.<br>
-        Separate Nodes: Use Separate Nodes for shared data to leverage index-free adjacency over property scanning.</p>
-
-        <p><strong>Standardization</strong><br>
-        Separate nodes work best when data is standardized. For example, "NYC" and "New York City" should point to the same node to ensure your graph remains unified and searchable.</p>
+        <p>Data Storage: Separate/Within Node When choosing between storing data as node properties or separate nodes, the decision rests on your query goals and scalability. The Trade-off Node Properties: Storing a list of URLs directly on a node is simple but slow for discovery. To find nodes sharing a link, the database must scan every node's list property—essentially a costly search. Separate Nodes: Use Separate Nodes for shared data to leverage index-free adjacency over property scanning. Standardization Separate nodes work best when data is standardized. For example, "NYC" and "New York City" should point to the same node to ensure your graph remains unified and searchable.</p>
 
         <div class="subsection">
             <span class="subsection-title">
@@ -308,8 +259,7 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Relationship Specificity:</strong> By using Specific Edges [Relationships] (e.g., PURCHASED, WROTE), you create Semantic Filters. During a traversal, the database engine ignores irrelevant edges entirely, only following the specific "type" required.</p>
-            <p><strong>Network Folding:</strong> Simplifies complex relationships by converting indirect paths into direct connections. It is appropriate whenever you want to measure the strength of a relationship between two similar entities based on a shared "anchor."</p>
+            <p>Relationship Specificity By using Specific Edges [Relationships] (e.g., PURCHASED, WROTE), you create Semantic Filters. During a traversal, the database engine ignores irrelevant edges entirely, only following the specific "type" required. Network Folding Simplifies complex relationships by converting indirect paths into direct connections. It is appropriate whenever you want to measure the strength of a relationship between two similar entities based on a shared "anchor."</p>
         </div>
 
         <div class="subsection">
@@ -322,11 +272,11 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Goal:</strong> Bipartite Projection (Folding) is your primary tool for distilling indirect associations into direct, measurable community clusters.</p>
-            <ul>
-                <li><strong>Directed Boundaries:</strong> Apply this when an action starts in Set A and targets Set B, but entities within the same set do not interact directly in that specific context.</li>
-                <li><strong>Discovery via Projection:</strong> This is the core utility. By linking two nodes in Set A because they share a common neighbor in Set B, you project a new network. This reveals "co-occurrence" or hidden community clusters.</li>
-            </ul>
+            
+
+[Image of a bipartite graph]
+
+            <p>Bipartite Projection (Folding) is your primary tool for distilling indirect associations into direct, measurable community clusters. Directed Boundaries: Apply this when an action starts in Set A and targets Set B, but entities within the same set do not interact directly in that specific context. Discovery via Projection: This is the core utility. By linking two nodes in Set A because they share a common neighbor in Set B, you project a new network. This reveals "co-occurrence" or hidden community clusters.</p>
         </div>
     </div>
 </details>
