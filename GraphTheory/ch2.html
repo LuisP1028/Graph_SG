@@ -122,7 +122,7 @@
 
 <details class="section" open>
     <summary>
-        Representing network structure - Design
+        Representing network structure - Design:
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
     </summary>
     <div class="section-content">
@@ -159,7 +159,7 @@
 
 <details class="section">
     <summary>
-        &lt;&lt;Cypher Query Language and Graph Query Language&gt;&gt;
+        Cypher Query Language and Graph Query Language:
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
     </summary>
     <div class="section-content">
@@ -182,7 +182,7 @@
 
 <details class="section">
     <summary>
-        &lt;&lt;Graph Databases: &gt;&gt;
+        Graph Databases:
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
     </summary>
     <div class="section-content">
@@ -209,7 +209,14 @@
                     </svg>
                 </button>
             </span>
-            <p>Structured as a triple is a data entity that consists of subject, predicate, and object. RDF is particularly suitable for creating ontologies that describe a specific domain of knowledge. Functioning like a basic sentence: Subject: The resource being described (an IRI or blank node). Predicate: The specific relationship or property (an IRI). Object: The value (Literal) or related entity (IRI/blank node). Nodes in an RDF graph: Internationalized resource identifier (IRI): Denotes any realworld entity or concept. An IRI is used to identify nodes in the graph in an unambiguous way. It is like an ID. Literal: Literals are values used to represent datatypes like strings, numbers, or dates. Blank node: Blank nodes are nodes without an identifier used in special RDF modeling scenarios.</p>
+            <p>Structured as a triple is a data entity that consists of subject, predicate, and object. RDF is particularly suitable for creating ontologies that describe a specific domain of knowledge. Functioning like a basic sentence: 
+                <li>Subject: The resource being described (an IRI or blank node).</li> 
+                <li>Predicate: The specific relationship or property (an IRI).</li> 
+                <li>Object: The value (Literal) or related entity (IRI/blank node).</li> 
+                <li>Nodes in an RDF graph: Internationalized resource identifier (IRI): Denotes any realworld entity or concept. An IRI is used to identify nodes in the graph in an unambiguous way. It is like an ID.</li> 
+                <li>Literal: Literals are values used to represent datatypes like strings, numbers, or dates.</li>
+                <li>Blank node: Blank nodes are nodes without an identifier used in special RDF modeling scenarios.</li>
+            </p>
         </div>
 
         <div class="subsection">
@@ -223,9 +230,16 @@
                 </button>
             </span>
             <p>Unlike simpler models, both nodes (the objects) and relationships (the connections) can store extra data as key-value pairs (properties) Labels categorize nodes (e.g., "Person" or "Product") Properties provide details (e.g., "Name: Alice"). This internal structure makes the graph highly flexible for modeling complex real-world data.</p>
-            <p>1. Monopartite Networks: Homogeneous Flows Definition: A graph where all nodes belong to a single category (e.g., $Node_A \to Node_A$). When to use: When you are modeling a peer-to-peer system where the "nature" of the entity doesn't change, only the direction of the influence. Logic: Use this for recursive importance (like PageRank). Influence flows through a single "type" of pipe, making it ideal for ranking, community detection, or pathfinding within a single domain (e.g., bank accounts, web pages, or social peers).</p>
-            <p>2. Bipartite (and K-Partite) Networks: Heterogeneous Mapping Definition: Edges can only exist between a node in one set and a node in the other. You cannot have an edge connecting two nodes within the same set. (e.g., $Node_A \to Node_B$). When to use: Use this to model ownership, consumption, or authorship. It separates the "actor" from the "object." Ontological Precision: By using specific labels (rather than generic ones), you "future-proof" the model against data collision when merging diverse datasets. It ensures that $Node_B$ and $Node_C$ don't get blurred into a single, unmanageable category.</p>
-            <p>3. Reified Interactions (Nodes as Actions) Definition: Turning a relationship into a standalone node (Reification). When to use: Use this when an interaction must be interactable. If you need to "like," "tag," or "comment" on an action that happened between two other nodes, that action must be a node. Logic: Since most graph models cannot point an edge at another edge, reifying the interaction allows you to attach metadata and incoming connections to the action itself without losing the history of the original event.</p>
+            <p>1. Monopartite Networks / Homogeneous Flows: A graph where all nodes belong to a single category (e.g., $Node_A \to Node_A$). 
+                <li>When to use: When you are modeling a peer-to-peer system where the "nature" of the entity doesn't change, only the direction of the influence. Logic: Use this for recursive importance (like PageRank). Influence flows through a single "type" of pipe, making it ideal for ranking, community detection, or pathfinding within a single domain (e.g., bank accounts, web pages, or social peers).</li>
+            </p>
+            <p>2. Bipartite (and K-Partite) Networks / Heterogeneous Mapping Definition: Edges can only exist between a node in one set and a node in the other. You cannot have an edge connecting two nodes within the same set. (e.g., $Node_A \to Node_B$). 
+                <li>When to use: Use this to model ownership, consumption, or authorship. It separates the "actor" from the "object." By using specific labels (rather than generic ones), you "future-proof" the model against data collision when merging diverse datasets. It ensures that $Node_B$ and $Node_C$ don't get blurred into a single, unmanageable category.</li>
+            </p>
+            <p>3. Reified Interactions (Nodes as Actions) Definition: Turning a relationship into a standalone node (Reification). 
+                <li>When to use: Use this when an interaction must be interactable. If you need to "like," "tag," or "comment" on an action that happened between two other nodes, that action must be a node.</li>
+                <li>Logic: Since most graph models cannot point an edge at another edge, reifying the interaction allows you to attach metadata and incoming connections to the action itself without losing the history of the original event.</li>
+            </p>
         </div>
 
         <div class="subsection">
@@ -238,7 +252,11 @@
                     </svg>
                 </button>
             </span>
-            <p>Definition: Uses directed edges to track the origin of information. A Derivative Node (the copy or mention) has an outgoing relationship pointing to the Source Node (the original). When to use: Use this to preserve the Source of Truth. Logic: Outgoing (Derivative): The new/derived node points "back" to indicate where it came from. Incoming (Source): The original entity only receives links, marking it as the definitive target. This allows you to measure an object's reach or popularity simply by counting its "in-degree" (incoming links).</p>
+            <p>Definition: Uses directed edges to track the origin of information. A Derivative Node (the copy or mention) has an outgoing relationship pointing to the Source Node (the original). 
+                <li>When to use: Use this to preserve the Source of Truth.</li>
+                <li>Outgoing (Derivative): The new/derived node points "back" to indicate where it came from.</li>
+                <li>Incoming (Source): The original entity only receives links, marking it as the definitive target. This allows you to measure an object's reach or popularity simply by counting its "in-degree" (incoming links).</li> 
+            </p>
         </div>
     </div>
 </details>
