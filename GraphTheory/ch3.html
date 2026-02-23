@@ -282,17 +282,17 @@
 
             <p>2. The "Bridge Table" Method (Mapping)<br>
             The Bridge Table method is used when your nodes and your relationships live in separate files.<br>
-            Step 1: The Entity Pass (Node Population)<br>
+            <p>Step 1: The Entity Pass (Node Population)</p><br>
             You load the primary entity file (e.g., Airports.csv).<br>
             You use the MERGE clause on a unique property, specifically the IATA code (e.g., JFK, LAX).<br>
             The database creates a node for every airport. Descriptive metadata like "City Name" or "Number of Runways" are stored as properties within the node, but the IATA code serves as the primary unique identifier.<br>
             You are pre-populating the graph with these indexed "anchor points."<br>
-            Step 2: The Mapping Pass (Instructional Input)<br>
+            <p>Step 2: The Mapping Pass (Instructional Input)</p><br>
             You switch to the Bridge CSV (e.g., Flight_Schedule.csv).<br>
             This file represents the topological logic of your graph. It contains foreign keys: an origin_code column and a destination_code column.<br>
             Cypher treats each row of this flight schedule as a set of instructions.<br>
             It reads the IATA codes from the CSV and prepares to use them as search parameters to locate the specific Airport nodes created in Step 1.<br>
-            Step 3: The Assembly Pass (Relationship Execution)<br>
+            <p>Step 3: The Assembly Pass (Relationship Execution)</p><br>
             This occurs in the same execution block as Step 2. Using the IATA codes retrieved from the schedule, Cypher performs a MATCH operation to locate the nodes in the database's memory.<br>
             It searches for the existing node where code = CSV.origin_code. It searches for the existing node where code = CSV.destination_code.<br>
             Once the pointers for these two specific nodes are identified, it executes a MERGE on the relationship: (origin)-[:FLIGHT_TO]->(destination).<br>
