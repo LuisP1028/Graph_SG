@@ -227,7 +227,12 @@
                     </svg>
                 </button>
             </summary>
-            <p>Think of it as <em>lossy compression</em> for relationships: you are stripping away the noise to find the latent factors of your data. Matrix factorization decomposes a large, complex matrix into two (or more) smaller, "latent" matrices that, when multiplied, approximate the original.</p>
+            <p>Think of it as <em>lossy compression</em> for relationships. It decomposes a large matrix R into two smaller matrices storing learned latent factors:</p>
+            <ul>
+                <li><strong>Matrix U (User Matrix):</strong> Rows are vectors where columns represent latent factors.</li>
+                <li><strong>Matrix V (Movie Matrix):</strong> Rows are vectors where columns represent a movie's alignment with those factors.</li>
+            </ul>
+            <p>Predict scores by taking the dot product of a User Vector and a Movie Vector.</p>
         </details>
 
         <details class="subsection">
