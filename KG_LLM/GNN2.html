@@ -187,49 +187,53 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>1. The Foundation: BaseGraphModel</strong></p>
-            <p>This is a template class. It defines a standard two-layer message-passing flow but leaves the specific "math" (the convolution type) open.</p>
+            
+            <p><strong>The Foundation: BaseGraphModel</strong></p>
+            <p>A template class defining a standard two-layer message-passing flow. It takes a specific convolution layer (like SAGEConv) as an argument and automatically applies a ReLU activation between layers.</p>
             <ul>
-                <li><strong>Parameters:</strong> It takes <em>conv_layer</em> as an argument, allowing you to pass any PyG layer (like SAGEConv or GCNConv).</li>
-                <li><strong>Logic:</strong> It enforces a RELU activation between layers to introduce non-linearity.</li>
+                <li><em>When to use / Why:</em> Use when building multiple GNN architectures. It standardizes the forward pass and reduces boilerplate code across different convolution experiments.</li>
             </ul>
-
-            <p><strong>2. The Simple Implementation: SAGE</strong></p>
-            <p>Since GraphSAGE (Sample and Aggregate) has a simple signature in PyG, we simply "plug" it into the base template.</p>
+        
+            <p><strong>The Simple Implementation: SAGE</strong></p>
+            
+            <p>GraphSAGE (Sample and Aggregate) plugs directly into the base template. It inherits the structural logic and simply passes SAGEConv as the chosen layer.</p>
             <ul>
-                <li><strong>Definition:</strong> Inherits everything from <em>BaseGraphModel</em>.</li>
-                <li><strong>Mechanism:</strong> It passes <em>SAGEConv</em> as the <em>conv_layer</em>. The base class then handles the instantiation and the forward pass automatically.</li>
+                <li><em>When to use / Why:</em> Use for large, dense graphs. It scales efficiently by sampling fixed-size neighborhoods instead of processing every single connection a node has.</li>
             </ul>
-
-            <p><strong>3. The Custom Implementation: GAT</strong></p>
-            <p>Graph Attention Networks require specific parameters (like heads) that the standard base template doesn't explicitly handle in its __init__.</p>
+        
+            <p><strong>The Custom Implementation: GAT</strong></p>
+            
+            <p>Graph Attention Networks require custom parameters like attention "heads." GAT manually overrides the constructor to define its layers, multiplying the hidden dimension by the number of attention heads.</p>
             <ul>
-                <li><strong>Override:</strong> Instead of letting the base class create the layers, GAT manually defines <em>self.conv1</em> and <em>self.conv2</em> inside its own constructor.</li>
-                <li><strong>Complexity:</strong> It accounts for multi-head attention, where the hidden dimension is multiplied by the number of heads (<em>hidden_dim * num_heads</em>).</li>
+                <li><em>When to use / Why:</em> Use when edge weights matter but aren't explicitly provided. Attention heads learn which neighbors are most important for the specific task.</li>
             </ul>
-
-            <p><strong>4. Integration: NodeClassifier</strong></p>
-            <p>Finally, you wrap your chosen encoder (SAGE or GAT) into the NodeClassifier.</p>
-            <p><strong>The Encoder:</strong> The encoder performs recursive neighborhood aggregation. In a 2-layer setup:</p>
+        
+            <p><strong>Integration: NodeClassifier (The Encoder)</strong></p>
+            
+            <p>The encoder wraps the chosen model to perform recursive aggregation. Layer 1 captures immediate neighbors. Layer 2 aggregates those results, allowing the center node to "see" a 2-hop radius.</p>
             <ul>
-                <li><strong>Layer 1:</strong> Each node computes a feature vector by aggregating the initial attributes (X) of its immediate neighbors.</li>
-                <li><strong>Layer 2:</strong> These intermediate vectors are aggregated again. Because the neighbors now hold information about their neighbors, the center node effectively “sees” a 2-hop radius.</li>
-                <li><strong>Output:</strong> A refined node embedding — a dense vector that mathematically encodes both the node’s own identity and its neighbors’ context.</li>
+                <li><em>When to use / Why:</em> Use as the core engine for learning topology. It systematically transforms raw node features and local connections into dense, mathematically useful embeddings.</li>
             </ul>
-
+        
             <p><strong>The Decoder: Logarithmic Mapping</strong></p>
-            <p>The “decoder” here is the <em>log_softmax</em> function, it is the standard for multi-class classification.</p>
+            <p>For multi-class node classification, the standard decoder is log_softmax. It outputs a log-probability for each node, optimized using NLLLoss.</p>
             <ul>
-                <li><strong>Numerical Stability:</strong> Unlike standard softmax, <em>log_softmax</em> operates in log-space, preventing vanishing gradient issues when probabilities are extremely close to 0 or 1.</li>
-                <li><strong>Final Output:</strong> A log-probability value for each node, which is then passed to <em>NLLLoss</em> (Negative Log-Likelihood) for optimization.</li>
+                <li><em>When to use / Why:</em> Use for standard multi-class node classification. Operating in log-space stabilizes gradient descent and prevents underflow with extreme probabilities.</li>
             </ul>
-
+        
             <p><strong>Other Decoders for Node Classification Tasks:</strong></p>
             <ul>
-                <li><strong>1. Binary Classification: Sigmoid</strong> - Used when a node is either A or not A (e.g., Fraudulent vs. Legitimate). Output: A single scalar between 0 and 1. Loss: <em>BCELoss</em>.</li>
-                <li><strong>2. Multi-Label Classification: Sigmoid (Independent)</strong> - Used when a node can belong to multiple categories simultaneously. Output: A vector of probabilities. Loss: <em>BCEWithLogitsLoss</em>.</li>
-                <li><strong>3. Node Regression: Identity (Linear)</strong> - Used to predict a continuous value. Output: Raw real-valued numbers (logits). Loss: <em>MSELoss</em> or <em>L1Loss</em>.</li>
-                <li><strong>4. Clustering/Unsupervised: Inner Product</strong> - Used when you don't have labels. Output: The dot product of two node embeddings. Goal: High values for connected nodes.</li>
+                <li><strong>Binary Classification (Sigmoid):</strong> Used for true/false states (e.g., fraudulent vs. legitimate). Outputs a single 0-1 scalar. Optimized with BCELoss.<br>
+                <em>When to use / Why:</em> Use for simple A/B sorting. It squashes output to a 0-1 probability score, perfectly pairing with binary cross-entropy loss.</li>
+                
+                <li><strong>Multi-Label Classification (Independent Sigmoid):</strong> Used when a node belongs to multiple, overlapping categories. Outputs a probability vector. Optimized with BCEWithLogitsLoss.<br>
+                <em>When to use / Why:</em> Use when categories overlap (e.g., an entity is both a buyer and seller). It evaluates each class independently rather than forcing a single choice.</li>
+                
+                <li><strong>Node Regression (Identity/Linear):</strong> Used to predict continuous, real-valued numbers (raw logits). Optimized with MSELoss or L1Loss.<br>
+                <em>When to use / Why:</em> Use for predicting continuous metrics (e.g., transaction volume). It passes the raw numerical output directly to calculate absolute error.</li>
+                
+                <li><strong>Clustering/Unsupervised (Inner Product):</strong> Used without labels. It calculates the dot product of two node embeddings.<br>
+                <em>When to use / Why:</em> Use when labels are missing. It forces nodes with similar structural roles or communities to cluster tightly together in the latent embedding space.</li>
             </ul>
         </div>
     </div>
