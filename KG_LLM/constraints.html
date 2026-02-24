@@ -92,6 +92,7 @@
             align-items: center;
             margin-bottom: 15px;
             font-size: 0.95rem;
+            cursor: pointer;
         }
 
         .code-block {
@@ -130,8 +131,8 @@
     
     <div class="section-content">
         
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 The "Fail Fast" Philosophy
                 <button class="eye-btn" onclick="window.parent.openViewport('path/to/visualization.html')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -139,7 +140,7 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             
             <p><strong>Goal:</strong> Define the necessity of constraints in software engineering.</p>
             
@@ -147,10 +148,10 @@
                 <li><strong>Constraint Definition:</strong> In software engineering, a constraint is a <em>contract</em>.</li>
                 <li><strong>Coding by Coincidence:</strong> Without them, you are essentially "coding by coincidence."</li>
             </ul>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 Computational Efficiency
                 <button class="eye-btn" onclick="window.parent.openViewport('path/to/efficiency_viz.html')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -158,16 +159,16 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p><strong>Why:</strong> Without a uniqueness constraint, every time you search for a protein, Neo4j has to perform a "Full Label Scan."</p>
             <ul>
                 <li><strong>Full Label Scan:</strong> It looks at every single Protein node in the database until it finds a match.</li>
                 <li><strong>B-Tree Index:</strong> With a constraint, it uses a <em>B-Tree index</em>, which is like jumping directly to the right page in a phone book.</li>
             </ul>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 Application Stability
                 <button class="eye-btn" onclick="window.parent.openViewport('path/to/stability_viz.html')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -175,13 +176,13 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>If your Python code expects a single description string but finds five duplicate nodes with different descriptions, your application will crash or, worse, return the wrong data silently.</p>
             <p>Constraints force the database to <strong>"Fail Fast"</strong> by rejecting bad data at the door.</p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 Semantic Trust
                 <button class="eye-btn" onclick="window.parent.openViewport('path/to/trust_viz.html')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -189,9 +190,9 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>A Knowledge Graph is only as good as its relationships. If "Protein A" is actually three different nodes in your DB, your "shortest path" algorithms and "centrality" metrics will be mathematically incorrect.</p>
-        </div>
+        </details>
 
     </div>
 </details>
@@ -205,8 +206,8 @@
     <div class="section-content">
         <p>You identify constraints by looking for <strong>Functional Dependencies</strong> and <strong>Business Invariants</strong>. Ask yourself these three questions:</p>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 A. What is the "Source of Truth" ID?
                 <button class="eye-btn" onclick="window.parent.openViewport('path/to/id_viz.html')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -214,7 +215,7 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>Look at your raw data. What column makes a row unique?</p>
             <ul>
                 <li><strong>Identification:</strong> If it’s an NCBI Gene ID or a SSN, that must be a <em>UNIQUENESS constraint</em>.</li>
@@ -222,10 +223,10 @@
                 <li><strong>Uniqueness Constraints Identification Trigger:</strong> Determine if the node has a standardized, unique identifier (like an NCBI Gene ID or an SSN).</li>
                 <li><strong>Purpose:</strong> Ensuring that no two distinct entities share the same ID value, preventing node duplication.</li>
             </ul>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 B. What information is "Mission Critical"?
                 <button class="eye-btn" onclick="window.parent.openViewport('path/to/critical_viz.html')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -233,7 +234,7 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>What properties must exist for the node to be useful?</p>
             <ul>
                 <li><strong>Identification:</strong> In healthcare, a Patient without a DateOfBirth is useless for analytics. This requires a <em>NODE KEY</em> or <em>EXISTENCE constraint</em>.</li>
@@ -243,10 +244,10 @@
                 <li><strong>Existence Constraint Identification Trigger:</strong> Determine if a specific property is absolutely required for your calculations, business logic, or application stability.</li>
                 <li><strong>Existence Constraint Purpose:</strong> Preventing "null" values from entering the database, which ensures that mission-critical data is always present.</li>
             </ul>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 C. What are the "Impossible" relationships?
                 <button class="eye-btn" onclick="window.parent.openViewport('path/to/rel_viz.html')">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -254,7 +255,7 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>What connections would break the logic of your world?</p>
             <ul>
                 <li><strong>Identification:</strong> In infrastructure, a PowerSwitch cannot connect to itself. In aerospace, a ChildPart cannot be the parent of its own ParentPart.</li>
@@ -262,7 +263,7 @@
                 <li><strong>Schema/Relationship Constraint Identification Trigger:</strong> Check if the relationships in your graph require a specific direction, type, or mandatory properties (like a timestamp or weight).</li>
                 <li><strong>Purpose:</strong> Enforcing the logical rules of your world, such as preventing circular dependencies or ensuring every interaction is properly documented.</li>
             </ul>
-        </div>
+        </details>
 
     </div>
 </details>
