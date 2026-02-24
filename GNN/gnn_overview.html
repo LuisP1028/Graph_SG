@@ -229,10 +229,11 @@
             </summary>
             <p>Think of it as <em>lossy compression</em> for relationships. It decomposes a large matrix R into two smaller matrices storing learned latent factors:</p>
             <ul>
-                <li><strong>Matrix U (User Matrix):</strong> Rows are vectors where columns represent latent factors.</li>
-                <li><strong>Matrix V (Movie Matrix):</strong> Rows are vectors where columns represent a movie's alignment with those factors.</li>
+                <li><strong>Matrix U (User Matrix):</strong> Each row is a specific user's vector, where each column is a specific latent factor (e.g., "how much does User A like Sci-Fi?").</li>
+                <li><strong>Matrix V (Movie Matrix):</strong> Each row is a specific movie's vector, where each column quantifies how much that movie aligns with that same latent factor (e.g., "how much is The Matrix a Sci-Fi movie?")</li>
             </ul>
             <p>Predict scores by taking the dot product of a User Vector and a Movie Vector.</p>
+            <p>When you take the dot product of User Vector i$and Item Vector j, you are multiplying their alignment across all factors. If User A has a high "Sci-Fi" score and The Matrix has a high "Sci-Fi" score, their product will be large, leading to a high predicted rating.</p>
         </details>
 
         <details class="subsection">
