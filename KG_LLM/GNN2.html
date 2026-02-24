@@ -301,7 +301,7 @@
 
         <div class="subsection">
             <span class="subsection-title">
-                —HETEROGENOUS ENCODERS—
+                HETEROGENOUS ENCODERS:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -309,26 +309,76 @@
                     </svg>
                 </button>
             </span>
-            <p>In a homogeneous GNN, the model uses one weight matrix. In a heterogeneous graph, the encoder maintains separate weight matrices for each relationship type.</p>
+            <p>In a homogeneous GNN, the model uses one weight matrix. In a heterogeneous graph, the encoder maintains separate weight matrices for each relationship type to process different kinds of nodes effectively.</p>
             
             <p><strong>ENCODING APPROACHES:</strong></p>
+        
+            <p><strong>1. Identity-based (Lookup Tables)</strong></p>
+            
+            <p>Assigns a unique, trainable vector to every individual entity. A matrix stores one vector per ID.</p>
             <ul>
-                <li><strong>1. Identity-based (Lookup Tables):</strong> Assigns a unique, trainable vector to every individual entity. matrix stores one vector per ID. Use this for large-scale Collaborative Filtering with little metadata.</li>
-                <li><strong>2. Feature-based (Linear/MLP Projections):</strong> Transforms raw attributes (age, price) into a vector space using a Linear layer or MLP. Appropriate for cold-start scenarios.</li>
-                <li><strong>3. Hybrid Fusion (The "Two-Step"):</strong> Merges Identity and Feature methods. Concatenates the "what" (feature) to the "who" (identity). Appropriate for RecSys needing a "warm start."</li>
-                <li><strong>4. Contextual/Sequential Encoders:</strong> Models like RNNs or Transformers process sequences of past actions. Use this for session-based recommendations.</li>
+                <li><em>How it works:</em> It creates an embedding matrix where each row corresponds to a specific node ID. Meaning is derived purely from structural context: if Node A (User) interacts with Node B (Movie), the loss function forces their two vectors to move closer together in mathematical space. If Node A and Node C both interact with Node B, their vectors eventually become similar. They "know" they are alike not because they share raw features, but because they share a neighbor.</li>
+                <li><em>When to use / Why:</em> Use for massive Collaborative Filtering where metadata is scarce. It excels when you have vast interaction logs (like clicks or purchases) but lack descriptive features (like age or genre). It effectively allows the model to "learn" a node's reputation through its social or transactional history rather than its resume.</li>
             </ul>
-
-            <p><strong>DECODER APPROACHES:</strong></p>
+        
+            <p><strong>2. Feature-based (Linear/MLP Projections)</strong></p>
+            
+            <p>Transforms raw attributes (age, price) into a vector space using a Linear layer or MLP.</p>
             <ul>
-                <li><strong>1. Dot Product (Similarity-Based):</strong> Computes similarity between user and item vectors. Critical for large-scale retrieval efficiency.</li>
-                <li><strong>2. Multi-Layer Perceptron (MLP) (Non-Linear):</strong> Concatenates embeddings and passes them through a neural network. Used for high-precision ranking.</li>
-                <li><strong>3. TransE (Translational Distance):</strong> Treats relationship as translation: h + r ≈ t. Ideal for knowledge graphs with logical flow.</li>
-                <li><strong>4. DistMult (Multiplicative Interaction):</strong> Relationship as diagonal matrix M_r. Score = h_i^T M_r h_j. Performs element-wise multiplication weighted by relationship importance.</li>
+                <li><em>How it works:</em> It ignores node IDs entirely and passes a node's raw metadata through a neural network. The network projects these attributes into a dense embedding space, mathematically capturing "what" the entity is based purely on its inherent properties.</li>
+                <li><em>When to use / Why:</em> Use for "cold-start" scenarios. When a new user or item enters the system with zero interaction history, identity-based methods fail. This method relies entirely on known properties to generate a useful initial embedding.</li>
+            </ul>
+        
+            <p><strong>3. Hybrid Fusion (The "Two-Step")</strong></p>
+            <p>Merges Identity and Feature methods. Concatenates the "what" (feature) to the "who" (identity).</p>
+            <ul>
+                <li><em>How it works:</em> It calculates an identity embedding (from a lookup table) and a feature embedding (from an MLP) independently. It then concatenates or adds these two vectors together, creating a unified representation that captures both historical behavior and static traits.</li>
+                <li><em>When to use / Why:</em> Use for modern Recommendation Systems needing a "warm start." It offers the best of both worlds, providing highly expressive embeddings for active users while maintaining a baseline representation for newer entities based on their features.</li>
+            </ul>
+        
+            <p><strong>4. Contextual/Sequential Encoders</strong></p>
+            
+            <p>Models like RNNs or Transformers process sequences of past actions.</p>
+            <ul>
+                <li><em>How it works:</em> Instead of treating a user's history as an unordered pile of interactions, it feeds the chronological sequence of their actions into a recurrent network or self-attention mechanism. This captures the temporal evolution of their behavior over time.</li>
+                <li><em>When to use / Why:</em> Use for session-based recommendations. It is critical when the specific order and recency of actions dictate the next step, such as predicting the next item a user will add to a shopping cart during an active browsing session.</li>
+            </ul>
+        
+            <p><strong>HETEROGENEOUS DECODERS:</strong></p>
+            <p>Once nodes are encoded, the decoder is responsible for calculating the probability or strength of a relationship between them.</p>
+        
+            <p><strong>1. Dot Product (Similarity-Based)</strong></p>
+            
+            <p>Computes similarity between user and item vectors.</p>
+            <ul>
+                <li><em>How it works:</em> It calculates the inner product between two node embeddings. Geometrically, this measures how closely aligned the two vectors are in the latent space. A higher dot product translates to a higher predicted probability of a link or interaction.</li>
+                <li><em>When to use / Why:</em> Use for large-scale retrieval. It is highly computationally efficient, making it the standard choice for quickly scoring millions of potential candidate pairs in the first stage of a recommendation pipeline.</li>
+            </ul>
+        
+            <p><strong>2. Multi-Layer Perceptron (MLP) (Non-Linear)</strong></p>
+            <p>Concatenates embeddings and passes them through a neural network.</p>
+            <ul>
+                <li><em>How it works:</em> It takes the source and target node embeddings, concatenates them into a single long vector, and feeds that through several hidden layers with non-linear activations. The network outputs a final interaction probability score.</li>
+                <li><em>When to use / Why:</em> Use for high-precision ranking. It captures complex, non-linear interactions between entities that a simple dot product would miss, making it ideal for the final, computationally heavier scoring stage of a recommendation system.</li>
+            </ul>
+        
+            <p><strong>3. TransE (Translational Distance)</strong></p>
+            
+            <p>Treats relationship as translation: h + r ≈ t.</p>
+            <ul>
+                <li><em>How it works:</em> It embeds nodes (head/tail) and relationship types as vectors in the same space. It assumes that if a fact is true, adding the relationship vector to the head node vector should land exactly on the tail node vector in the latent space.</li>
+                <li><em>When to use / Why:</em> Use for Knowledge Graphs with strict logical flow. It is highly effective at modeling 1-to-1 relationships and capturing hierarchical or directional facts (e.g., "Rome" + "is capital of" ≈ "Italy").</li>
+            </ul>
+        
+            <p><strong>4. DistMult (Multiplicative Interaction)</strong></p>
+            
+            <p>Relationship as diagonal matrix M_r. Score = h_i^T M_r h_j.</p>
+            <ul>
+                <li><em>How it works:</em> It embeds nodes as vectors and relationship types as diagonal matrices. It computes an element-wise multiplication between the head vector, the relationship matrix, and the tail vector, weighting the interaction by the specific relationship type.</li>
+                <li><em>When to use / Why:</em> Use for Knowledge Graphs with symmetrical relationships. It is highly efficient and captures multi-relational semantics well, though its symmetric nature makes it less suitable for strictly directional relationships compared to TransE.</li>
             </ul>
         </div>
-    </div>
-</details>
-
+        </div>
+        </details>
 </body>
 </html>
