@@ -345,18 +345,42 @@
                     </svg>
                 </button>
             </summary>
-            <p>It acts as a cumulative ledger that decouples data storage from rendering logic. Instead of just "printing" text, it maintains a structured list of dictionaries, where each dictionary represents a full interaction state (input, reasoning, active query, and final output).</p>
+            <p>The System Ledger acts as a cumulative record that decouples raw data storage from UI rendering logic. It maintains a structured list of dictionaries where each entry captures the full lifecycle of a single interaction (input, reasoning, query, and output).</p>
             
             <ul>
-                <li><strong>Step 1: State Initialization (The Blank Slate):</strong> The MessageHistory class initializes a list called self.messages with a single empty dictionary {}. This creates a ready-to-fill container for the current turn's incoming data stream.</li>
-                <li><strong>Step 2: Real-Time Routing:</strong> The Input Handler iterates through the generator's event stream. It uses st.empty() placeholders to display transient updates (e.g., "detecting intent") without permanently committing them to the history log yet.</li>
-                <li><strong>Step 3: Incremental Aggregation:</strong> Simultaneously, the Handler calls state.messages.update(current_state). This progressively fills the active dictionary in MessageHistory with every piece of data (intent classification, schema, query, etc.) as it arrives.</li>
-                <li><strong>Step 4: Polymorphic Rendering (The Translator):</strong> The display_message method checks the dictionary keys. If it finds map, it draws a Folium map; if table, a dataframe, etc. This decouples the data type from the visual widget used to show it.</li>
-                <li><strong>Step 5: Session Finalization (The Commit):</strong> On the "END" signal, the Handler calls update(finalize=True). This locks the current dictionary as history, appends a new empty one for the next turn, and triggers st.rerun() to refresh the UI.</li>
+                <li>
+                    <strong>Step 1: State Initialization (The Blank Slate):</strong> This is the <strong>foundation phase</strong>.<br>
+                    <strong>How it works:</strong> The <code>MessageHistory</code> class initializes <code>self.messages</code> with a single empty dictionary <code>{}</code> to act as a container for the incoming stream.<br>
+                    <strong>Why it's used:</strong> It ensures there is always a structured "active" slot ready to receive data before any processing begins.<br>
+                    <strong>When to use:</strong> Use this at the start of a session or whenever resetting the conversation flow to provide a clean data structure.
+                </li>
+                <li>
+                    <strong>Step 2: Real-Time Routing:</strong> This is the <strong>live feedback phase</strong>.<br>
+                    <strong>How it works:</strong> The Input Handler iterates through the event stream, using temporary UI placeholders to display "thinking" steps (like "detecting intent") without logging them yet.<br>
+                    <strong>Why it's used:</strong> It keeps the user engaged with transient updates while keeping the permanent ledger free of temporary noise.<br>
+                    <strong>When to use:</strong> Essential for long-running multi-agent tasks where users need to see immediate progress.
+                </li>
+                <li>
+                    <strong>Step 3: Incremental Aggregation:</strong> This is the <strong>data collection phase</strong>.<br>
+                    <strong>How it works:</strong> The system calls <code>state.messages.update(current_state)</code> to progressively fill the active dictionary with data (intent, schema, query) as it arrives.<br>
+                    <strong>Why it's used:</strong> It builds a complete "truth" of the interaction in real-time so the state is never lost if the connection drops.<br>
+                    <strong>When to use:</strong> Use this throughout the graph execution to capture every intermediate result from your agents.
+                </li>
+                <li>
+                    <strong>Step 4: Polymorphic Rendering (The Translator):</strong> This is the <strong>visual mapping phase</strong>.<br>
+                    <strong>How it works:</strong> The <code>display_message</code> method inspects dictionary keys; if it sees <code>table</code>, it renders a dataframe; if <code>map</code>, it renders a Folium map.<br>
+                    <strong>Why it's used:</strong> It decouples the <em>type</em> of data from the <em>widget</em> used to show it, allowing the UI to adapt dynamically.<br>
+                    <strong>When to use:</strong> Critical when your system outputs diverse data types like charts, Cypher code blocks, or markdown text.
+                </li>
+                <li>
+                    <strong>Step 5: Session Finalization (The Commit):</strong> This is the <strong>archiving phase</strong>.<br>
+                    <strong>How it works:</strong> On the "END" signal, the handler locks the current dictionary, appends a new empty one for the next turn, and triggers a UI refresh.<br>
+                    <strong>Why it's used:</strong> It converts a "work-in-progress" state into a permanent history log, preparing the system for the next user input.<br>
+                    <strong>When to use:</strong> Required at the end of every successful agentic loop to persist the interaction history.
+                </li>
             </ul>
         </details>
     </div>
-</details>
 
 </body>
 </html>
