@@ -191,6 +191,7 @@
             <p><strong>The Foundation: BaseGraphModel</strong></p>
             <p>A template class defining a standard two-layer message-passing flow. It takes a specific convolution layer (like SAGEConv) as an argument and automatically applies a ReLU activation between layers.</p>
             <ul>
+                <li><em>How it works:</em> It uses dependency injection. You hand it a "type" of convolution (like a constructor), and it builds the layers for you. This ensures that every model you build follows the same connectivity pattern and dropout rules.</li>
                 <li><em>When to use / Why:</em> Use when building multiple GNN architectures. It standardizes the forward pass and reduces boilerplate code across different convolution experiments.</li>
             </ul>
         
@@ -198,6 +199,7 @@
             
             <p>GraphSAGE (Sample and Aggregate) plugs directly into the base template. It inherits the structural logic and simply passes SAGEConv as the chosen layer.</p>
             <ul>
+                <li><em>How it works:</em> It aggregates features from a fixed-size sample of a node’s neighborhood (e.g., "only look at 10 random friends"). It then concatenates the node's own features with this neighborhood summary. This makes the computation time predictable regardless of how "popular" a node is.</li>
                 <li><em>When to use / Why:</em> Use for large, dense graphs. It scales efficiently by sampling fixed-size neighborhoods instead of processing every single connection a node has.</li>
             </ul>
         
@@ -205,6 +207,7 @@
             
             <p>Graph Attention Networks require custom parameters like attention "heads." GAT manually overrides the constructor to define its layers, multiplying the hidden dimension by the number of attention heads.</p>
             <ul>
+                <li><em>How it works:</em> It uses an Attention Mechanism to assign a coefficient (a weight) to every edge. It also uses "Multi-Head Attention," where the model runs several independent attention processes at once (like having 8 different experts looking at the same neighborhood) and then combines their findings.</li>
                 <li><em>When to use / Why:</em> Use when edge weights matter but aren't explicitly provided. Attention heads learn which neighbors are most important for the specific task.</li>
             </ul>
         
