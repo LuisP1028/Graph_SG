@@ -141,13 +141,17 @@
                 </button>
             </span>
             
-            <p>In many real-world graphs (like social or citation networks), there is a dense "core" of highly connected nodes and a "periphery" of sparse, dangling leaf nodes.</p>
+            <p>In real-world networks, topologies frequently fracture into a dense "core" of highly connected hubs and a sparse "periphery" of niche, leaf nodes. This structural reality creates a fundamental resolution conflict for standard, fixed-hop Graph Neural Networks.</p>
+            
+            
             
             <ul>
-                <li><strong>Core Nodes:</strong> Require high-hop info (global context) to distinguish their role in the massive cluster.</li>
-                <li><strong>Periphery (Leaf) Nodes:</strong> Their identity is usually defined by their 1 or 2 direct connections.</li>
-                <li><strong>Observation:</strong> Forcing them to aggregate 5-hop data leads to <em>over-smoothing</em>, where their unique features are washed out by the "average" of the entire graph.</li>
+                <li><strong>The Hub's Dilemma (Core Nodes):</strong> Embedded within massive, dense cliques, core nodes look identical to their immediate neighbors at a low hop count. They require deep, high-hop context (a "wide-angle lens") to resolve their distinct roles within the global topology.</li>
+                <li><strong>The Niche's Dilemma (Periphery Nodes):</strong> Sparse nodes are defined entirely by their 1 or 2 local connections. They require shallow, low-hop context (a "macro lens") to preserve their pure, localized signal.</li>
+                <li><strong>The GNN Resolution Problem:</strong> Because standard GNNs apply a uniform layer depth across the entire graph, they force a compromise. Optimizing depth for the core causes <em>over-smoothing</em> in the periphery—diluting unique local features with the global average—while optimizing for the periphery leaves the core structurally blind.</li>
             </ul>
+        
+            
         </div>
 
         <div class="subsection">
