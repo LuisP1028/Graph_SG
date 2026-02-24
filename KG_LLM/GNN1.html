@@ -124,7 +124,7 @@
 
 <details class="section" open>
     <summary>
-        GRAPH NEURAL NETWORKS AND GRAPH REPRESENTATION LEARNING
+        BASIC PREPARATIONS FOR GNNs
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
     </summary>
     
@@ -179,7 +179,7 @@
 
         <div class="subsection">
             <span class="subsection-title">
-                LOCAL VS GLOBAL (POSITIONAL & STRUCTURAL EMBEDDINGS)
+                POSITIONAL & STRUCTURAL EMBEDDINGS
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -221,8 +221,8 @@
                 </button>
             </span>
             <ul>
-                <li><strong>Transductive:</strong> Optimizes embeddings for a fixed node set on a static graph. It solves a "specific puzzle" but fails when new, unseen nodes appear.</li>
-                <li><strong>Inductive:</strong> Learns parametric rules (general strategies) from node features. It generalizes to new, unseen nodes or dynamic graph changes.</li>
+                <li><strong>Transductive:</strong> Optimizes embeddings for a fixed node set on a static graph. Fails when new, unseen nodes appear.</li>
+                <li><strong>Inductive:</strong> Learns parametric rules from node features. It generalizes to new, unseen nodes or dynamic graph changes.</li>
             </ul>
         </div>
 
@@ -251,7 +251,7 @@
 
 <details class="section">
     <summary>
-        EMBEDDINGS AND KNOWLEDGE GRAPHS
+        EMBEDDINGS AND SAMPLING
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
     </summary>
     <div class="section-content">
@@ -289,7 +289,7 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Loss Functions: The Logic of Negative Sampling</strong>. Because most graphs are sparse—meaning the vast majority of potential connections do not exist—a loss function must be able to distinguish “true” edges from “false” ones without checking the entire network by:</p>
+            <p><strong>The Logic of Negative Sampling</strong>. Because most graphs are sparse—meaning the vast majority of potential connections do not exist—a loss function must be able to distinguish “true” edges from “false” ones without checking the entire network by:</p>
             <ul>
                 <li><strong>Rewarding True Facts:</strong> The model identifies a real connection (a “positive sample”) and adjusts the embedding vectors so the Decoder gives this relationship a high score.</li>
                 <li><strong>Penalizing False Facts:</strong> To provide contrast, the model “randomly samples” entities that are not known to have a relationship (e.g., Aspirin TREATS COX-2). These are <em>negative samples</em>.</li>
@@ -298,8 +298,8 @@
             <p><strong>Sampling Strategies:</strong></p>
             <ul>
                 <li><strong>Random Sampling:</strong> The simplest method, which pairs a subject and relation with an entirely arbitrary node. While fast, it often creates "obvious" errors that don't challenge the model.</li>
-                <li><strong>Type-Constrained Sampling:</strong> Restricts the replacement to nodes of the same semantic category.</li>
-                <li><strong>Adversarial Sampling:</strong> Uses advanced logic to identify "difficult" negative examples that the model is likely to confuse with true facts.</li>
+                <li><strong>Type-Constrained Sampling:</strong> This replaces an entity with another from the same ontology class (e.g., swapping one "Philosopher" for another). It prevents "easy" wins where the model simply identifies a category mismatch instead of learning the actual relationship.</li>
+                <li><strong>Adversarial Sampling:</strong> Uses uses a generator or current model weights to find "hard" negatives—triples that look statistically plausible but are false. By training on these high-probability errors, the model is forced to learn much finer semantic boundaries.</li>
             </ul>
         </div>
     </div>
@@ -321,7 +321,7 @@
                     </svg>
                 </button>
             </span>
-            <p>The decoder acts as a reconstruction agent by translating latent vectors back into the original graph's structural or semantic properties.</p>
+            <p>It treats the relationship as a mathematical operation—a translation, a rotation, or a scaling—that must transform the source node (𝐡) to the target node (𝐭). The decoder calculates a score based on how well 𝐡 + 𝐫 ≈ 𝐭 holds true in latent space.</p>
             <ul>
                 <li><strong>Node-Level:</strong> It reconstructs links or attributes; for example, it calculates if two vectors are close enough to "rebuild" a missing edge.</li>
                 <li><strong>Graph-Level:</strong> It reconstructs a global identity; it maps the combined signature of all nodes to a single label.</li>
@@ -362,13 +362,13 @@ Score = HeadVector * RelationshipMatrix * TailVector
 
 <details class="section">
     <summary>
-        MESSAGE PASSING AND GNN ENHANCEMENTS
+        MESSAGE PASSING, NORMALIZATION, AND UPDATE METHODS
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
     </summary>
     <div class="section-content">
         <div class="subsection">
             <span class="subsection-title">
-                Graph Neural Networks: Message Passing
+                Message Passing
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -377,7 +377,8 @@ Score = HeadVector * RelationshipMatrix * TailVector
                 </button>
             </span>
             <p>Standard message passing’s insight is that nodes can learn not just from their immediate connections but also from the broader graph structure through iterative updates.</p>
-            <p><strong>Best for:</strong> Tasks where a node's unique attributes are fundamentally different from its neighbors (heterophily). Use this when "who I am" matters more than "who I hang out with.”</p>
+            <p><strong>Best for:</strong> Tasks where a node's unique attributes are fundamentally different from its neighbors (heterophily).</p>
+                <p>Use this when "who I am" matters more than "who I hang out with.”</p>
             <div class="code-block">
 // Core GNN Mechanism
 1. AGGREGATE — Collects/combines messages from neighbors
@@ -398,8 +399,11 @@ Score = HeadVector * RelationshipMatrix * TailVector
             </span>
             <ul>
                 <li><strong>Mean Normalization:</strong> Use when a node’s identity is defined by the average behavior of its peers. Treats every neighborhood equally, capturing the "local flavor" without volume bias.</li>
+                    <li>When to use: When the identity of the neighborhood is defined by its average behavior, not its size.</li>
                 <li><strong>Symmetric Normalization (GCN):</strong> Scales messages by 1/√(di * dj). Shares the burden of normalization between sender and receiver, dampening high-degree hubs.</li>
+                    <li>When to use: For standard representation learning where you need to balance the influence of hubs and prevent numerical instability in deep networks.</li>
                 <li><strong>Sum Aggregation:</strong> Essential for tasks where degree is a critical feature (e.g., GIN). Useful for chemistry or fraud detection. If the quantity of edges is as important as quality, do not normalize.</li>
+                    <li>When to use: For discriminative tasks (like GIN) where the count matters—such as detecting molecular structures in chemistry or identifying high-volume burst patterns in fraud detection.</li>
             </ul>
         </div>
 

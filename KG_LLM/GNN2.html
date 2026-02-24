@@ -122,14 +122,14 @@
 
 <details class="section" open>
     <summary>
-        Node Classification & Link Prediction with GNNs
-        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+        PREPROCESSING FOR LINK PREDICTION:
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.1</span>
     </summary>
     
     <div class="section-content">
         <div class="subsection">
             <span class="subsection-title">
-                &lt;PRE-PROCESSING&gt;
+                PRE-PROCESSING:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -140,38 +140,46 @@
             
             <p><strong>1. Node-Level Preprocessing</strong></p>
             <ul>
-                <li><strong>Incremental Re-indexing:</strong> Maps sparse, high-cardinality IDs (like Bitcoin hashes) to a dense, zero-indexed integer range to enable direct memory addressing and prevent massive, empty tensors.</li>
-                <li><strong>Feature Normalization:</strong> Scales node features (e.g., transaction amounts) using Z-score or Min-Max scaling to ensure stable gradient descent.</li>
-                <li><strong>Positional Encodings:</strong> Injects global structural info (via Laplacian Eigenvectors) so the model understands a node's relative location.</li>
+                <li><strong>Incremental Re-indexing:</strong> Maps sparse identifiers (like IP addresses) to dense, zero-indexed integers.<br>
+                <em>Useful & Why:</em> Essential for memory efficiency. It creates a contiguous address block for embeddings, preventing the allocation of massive, empty tensors for non-existent IDs.</li>
+                <li><strong>Feature Normalization:</strong> Scales numerical node features using Z-score or Min-Max scaling.<br>
+                <em>Useful & Why:</em> Critical for convergence. It prevents features with large magnitudes (like "account balance") from exploding gradients and dominating the learning process.</li>
+                <li><strong>Positional Encodings:</strong> Injects structural coordinates (like Laplacian Eigenvectors) into node features.<br>
+                <em>Useful & Why:</em> Vital for structure-aware tasks. It allows the model to distinguish between topologically identical subgraphs based on their absolute position in the global graph.</li>
             </ul>
 
             <p><strong>2. Edge-Level Preprocessing</strong></p>
             <ul>
-                <li><strong>Adjacency List Construction:</strong> Converts source-target pairs into compact formats like Coordinate (COO) for GPU-optimized message passing.</li>
-                <li><strong>DropEdge:</strong> Randomly removes a subset of edges during training as a regularizer to mitigate over-smoothing.</li>
-                <li><strong>Edge Weighting:</strong> Assigns importance values to edges based on attributes like transaction frequency or illicit proximity.</li>
+                <li><strong>Adjacency List Construction:</strong> Converts known positive connections into a compact Coordinate (COO) format.<br>
+                <em>Useful & Why:</em> Foundational for computation. It transforms raw source-target pairs into the sparse matrix standard required for optimized GPU message passing.</li>
+                <li><strong>Negative Sampling:</strong> Randomly generates "fake" edges (node pairs that do not connect).<br>
+                <em>Useful & Why:</em> Mandatory for discriminative learning. Without "fake" examples (Class 0), the model only sees positives (Class 1) and collapses to a trivial "always true" solution.</li>
+                <li><strong>Edge Weighting:</strong> Assigns values to existing links based on interaction strength.<br>
+                <em>Useful & Why:</em> Adds necessary nuance. It helps the model prioritize significant, high-traffic pathways over weak or incidental connections in dense graphs.</li>
             </ul>
 
             <p><strong>3. Structural & Task-Specific Methods</strong></p>
             <ul>
-                <li><strong>Graph Sampling/Partitioning:</strong> Clusters or samples subgraphs for massive datasets (like Elliptic) to fit into limited GPU memory.</li>
-                <li><strong>Virtual Nodes:</strong> Adds a global node connected to all others to facilitate long-range info flow.</li>
+                <li><strong>Subgraph Sampling (e.g., SEAL):</strong> Extracts localized subgraphs around target edge pairs.<br>
+                <em>Useful & Why:</em> Enables scaling. It allows training on massive datasets (like social networks) by processing manageable local neighborhoods instead of the entire graph at once.</li>
+                <li><strong>Virtual Nodes:</strong> Adds a global dummy node connected to all real nodes.<br>
+                <em>Useful & Why:</em> Shortcuts long paths. It allows distant nodes to communicate instantly, improving performance on graphs with long chains or disconnected components.</li>
             </ul>
 
-            <p><strong>4. Data Masking & Splitting (The Final Phase)</strong></p>
-            <p>To move from raw features to a trainable model, the workflow implements <em>Boolean Masking</em> to handle the semi-supervised nature of the labels:</p>
+            <p><strong>4. Edge Splitting & Masking (The Final Phase)</strong></p>
             <ul>
-                <li><strong>Label Filtering:</strong> Creates a <em>known_mask</em> to distinguish between verified nodes (licit/illicit) and unknown/unlabeled nodes.</li>
-                <li><strong>Stochastic Indexing:</strong> Uses <em>torch.randperm</em> to shuffle the indices of labeled nodes, ensuring the split is not biased by the original data order.</li>
-                <li><strong>Boolean Split Masks:</strong> Defines <em>train_mask</em>, <em>val_mask</em>, and <em>test_mask</em> directly on the PyG Data object.</li>
-                <li>These masks allow the model to access the entire graph topology for learning representations while strictly limiting the loss calculation to the appropriate subsets.</li>
-                <li><strong>Class Balancing Check:</strong> A final verification of the licit-to-illicit ratio across masks to ensure the model isn't trained on skewed distributions.</li>
+                <li><strong>Message-Passing vs. Supervision Edges:</strong> "Message-passing" edges build the topology; "supervision" edges are hidden for loss calculation.<br>
+                <em>Useful & Why:</em> Prevents data leakage. It ensures the model predicts links based on surrounding context, rather than "cheating" by seeing the target link in the input graph.</li>
+                <li><strong>Edge Splits (Train/Val/Test):</strong> Positive and negative edges are strictly partitioned.<br>
+                <em>Useful & Why:</em> Standard validation. It segregates data to verify the model is learning generalizable patterns rather than simply memorizing the training graph structure.</li>
+                <li><strong>Class Balancing:</strong> Ensures a controlled ratio (often 1:1) of positive (real) to negative (fake) edges.<br>
+                <em>Useful & Why:</em> Corrects statistical bias. It prevents the model from achieving high accuracy metrics by simply guessing "no link" for every pair in a sparse graph.</li>
             </ul>
         </div>
 
         <div class="subsection">
             <span class="subsection-title">
-                &lt;ENCODER-DECODER FOR NODE CLASSIFICATION&gt;
+                ENCODER-DECODER FOR NODE CLASSIFICATION:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -235,7 +243,7 @@
     <div class="section-content">
         <div class="subsection">
             <span class="subsection-title">
-                &lt;ENCODER-DECODER FOR LINK PREDICTION&gt;
+                ENCODER-DECODER FOR LINK PREDICTION:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
