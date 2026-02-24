@@ -124,7 +124,7 @@
 
 <details class="section" open>
     <summary>
-        MACHINE LEARNING FOR KNOWLEDGE GRAPHS
+        LOCAL AND EGONET FEATURES
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
     </summary>
     
@@ -273,7 +273,7 @@
 
 <details class="section">
     <summary>
-        &lt;ML on Graphs:&gt;
+        ML on Graphs:
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.3</span>
     </summary>
     <div class="section-content">
@@ -299,7 +299,7 @@
 
         <div class="subsection">
             <span class="subsection-title">
-                Evaluating ML Graphs;
+                Evaluating ML Graphs:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -320,7 +320,7 @@
 
 <details class="section">
     <summary>
-        &lt;Feature Engineering:&gt;
+        Feature Engineering:
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.4</span>
     </summary>
     <div class="section-content">
@@ -375,7 +375,7 @@
 
         <div class="subsection">
             <span class="subsection-title">
-                &lt;Manual Relationship Feature Examples:&gt;
+                Manual Relationship Feature Examples:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -383,7 +383,7 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>&lt;Node-Based Combination:&gt;</strong> This approach creates a "link" feature by concatenating the data already known about the two individual nodes.</p>
+            <p><strong>Node-Based Combination:</strong> Compare the node embeddings. This approach creates a "link" feature by concatenating the data already known about the two individual nodes.</p>
             <p><strong>Symmetric and Distance-Based Operation:</strong></p>
             <ul>
                 <li><strong>Average:</strong> Captures the "central tendency" by taking the element-wise mean. Useful for community membership or social circle prediction.</li>
@@ -392,14 +392,15 @@
             </ul>
             <p><strong>Compositional Operations:</strong></p>
             <ul>
-                <li><strong>Concatenation:</strong> Joins vectors end-to-end. Preserves all data but doubles computational cost. Gold standard when relationship order matters (e.g., "A acts on B").</li>
+                <li><strong>Concatenation:</strong> Joins vectors end-to-end. Preserves all data but doubles computational cost.</li>
+                    <p> Gold standard when relationship order matters (e.g., "A acts on B").</p>
                 <li><strong>Hadamard (Element-wise Product):</strong> Multiplies corresponding elements. Captures interactions where both nodes must be high to signal a relationship.</li>
             </ul>
         </div>
 
         <div class="subsection">
             <span class="subsection-title">
-                &lt;Path-Based Features:&gt;
+                Path-Based Features:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -408,9 +409,9 @@
                 </button>
             </span>
             <ol>
-                <li><strong>Semantic Blueprinting (Metapath Definition):</strong> Define potential "templates" for connections. Example: Villain $\rightarrow$ Cites $ \rightarrow$ Philosopher $\rightarrow$ Influenced $\rightarrow$ Concept.</li>
-                <li><strong>Metapath Reduction (Filtering the Columns):</strong> Statistical selection step. Analyze templates and discard those that don't historically correlate with the outcome to shrink the feature vector.</li>
-                <li><strong>Structural Scoring (Calculating the Values):</strong> Use DWPC (Degree-Weighted Path Count) to score paths. Mitigates "hub noise" by weighting paths through busy nodes less than niche nodes.</li>
+                <li><strong>Semantic Blueprinting (Metapath Definition):</strong> Designing path templates through the graph schema. You map specific sequences, like Villain to Philosopher, to capture the underlying logic of the network.</li>
+                <li><strong>Metapath Reduction (Filtering the Columns):</strong> Uses statistical selection to filter these templates. You analyze which paths correlate with your target and discard the rest to keep the feature vector small and efficient.</li>
+                <li><strong>Structural Scoring (Calculating the Values):</strong> Calculates weights for the selected paths using metrics like DWPC. This prevents high-degree hubs from dominating the score, ensuring niche connections are valued properly.</li>
             </ol>
         </div>
     </div>
