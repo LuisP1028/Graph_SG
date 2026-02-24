@@ -153,13 +153,6 @@
             </ul>
 
             <div class="code-block">
-Example:
-Extraction: Identify a node’s "Structural DNA." Instead of tweets, calculate a facility's "Throughput" (local property) and "Betweenness" (its role as a bridge).
-Vectorization: Every warehouse becomes a numerical vector: [volume, bridge_score]. You have turned operational behavior into spatial coordinates.
-Cosine Similarity: Compare these vectors. If two warehouses "act" the same, you draw a Similarity Edge between them—even if they aren't physically linked.
-Label Propagation: You let "labels" flow across these new similarity edges.
-Like a virus of "sameness," the label spreads until it hits a boundary where behavior changes.
-Segmentation: The result is a set of Communities based on roles—grouping all "Critical Global Hubs" together and all "Local Spoke Sites" together.
             </div>
         </div>
     </div>
@@ -167,7 +160,7 @@ Segmentation: The result is a set of Communities based on roles—grouping all "
 
 <details class="section" open>
     <summary>
-        MOTIFS AND GRAPHLETS
+        MOTIFS, GRAPHLETS, BETWEENNESS AND CLOSENESS CENTRALITY
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.1</span>
     </summary>
     
@@ -200,7 +193,7 @@ Segmentation: The result is a set of Communities based on roles—grouping all "
                     </svg>
                 </button>
             </span>
-            <p>Betweenness Centrality measures a node’s <strong>strategic value</strong> as a broker. While graphlets look at local "shapes," this identifies a node's global position by calculating how often it sits on the shortest path between all other node pairs. Nodes with high betweenness act as <em>critical bridges</em>; they control the flow of information.</p>
+            <p>Quantifies the importance of a node in passing information throughout the graph. Betweenness Centrality measures a node’s <strong>strategic value</strong> as a broker. While graphlets look at local "shapes," this identifies a node's global position by calculating how often it sits on the shortest path between all other node pairs. Nodes with high betweenness act as <em>critical bridges</em>; they control the flow of information.</p>
         </div>
 
         <div class="subsection">
@@ -213,7 +206,7 @@ Segmentation: The result is a set of Communities based on roles—grouping all "
                     </svg>
                 </button>
             </span>
-            <p>Closeness Centrality measures <strong>accessibility</strong>. It calculates the shortest paths from one node to every other node in the network. A high score indicates a <em>"central"</em> location, allowing a node to reach the entire system with minimum latency.</p>
+            <p>Closeness Centrality measures <strong>accessibility</strong>. It quantifies how quickly a node can propagate that information. It calculates the shortest paths from one node to every other node in the network. A high score indicates a <em>"central"</em> location, allowing a node to reach the entire system with minimum latency.</p>
         </div>
     </div>
 </details>
@@ -241,8 +234,8 @@ Segmentation: The result is a set of Communities based on roles—grouping all "
                 <li><strong>1. From Similarity to Segments:</strong> By maximizing <em>Modularity</em>, it ensures these clusters represent significant, non-random structural niches rather than coincidental overlaps.</li>
                 <li><strong>Modularity:</strong> To find order, you need a baseline of chaos. We create a <em>Null Model</em> by shuffling the network's edges randomly while keeping node degrees constant (purposely shuffle connections (even if they don't exist in reality), to establish a baseline as to whether order exists in the graph). A high score proves the cluster is an intentional archetype, not a statistical accident.</li>
                 <li><strong>Aggregation:</strong> Nodes in the same community are collapsed into a single <em>"super-node."</em></li>
-                <li><strong>Self-loops & Edges:</strong> "self-loops" keep track of super-node relationships, while "weighted edges" keep track of supernode-supernode relationships. "self loops" inside of a super-node, is really just jargon for saying you keep a record of the relationships inside of a super-node. Weighted edges between super-nodes represent the <em>"bridge strength"</em> between groups, indicating how many links originally connected members of Community A to members of Community B.</li>
-                <li><strong>2. Identifying Functional "Tribes":</strong> This identifies behavioral archetypes. Because you are clustering based on similarity rather than direct interaction, the resulting groups are <em>"tribes"</em> of entities that perform identical functions.</li>
+                <li><strong>Self-loops & Edges:</strong> "Self-loops" keep track of super-node relationships, while "weighted edges" keep track of supernode-supernode relationships.</li>
+                <li><strong>2. Identifying Functional "Tribes":</strong> This identifies behavioral archetypes. Because you are clustering based on functional similarity rather than direct interaction, the resulting groups are <em>"tribes"</em> of entities that perform identical functions.</li>
                 <li><strong>3. The Final Mutation:</strong> It saves cluster IDs to your RAM-based graph projection. This lets you use those segments as inputs for the next algorithm instantly, bypassing the delay of writing to your permanent database.</li>
             </ul>
         </div>
