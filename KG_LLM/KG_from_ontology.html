@@ -272,12 +272,6 @@
                 
             </ul>
             
-            <div class="code-block">
-            <p>Key Configuration Tactics:</p>
-            handleVocabUris: "IGNORE": Strips the URL prefix from property names, turning http://...#hasSymptom into simply hasSymptom.
-            applyNeo4jNaming: true: Automatically converts RDF styles (like camelCase) into standard Neo4j UPPERCASE_SNAKE_CASE, ensuring compatibility with the Neo4j ecosystem.
-            </div>
-            
             <p><strong>Phase 3: Post-Import Enrichment (The Editor)</strong></p>
             <p>This phase is about Refining the raw data into a usable schema. When Neosemantics imports data, it often dumps everything under a generic label like :Resource.</p>
             <ul>
@@ -300,17 +294,12 @@
             </ul>
         </div>
 
-        <div class="subsection">
-            <span class="subsection-title">
-                QUERYING MULTI-LAYERED DATASETS [Phase 4]
-                <button class="eye-btn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                </button>
             </span>
-            <p>The abstract concept map (Taxonomy), the real-world records (Instances), and the descriptive details (Metadata). Querying is described as "stepping" through these layers sequentially rather than grabbing everything at once.</p>
+            <p><li>The abstract concept map (Taxonomy)</li>
+            <li>The real-world records (Instances)</li>
+            <li>Descriptive details (Metadata)</li>
+            <li>e.g. If "Virus" is the Concept (the category), then "COVID-19" is the Instance (the actual entity).</li>
+            <p>Querying is described as "stepping" through these layers sequentially rather than grabbing everything at once.</p>
             <div class="code-block">
 Find the broad Concept.
 Pass those results down to find specific Data points.
@@ -318,7 +307,7 @@ Finally, pull the Metadata (fine print).
             </div>
             <p>This "chaining" prevents the system from crashing by managing the data load step-by-step.</p>
             <p><strong>Phase 5: Annotation Enrichment (The Glue)</strong></p>
-            <p>While Phases 1–3 build the taxonomic "skeleton," Phase 5 adds the "connective tissue" using external annotation files (like TSVs). This links abstract concepts to real-world evidence.</p>
+            <p>Adding new information and context layered ontop of the ontology.</p>
             <ul>
                 <li><strong>Tabular Ingestion:</strong> Use LOAD CSV to process flat data. This introduces specific clinical instances, evidence codes, and frequency metrics that structural .owl files lack.</li>
                 <li><strong>Relational Mapping:</strong> Through Match-and-Merge, you find existing ontology nodes (Phases 2–3) and draw physical edges (e.g., [:HAS_PHENOTYPIC_FEATURE]) to new disease nodes.</li>
