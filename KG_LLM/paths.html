@@ -180,11 +180,29 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Path:</strong> A specific set of steps to get from A -> B.</p>
-            <p><strong>Metapath:</strong> An established path pattern that showcases some phenomena ‘x’.</p>
-            <p><strong>Path Count:</strong> Calculates the number of ways phenomena “x” can be arrived at.</p>
+        
+            <p><strong>Path</strong></p>
+                <p>A specific sequence of connected nodes and edges leading from a start node (A) to a target node (B).</p>
+            <ul>
+                <li><em>How it works:</em> It traces a single, concrete route through the network topology (e.g., User A → Clicked → Item B). It represents one specific instance of connectivity or flow between two entities.</li>
+                <li><em>When to use / Why:</em> Use when tracing specific forensic trails, transaction flows, or user journeys. It isolates exact causal links, allowing you to audit how two specific nodes are connected.</li>
+            </ul>
+        
+            <p><strong>Metapath</strong></p>
+                <p>An established schematic pattern of node and edge types that defines a specific semantic relationship (e.g., Author → Paper → Author).</p>
+            <ul>
+                <li><em>How it works:</em> It acts as a template or filter. Instead of looking at random connections, it enforces a semantic structure (like "Co-Authorship") by only considering paths that follow the specific sequence of types defined in the schema.</li>
+                <li><em>When to use / Why:</em> Use in heterogeneous graphs to define "similarity" or meaningful relationships. It allows you to relate two nodes based on shared context (e.g., same industry) rather than just direct adjacency.</li>
+            </ul>
+        
+            <p><strong>Path Count</strong></p>
+            <p>The raw integer count of how many valid paths exist between two nodes that match a specific metapath pattern.</p>
+            <ul>
+                <li><em>How it works:</em> It iterates through the graph and sums up every distinct path that satisfies the metapath criteria. If User A and User B purchased 5 of the same items, the Path Count for the "User-Item-User" metapath is 5.</li>
+                <li><em>When to use / Why:</em> Use for baseline feature engineering. It provides a raw magnitude of connection strength but acts naively, failing to account for "popularity bias" (connecting via a common hub vs. a niche node).</li>
+            </ul>
         </div>
-
+        
         <div class="subsection">
             <span class="subsection-title">
                 THE MATHEMATICS: PDP AND DWPC
@@ -195,37 +213,25 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>The Path-Degree Product (PDP):</strong></p>
+        
+            <p><strong>The Path-Degree Product (PDP)</strong></p>
+            <p>A metric for a <em>single path</em> that down-weights connections passing through high-degree "super-nodes."</p>
             <div class="code-block">
-$$PDP(path) = \prod_{d \in D_{path}} d^{-w}$$
+        $$PDP(path) = \prod_{d \in D_{path}} d^{-w}$$
             </div>
-            <p>For a single specific path, you look at every node's degree (number of connections) along that path. You raise each degree to the power of -w (the damping exponent) and multiply them together. <em>Logic:</em> Because the exponent is negative, a higher degree ($d$) results in a smaller PDP. A path through a "hub" node (like a very common gene) is worth less than a path through a "exclusive" node.</p>
-
-            <p><strong>The Degree-Weighted Path Count (DWPC):</strong></p>
-            <div class="code-block">
-$$DWPC_m(s, t) = \sum_{path \in Paths_m(s, t)} PDP(path)$$
-            </div>
-            <p>To calculate the DWPC, you first find every unique path that flows through your metapath pattern, then you sum their individual PDP values. It tells you not just how many ways there are to get from A to B, but how meaningful or specific those connections are.</p>
-        </div>
-
-        <div class="subsection">
-            <span class="subsection-title">
-                WHY AND WHEN IS THIS USEFUL?
-                <button class="eye-btn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                </button>
-            </span>
-            <p>In large knowledge graphs like Hetionet, some nodes are "celebrities"—they connect to almost everything (e.g., a common side effect like "nausea" or a well-studied gene).</p>
-            <p><strong>Problem with PC:</strong> If you use basic Path Count, any metapath involving a celebrity node will have a massive score simply because that node is a massive hub, not because the relationship is meaningful.</p>
-            <p><strong>The DWPC Solution:</strong> It downweights these "well-known nodes." It prioritizes paths that are specific and rare.</p>
-            <p><strong>When to use it:</strong></p>
             <ul>
-                <li><strong>Target Discovery:</strong> When you want to find a drug-disease link that isn't just "this drug causes nausea" (which applies to almost every drug).</li>
-                <li><strong>Recommendation Systems:</strong> When you want to suggest a niche movie a user will love, rather than just suggesting The Avengers because everyone has seen it.</li>
-                <li><strong>Link Prediction:</strong> When you need to determine if a connection is biologically significant or just a byproduct of a node being over-researched.</li>
+                <li><em>How it works:</em> It examines every node along a specific path and raises its degree ($d$) to a negative exponent ($-w$). Mathematically, this means paths through massive hubs (high $d$) yield tiny scores, while paths through exclusive, low-degree nodes yield high scores.</li>
+                <li><em>When to use / Why:</em> Use to quantify the <em>specificity</em> or information content of a single connection. It ensures that widely connected nodes (like the word "the" or a generic item) don't artificially inflate similarity scores.</li>
+            </ul>
+        
+            <p><strong>The Degree-Weighted Path Count (DWPC)</strong></p>
+            <p>The sum of PDP scores for all paths matching a metapath. It represents the total "quality" of the relationship.</p>
+            <div class="code-block">
+        $$DWPC_m(s, t) = \sum_{path \in Paths_m(s, t)} PDP(path)$$
+            </div>
+            <ul>
+                <li><em>How it works:</em> It aggregates the "exclusivity" of the relationship. It finds every unique path matching the pattern, calculates the PDP for each, and sums them. This rewards pairs connected by many <em>specific</em> paths while discounting those connected only by generic hubs.</li>
+                <li><em>When to use / Why:</em> Use as a robust metric for semantic similarity (e.g., in drug discovery). It distinguishes between meaningful connections and noise, providing a weighted score that accurately reflects the strength of the association.</li>
             </ul>
         </div>
 

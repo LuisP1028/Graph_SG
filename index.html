@@ -232,6 +232,17 @@
         .container { padding: 10px; }
     }
 </style>
+
+<script>
+    MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']]
+      }
+    };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
 </head>
 <body>
 
@@ -505,7 +516,9 @@
 
     async function loadHTMLIncludes() {
         const containers = document.querySelectorAll('[data-include]');
-        for (const container of containers) {
+        
+        // Wait for all fetches to resolve
+        await Promise.all(Array.from(containers).map(async (container) => {
             const file = container.getAttribute('data-include');
             try {
                 const response = await fetch(file);
@@ -514,11 +527,6 @@
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(htmlText, 'text/html');
 
-                /** * IMPROVED EXTRACTION LOGIC:
-                 * 1. Get all children of the child file's body.
-                 * 2. Filter out visual overlay layers to prevent opacity stacking.
-                 * 3. Join the outerHTML of all valid top-level nodes to capture multiple modules.
-                 */
                 const validElements = Array.from(doc.body.children).filter(el => {
                     return !el.classList.contains('dither-layer') && !el.classList.contains('scanlines');
                 });
@@ -528,11 +536,15 @@
                 } else {
                     container.innerHTML = `<p style="color:var(--dim-color)">[MODULE_EMPTY]</p>`;
                 }
-
             } catch (error) {
                 console.error('Import Failed:', error);
                 container.innerHTML = `<p style="color:red">ERROR: COULD NOT LOAD MODULE [${file}].</p>`;
             }
+        }));
+
+        // Trigger MathJax re-render after all content is dynamically injected
+        if (window.MathJax) {
+            MathJax.typesetPromise().catch((err) => console.log('MathJax Error:', err.message));
         }
     }
 
