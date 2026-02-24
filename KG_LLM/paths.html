@@ -143,10 +143,30 @@
             
             <p><strong>Goal:</strong> Transforming structured and semistructured schemas and data formats into a homogeneous graph. KGs transform scattered data into a unified map.</p>
             
+            <p><strong>Conductivity (Conductance)</strong></p>
+            <p>Measures how "leak-proof" a community is. It compares the number of edges leaving the group to the total edges inside it.</p>
             <ul>
-                <li><strong>Conductivity (Conductance):</strong> <em>Low Value</em>: Indicates a distinct, "tight-knit" community with few links to the outside world. This suggests a highly independent and well-defined functional module. <em>High Value</em>: Indicates a "leaky" or well-integrated group that shares many connections with the wider network, making it difficult to isolate as a separate entity.</li>
-                <li><strong>Intensity (Density):</strong> <em>High Value</em>: Reflects a cohesive module where nodes utilize a high percentage of their potential internal connections, indicating frequent and intense collaboration. <em>Low Value</em>: Represents a sparse or loose pathway where interactions are rare relative to the total possible connections, suggesting a weakly interactive group.</li>
-                <li><strong>Reachability:</strong> <em>High Value</em>: Suggests an integrated "Giant Component" where signals or information can traverse the majority of the network without hitting structural dead ends. <em>Low Value</em>: Indicates a fragmented or "shattered" system composed of isolated islands, where information is effectively trapped within disconnected silos.</li>
+                <li><em>Low Value:</em> A distinct, tight-knit clique (like a family) that barely interacts with outsiders.</li>
+                <li><em>High Value:</em> A vague group that blends into the background noise of the network.</li>
+                <li><em>When to use:</em> Use to validate cluster quality. If your fraud detection model groups nodes with high conductance, it likely failed to find a real criminal ring.</li>
+            </ul>
+        
+            <p><strong>Intensity (Density)</strong></p>
+            
+            <p>Measures internal cohesiveness. It calculates the ratio of actual connections to potential connections within a group.</p>
+            <ul>
+                <li><em>High Value:</em> Everyone knows everyone. The group is highly collaborative and robust.</li>
+                <li><em>Low Value:</em> A loose collection of acquaintances. The group is fragile and barely connected.</li>
+                <li><em>When to use:</em> Use to assess group strength. A high-density subgraph in a transaction network often indicates a coordinated attack or a high-velocity money laundering cycle.</li>
+            </ul>
+        
+            <p><strong>Reachability</strong></p>
+            
+            <p>Measures network integrity. It asks: "If I start at Node A, can I eventually reach Node Z?"</p>
+            <ul>
+                <li><em>High Value:</em> A "Giant Component" exists. Information flows freely across the entire system.</li>
+                <li><em>Low Value:</em> A shattered system of isolated islands. Data is trapped in silos.</li>
+                <li><em>When to use:</em> Use to analyze information flow. If a cyber-attack hits a network with low reachability, the damage is naturally contained; in high reachability, it spreads everywhere.</li>
             </ul>
         </div>
 
