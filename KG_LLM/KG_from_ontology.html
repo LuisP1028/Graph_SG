@@ -224,19 +224,21 @@
                 </button>
             </span>
             <p>In LPG, the link itself has a "data payload." LPG (Labeled Property Graph) is built for speed and context. Every single line (edge) between two nodes can have its own private properties.</p>
+            
             <ul>
-                <li>Because LPG uses pointers for properties, it provides fast graph traversal through <em>index-free adjacency</em>.</li>
+                <li><strong>Index-Free Adjacency:</strong> Instead of searching a global index or table, the system uses physical "pointers" to hop between nodes instantly.</li>
+                <li><strong>Labeled Wires:</strong> Relationships are treated as specific paths. The system filters by the "color" or label of the wire (e.g., FRIEND vs. BOSS) before even moving.</li>
             </ul>
+            
+            
             <div class="code-block">
-Instead of:
-Find all of Alice's friends.
-For each friend, go find their "City" record.
-Check if City == "London".
-
-The LPG does:
-Teleport to Alice's neighbors.
-Instantly check the "City" property already living on that neighbor node as it arrives.
+        Instead of:
+        Scanning a massive "Relationships" table to find which rows link Alice and Bob, then checking if the relationship type is "FRIEND".
+        
+        The LPG does:
+        Alice is physically connected to neighbors by different "labeled wires." To find friends, the system ignores the COWORKER and FAMILY wires entirely. It only travels down the FRIEND wires. The lookup is built into the physical path—you don't ask if they are friends; you simply arrive via the FRIEND wire.
             </div>
+            
         </div>
 
         <div class="subsection">
@@ -254,7 +256,6 @@ Instantly check the "City" property already living on that neighbor node as it a
             <ul>
                 <li><strong>Global Uniqueness:</strong> You create a constraint on the :Resource label (the default tag for all RDF imports) to ensure no two nodes share the same URI.</li>
                 <li><strong>Entry-Point Indexing:</strong> Since LPGs use Index-Free Adjacency, you only need an index to find the starting node. Once found, the system "teleports" to neighbors.</li>
-                <li>Critical Note: In Neo4j, a uniqueness constraint automatically creates an index. You only need to add extra indexes for properties you will filter by frequently (like id or name).</li>
             </ul>
             <p><strong>Phase 2: Orchestrated Import (The Bridge)</strong></p>
             <p>Using Neosemantics (n10s), you translate the .owl logic into Neo4j nodes and edges. This is where you decide how much of the "RDF baggage" you want to carry.</p>
