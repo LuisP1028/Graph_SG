@@ -313,7 +313,7 @@ Finally, pull the Metadata (fine print).
 
         <div class="subsection">
             <p>Subclass Reasoning (Subsumption)</p>
-            <p>Similar to query expansion in a vector DB to "cast a wider net" (but here it's precise instead of probabilistic). Subclass reasoning uses <em>is-a hierarchies</em> to expand a query's scope. It ensures that a search for a general concept (Parent) also retrieves data tagged with specific variations (Children).</p>
+            <p>Similar to query expansion in a vector DB to "cast a wider net" (but here it's precise instead of probabilistic).It utilizes the "is-a" hierarchy within an ontology. In a Knowledge Graph, this isn't just a label; it’s a directional path. The system treats a general "Parent" concept as a container for all its "Children."</p>
             <p><strong>When & Why to Implement</strong></p>
             <ul>
                 <li><strong>When:</strong> Your data uses formal ontologies (HPO, SNOMED) or nested categories.</li>
@@ -321,9 +321,9 @@ Finally, pull the Metadata (fine print).
             </ul>
             <p><strong>How to Implement</strong></p>
             <ul>
-                <li><strong>Identify Hierarchy:</strong> Locate the SUBCLASSOF or is_a relationship in your KG.</li>
-                <li><strong>Transitive Traversal:</strong> Use variable-length paths in Cypher (e.g., [:SUBCLASSOF*1..n]) to find descendants.</li>
-                <li><strong>Query Expansion:</strong> In an LLM pipeline, use a "Rewriter" agent to identify the parent entity and fetch its subclasses to augment the retrieval context.</li>
+                <li><strong>Identify Hierarchy:</strong> Locate the SUBCLASSOF or is_a relationship in your KG. This declares how data is stored in your knowledge graph.</li>
+                <li><strong>Transitive Traversal:</strong> Use variable-length paths in Cypher (e.g., [:SUBCLASSOF*1..n]) to find descendants. This declares how to traverse these relationships in your knowledge graph.</li>
+                <li><strong>Query Expansion:</strong> In an LLM pipeline, use a "Rewriter" agent to identify the parent entity and fetch its subclasses to augment the retrieval context. </li>
             </ul>
         </div>
     </div>

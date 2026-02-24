@@ -141,12 +141,11 @@ END-TO-END LLM NER PROCESS: IDENTIFYING ENTITIES
                 </svg>
             </button>
         </span>
-        
-        <p><strong>Goal:</strong> The process begins by querying the Neo4j graph to extract a clean list of categories (like Disease, Organism, or Procedure).</p>
-        
+        <p><strong>Goal:</strong> Extract the <strong>Ground Truth</strong> from your Knowledge Graph by querying Neo4j for every unique category label (e.g., <code>:Disease</code>, <code>:Gene</code>) currently in your ontology.</p>
         <ul>
-            <li><strong>Key 01:</strong> This ensures the LLM doesn’t invent its own labels but uses the <em>standardized "language" of the ontology</em>.</li>
+            <li><strong>Key 01:</strong> This creates a "menu" of valid terms, ensuring the LLM uses your specific database's language rather than guessing.</li>
         </ul>
+        
     </div>
 
     <div class="subsection">
@@ -159,10 +158,11 @@ END-TO-END LLM NER PROCESS: IDENTIFYING ENTITIES
                 </svg>
             </button>
         </span>
-        <p><strong>Goal:</strong> The author constructs a "system prompt" that acts as a strict set of guardrails for the LLM.</p>
+        <p><strong>Goal:</strong> Feed the category "menu" into a <strong>System Prompt</strong> that acts as a set of strict guardrails.</p>
         <ul>
-            <li><strong>Key 01:</strong> This prompt provides the list of categories from Step 1 and <em>explicitly forbids the model from using any other labels</em>.</li>
+            <li><strong>Key 01:</strong> You explicitly tell the LLM: "You are a medical annotator. Here is a list of allowed categories. If a term doesn't fit these specific labels, do not extract it." This prevents "hallucinated" categories.</li>
         </ul>
+        
     </div>
 
     <div class="subsection">
@@ -175,10 +175,11 @@ END-TO-END LLM NER PROCESS: IDENTIFYING ENTITIES
                 </svg>
             </button>
         </span>
-        <p><strong>Goal:</strong> Unstructured text is fed to the LLM, which identifies terms and maps them to the provided labels.</p>
+        <p><strong>Goal:</strong> You provide the LLM with unstructured text (like a patient note). The LLM scans the text, identifies entities, and maps them to your allowed categories.</p>
         <ul>
-            <li><strong>Key 01:</strong> The output is returned as <em>structured JSON</em>, listing each entity "mention" (the exact text found) alongside its classification.</li>
+            <li><strong>Key 01:</strong> Crucially, it must output this as <strong>Structured JSON</strong>, which a computer can read, rather than a conversational paragraph.</li>
         </ul>
+        
     </div>
 
     <div class="subsection">
@@ -191,10 +192,11 @@ END-TO-END LLM NER PROCESS: IDENTIFYING ENTITIES
                 </svg>
             </button>
         </span>
-        <p><strong>Goal:</strong> LLMs process text as tokens (probability chunks), not individual characters, making them notoriously unreliable at calculating exact offsets.</p>
+        <p><strong>Goal:</strong> Take the LLM’s extracted words and use a <strong>Python script</strong> to re-scan the original text.</p>
         <ul>
-            <li><strong>Key 01:</strong> To fix this, <em>scan the original string</em> for the LLM's extracted mentions.</li>
+            <li><strong>Key 01:</strong> LLMs are great at finding words but terrible at math; they often miscalculate exactly where a word starts or ends (offsets). This "double-check" finds the exact character positions for perfect accuracy.</li>
         </ul>
+        
     </div>
 
 </div>
