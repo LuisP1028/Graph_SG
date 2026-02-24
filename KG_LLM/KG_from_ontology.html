@@ -257,19 +257,40 @@
                 <li><strong>Global Uniqueness:</strong> You create a constraint on the :Resource label (the default tag for all RDF imports) to ensure no two nodes share the same URI.</li>
                 <li><strong>Entry-Point Indexing:</strong> Since LPGs use Index-Free Adjacency, you only need an index to find the starting node. Once found, the system "teleports" to neighbors.</li>
             </ul>
+            
             <p><strong>Phase 2: Orchestrated Import (The Bridge)</strong></p>
-            <p>Using Neosemantics (n10s), you translate the .owl logic into Neo4j nodes and edges. This is where you decide how much of the "RDF baggage" you want to carry.</p>
-            <div class="code-block">
-Key Configuration Tactics:
-handleVocabUris: "IGNORE": Essential for usability. It strips the 50-character URL prefix from property names, turning http://...#hasSymptom into just hasSymptom.
-applyNeo4jNaming: true: Automatically cleans up the RDF style. It converts camelCase or lowercase relationships into the standard Neo4j UPPERCASE_SNAKE_CASE, making your graph immediately compatible with other Neo4j tools.
-            </div>
-            <p><strong>Phase 3: Post-Import Enrichment (The Editor)</strong></p>
-            <p>Neosemantics is a translator, not an architect. Once the data is in, you use Cypher and APOC to mold the generic "Resources" into a domain-specific model.</p>
+            <p>Translating means converting <strong>academic-grade logic (RDF/OWL)</strong> into <strong>application-grade performance (LPG/Neo4j)</strong> using Neosemantics (n10s). This process turns a formal document into a high-speed, navigable map.</p>
+            
             <ul>
-                <li><strong>1. The Sorting Hat (Labeling):</strong> You scan the generic nodes and apply specific labels based on their URI patterns. This allows you to run queries like MATCH (p:HpoPhenotype) instead of searching every single node in the database.</li>
-                <li><strong>2. String Surgery (Normalization):</strong> Using APOC's text functions, you transform raw URIs into standardized IDs. For your medical use case, this means converting .../HP_0001 into HP:0001.</li>
+                <li>
+                    <strong>Structural Shift (List to Map):</strong> RDF stores data as a flat list of sentences. Translation physically "wires" these sentences together into a network of nodes and edges. This enables <strong>Index-Free Adjacency</strong>, allowing the system to "teleport" between connected facts instantly.
+                </li>
+                
+                <li>
+                    <strong>The Cleaning Step (Removing Noise):</strong> In RDF, every property uses a long URL (URI) for uniqueness. Cleaning strips these 50-character prefixes, making the data human-readable and developer-friendly.
+                </li>
+                
             </ul>
+            
+            <div class="code-block">
+            <p>Key Configuration Tactics:</p>
+            handleVocabUris: "IGNORE": Strips the URL prefix from property names, turning http://...#hasSymptom into simply hasSymptom.
+            applyNeo4jNaming: true: Automatically converts RDF styles (like camelCase) into standard Neo4j UPPERCASE_SNAKE_CASE, ensuring compatibility with the Neo4j ecosystem.
+            </div>
+            
+            <p><strong>Phase 3: Post-Import Enrichment (The Editor)</strong></p>
+            <p>This phase is about Refining the raw data into a usable schema. When Neosemantics imports data, it often dumps everything under a generic label like :Resource.</p>
+            <ul>
+                <li>
+                    <strong>1. The Sorting Hat (Performance):</strong> If you have 10 million nodes, searching for "Diabetes" across the entire database is slow. By applying specific labels (like :Disease or :Symptom), you create specialized "buckets." This allows the database to ignore 9.9 million irrelevant nodes and only search the 100,000 labeled as :Disease.
+                </li>
+                
+                <li>
+                    <strong>2. String Surgery (Standardization):</strong> Raw data often comes with messy, non-standard IDs (e.g., .../HP_0001). If a doctor searches for HP:0001, the system will fail to find a match. Normalization cleans these IDs so they match the standard formats used by other tools, LLMs, and researchers, ensuring your graph is "search-ready."
+                </li>
+                
+            </ul>
+
             <p><strong>Phase 4: Query Strategy (The Navigator)</strong></p>
             <p>Once modeled, use the "Anchor, Funnel, Chain" method.</p>
             <ul>
