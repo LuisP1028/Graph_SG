@@ -199,7 +199,6 @@
         GRAPH-BASED ENTITY RESOLUTION
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.2</span>
     </summary>
-    <p>Determines if two nodes represent the same real-world entity by analyzing their connections rather than just their names.</p>
     <div class="section-content">
         <div class="subsection">
             <span class="subsection-title">
@@ -211,10 +210,10 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Goal:</strong> Use structural evidence and global interaction density to resolve entities.</p>
+            <p><strong>Goal:</strong>Determines if two nodes represent the same real-world entity by analyzing their connections rather than just their names.</p>
             <ul>
                 <li><strong>Context is connectivity:</strong> If two candidate nodes share <em>common neighbors</em> (LIVES_IN, ATTENDED, MENTIONED), the structural evidence for merging them grows.</li>
-                <li><strong>Louvain Algorithm:</strong> Analyzes global interaction density to identify <em>neighborhoods</em> where nodes are more tightly connected to each other than to the rest of the graph.</li>
+                <li><strong>Louvain Algorithm:</strong> Detects dense communities; if two "Johns" land in isolated clusters, they are distinct. Analyzes global interaction density to identify <em>neighborhoods</em> where nodes are more tightly connected to each other than to the rest of the graph.</li>
                 <li><strong>Mathematical Evidence:</strong> If "John Doe" from a maritime document and "John Doe" from astrophysics are placed into <em>different communities</em>, they belong to separate spheres.</li>
             </ul>
         </div>
