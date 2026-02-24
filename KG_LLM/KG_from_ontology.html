@@ -170,7 +170,7 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>OWL:</strong> Industry standard formatting providing the formal logic and schema for Knowledge Graphs, defining how entities relate.</p>
+            <p><strong>OWL [Web Ontology Language]:</strong> It allows different databases to "understand" each other’s meaning, transforming isolated, messy spreadsheets into a single, searchable network of facts.</p>
             <ul>
                 <li><strong>Standardization:</strong> Provides a formal vocabulary to define "what things are" and "how they relate" using logic.</li>
                 <li><strong>Interoperability:</strong> Enables disparate systems to exchange data without losing meaning.</li>
@@ -189,38 +189,28 @@
                 </button>
             </span>
             <p>Structured as a <strong>triple</strong> is a data entity that consists of subject, predicate, and object.</p>
+            
             <ul>
                 <li>RDF is particularly suitable for creating ontologies that describe a specific domain of knowledge.</li>
                 <li>In RDF, relationships are global statements, and can be easily “mapped” given that different sources use the same RDF URI.</li>
                 <li>For example: If Source A (a clinical database) and Source B (a research paper) both use the URI: “http://purl.obolibrary.org/obo/HP_0001250”.</li>
                 <li>An LLM or system immediately knows both are talking about "Seizures," even if Source A calls it "Fits" and Source B calls it "Epilepsy."</li>
             </ul>
-            <div class="code-block">
-Functioning like a basic sentence:
-Subject: The resource being described (an IRI or blank node).
-Predicate: The specific relationship or property (an IRI).
-Object: The value (Literal) or related entity (IRI/blank node).
-            </div>
+            
+        
             <p><strong>Methods of adding metadata to RDF:</strong></p>
+        
             <p><strong>1. Reification</strong></p>
-            <p>Turn the “relationship” edge into its own distinct node, and have the initial node and end node point to the new “relationship node”. Fill the “relationship node” with metadata. While this keeps the logic clean, it triples the number of edges in your graph.</p>
-            <p><strong>2. Named Graphs</strong></p>
-            <p>The fourth element (the Graph ID) is a unique identifier attached to the statement. You then use that same ID as the "Subject" for new sentences that contain your metadata.</p>
-            <div class="code-block">
-The Statement: (Subject, Predicate, Object, Graph_ID_77)
-The Metadata: (Graph_ID_77, was_reported_by, Satellite_A)
-The "pointer" is the shared ID.
-            </div>
-            <p>When you want the metadata for a relationship, you look for any statement where the Subject matches the Graph ID of the relationship you're interested in.</p>
+            <p>Turns a relationship into a physical <strong>middleman node</strong>. Instead of one edge between A and B, you create a node representing the "Statement" itself and point metadata to it. While compatible with all tools, it triples the number of edges in your graph.</p>
+            
+        
+            <p><strong>2. Named Graphs (Quads)</strong></p>
+            <p>Adds a <strong>Graph ID</strong> as a fourth element, turning the triple into a "Quad." This ID acts as a unique identifier for the statement, which you then use as the <strong>Subject</strong> for new metadata sentences. Efficient for batching facts, but clunky for single-triple queries.</p>
+            
+        
             <p><strong>3. RDF-STAR</strong></p>
-            <p>In RDF-star, you use double-angled brackets << >> to wrap a triple, effectively telling the computer: "Treat this entire sentence as a single object."</p>
-            <div class="code-block">
-How it works in practice:
-Instead of creating a "middleman" node or an "ID" in a separate column, you just write: <<Subject -> Predicate -> Object>> -> hasMetadata -> "Value"
-The Fact: <<Diabetes -> hasSymptom -> Thirst>>
-The Metadata: You attach :source "Medical Journal" directly to that bracketed fact.
-            </div>
-            <p><em>The Catch:</em> Because this uses a special syntax (<< >>), older RDF databases don't understand it. It requires modern "RDF-star compatible" engines to actually run the queries.</p>
+            <p>Uses double-angled brackets <code>&lt;&lt; &gt;&gt;</code> to wrap a triple, treating the <strong>entire sentence</strong> as a single object. You attach metadata directly to these brackets, making it the most human-readable and efficient method. <em>The Catch:</em> Requires modern, compatible engines to understand the syntax.</p>
+            
         </div>
 
         <div class="subsection">
