@@ -258,20 +258,45 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Phase 1: Global Identity Normalization (Indexing)</strong></p>
-            <p>The Core: Mapping arbitrary entity names into a continuous 0-indexed integer space for direct GPU memory addressing. Ecosystem Expansion: Beyond basic dictionary mapping, massive streaming graphs use hash functions (e.g., MurmurHash) to convert strings to integers on the fly.</p>
             
-            <p><strong>Phase 2: Structural Encoding (the edge_index)</strong></p>
-            <p>The Core: Storing network topology in a 2 × E Coordinate (COO) tensor to separate “who a node knows” from “what a node is.” Ecosystem Expansion: While COO is standard, tools like <em>scipy.sparse</em> offer CSR (Compressed Sparse Row) formats, which are vastly superior for high-performance matrix multiplications.</p>
+            <p><strong>Phase 1: Global Identity Normalization (Indexing)</strong></p>
+            <p>Maps raw entity names (like emails or hashes) to contiguous, zero-indexed integers so the GPU can locate them directly in memory. Ecosystems expand this using fast hash functions (like MurmurHash) to convert strings on the fly.</p>
+            <ul>
+                <li><em>How it works:</em> It assigns every unique raw identifier a sequential integer ID starting from zero. For streaming data, hash functions deterministically map incoming strings to these integer addresses instantly without needing a pre-built static dictionary.</li>
+                <li><em>When to use / Why:</em> Use as the mandatory first step for graph building. GPUs cannot process raw strings or sparse, non-sequential IDs. It ensures contiguous memory allocation, preventing massive, empty, and crash-inducing tensors.</li>
+            </ul>
+
+            <p><strong>Phase 2: Structural Encoding (edge_index)</strong></p>
+            
+            <p>Stores graph topology in a 2D tensor (COO format), cleanly separating a node's connections from its actual data features. Advanced setups convert this to CSR formats for extreme speed.</p>
+            <ul>
+                <li><em>How it works:</em> It creates a 2-by-E matrix where the first row holds source node IDs and the second row holds target node IDs. This Coordinate (COO) format efficiently lists only the edges that actually exist, rather than an N-by-N matrix full of zeros.</li>
+                <li><em>When to use / Why:</em> Use for foundational message passing. COO is the standard for PyTorch Geometric to route information between nodes. Converting to CSR is used later when aggressively optimizing dense matrix multiplications in production.</li>
+            </ul>
 
             <p><strong>Phase 3: Feature Matrix Alignment (X)</strong></p>
-            <p>The Core: Creating a 1:1 correspondence between a node’s integer ID and its row in the dense feature matrix. Ecosystem Expansion: Features (X) can be generated using algorithms like PageRank or dense vector embeddings via LLMs (semantic text chunking) prior to alignment.</p>
+            
+            <p>Ensures strict 1:1 mapping between a node’s new integer ID and its specific row in the dense feature matrix tensor. These vectors can be enriched via PageRank or LLM semantic embeddings.</p>
+            <ul>
+                <li><em>How it works:</em> It constructs a master feature tensor where row i contains the specific attributes for the node assigned integer ID i. This perfectly aligns the topological map (the edge_index) with the actual node characteristics (the features).</li>
+                <li><em>When to use / Why:</em> Use to give the model actual data to learn from beyond just the graph structure. Perfect alignment is critical; a mismatch here means the network is learning from scrambled, incorrect node profiles, rendering the embeddings useless.</li>
+            </ul>
 
             <p><strong>Phase 4: Dataset Splitting & Edge Masking</strong></p>
-            <p>The Core: Hiding ground-truth positive edges and generating fake “negative” edges. Ecosystem Expansion: Tools like PyG’s <em>TemporalData</em> ensure models don’t predict the past using future edges. Hard Negative Mining frameworks select highly plausible but fake edges to force finer decision boundaries.</p>
+            
+            <p>Hides real "positive" edges for testing, and generates fake "negative" edges so the model learns what non-connections look like. Advanced setups use TemporalData to prevent time-based leaks.</p>
+            <ul>
+                <li><em>How it works:</em> It splits edges into message-passing (to build the graph) and supervision (to calculate loss). Crucially, it samples random pairs of unconnected nodes to act as negative examples, giving the model a balanced 1:1 classification task.</li>
+                <li><em>When to use / Why:</em> Use because real graphs only list positive links. Without generating negative samples, the model collapses into trivially predicting every node pair is connected. Hard negative mining forces the model to learn finer, more accurate boundaries.</li>
+            </ul>
 
             <p><strong>Phase 5: Mini-Batching (Subgraph Generation)</strong></p>
-            <p>The Core: Using breadth-first expansion to extractLocalized, multi-hop subgraphs. Ecosystem Expansion: <em>Cluster-GCN</em> uses METIS to partition graphs. <em>GraphSAINT</em> samples random walks to neutralize “neighbor explosion.”</p>
+            
+            <p>Uses breadth-first search to extract small, localized multi-hop subgraphs, allowing huge networks to fit into GPU memory. Systems use METIS or random walks to control size.</p>
+            <ul>
+                <li><em>How it works:</em> It pulls a target edge and recursively samples its multi-hop neighborhood to create a self-contained mini-graph. To prevent exponential "neighbor explosion," techniques like GraphSAINT use random walks to strictly bound the subgraph size.</li>
+                <li><em>When to use / Why:</em> Use when your graph is too large to fit into VRAM. Standard batching doesn't work for graphs because nodes are connected; subgraph batching preserves the necessary local topology so the model can still aggregate neighbor messages accurately.</li>
+            </ul>
         </div>
 
         <div class="subsection">
