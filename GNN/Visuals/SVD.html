@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVD Ditherpunk Visualization</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --term-green: #00FF41;
+            --term-black: #000000;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body, html {
+            width: 100vw;
+            height: 100vh;
+            background-color: var(--term-black);
+            color: var(--term-green);
+            font-family: 'VT323', monospace;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+            font-size: 18px;
+        }
+
+        /* Scanline Overlay */
+        body::after {
+            content: " ";
+            display: block;
+            position: absolute;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 2;
+            background-size: 100% 2px, 3px 100%;
+            pointer-events: none;
+        }
+
+        #app-container {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        /* 3D Canvas Area */
+        #canvas-container {
+            flex: 7;
+            position: relative;
+            border-right: 2px solid var(--term-green);
+            box-shadow: inset -5px 0 15px rgba(0, 255, 65, 0.1);
+        }
+
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* UI Dashboard */
+        #ui-container {
+            flex: 3;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            background: rgba(0, 20, 0, 0.8);
+            overflow-y: auto;
+        }
+
+        .header {
+            text-align: center;
+            border-bottom: 1px solid var(--term-green);
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+            text-shadow: 0 0 5px var(--term-green);
+        }
+
+        .header h1 {
+            font-size: 24px;
+            letter-spacing: 2px;
+        }
+
+        .matrix-panel {
+            margin-bottom: 20px;
+            border: 1px dashed rgba(0, 255, 65, 0.4);
+            padding: 10px;
+            position: relative;
+        }
+
+        .matrix-panel::before {
+            content: "[";
+            position: absolute;
+            left: -5px; top: 0; bottom: 0;
+            font-size: 30px;
+            display: flex; align-items: center;
+        }
+        .matrix-panel::after {
+            content: "]";
+            position: absolute;
+            right: -5px; top: 0; bottom: 0;
+            font-size: 30px;
+            display: flex; align-items: center;
+        }
+
+        .matrix-title {
+            position: absolute;
+            top: -12px;
+            left: 10px;
+            background: var(--term-black);
+            padding: 0 5px;
+            font-weight: bold;
+        }
+
+        .matrix-content {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            min-height: 40px;
+            color: rgba(0, 255, 65, 0.7);
+        }
+
+        .highlight {
+            color: #fff;
+            text-shadow: 0 0 8px #fff;
+        }
+
+        button {
+            background: transparent;
+            color: var(--term-green);
+            border: 2px solid var(--term-green);
+            padding: 15px;
+            font-family: 'VT323', monospace;
+            font-size: 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            transition: all 0.2s;
+            box-shadow: 0 0 10px rgba(0, 255, 65, 0.2);
+            margin-top: auto;
+        }
+
+        button:hover {
+            background: var(--term-green);
+            color: var(--term-black);
+            box-shadow: 0 0 20px var(--term-green);
+        }
+
+        button:disabled {
+            border-color: #333;
+            color: #333;
+            box-shadow: none;
+            cursor: not-allowed;
+            background: transparent;
+        }
+
+        /* Floating 3D Labels */
+        .floating-label {
+            position: absolute;
+            color: var(--term-green);
+            text-shadow: 0 0 5px var(--term-green);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.5s;
+            background: rgba(0,0,0,0.7);
+            border: 1px solid var(--term-green);
+            padding: 2px 5px;
+        }
+
+        /* Responsive */
+        @media (max-width: 800px) {
+            body, html { overflow: auto; }
+            #app-container { flex-direction: column; }
+            #canvas-container { flex: none; height: 50vh; border-right: none; border-bottom: 2px solid var(--term-green); }
+            #ui-container { flex: none; height: 50vh; }
+        }
+    </style>
+
+    <!-- Import Maps for Three.js -->
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+            }
+        }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.4/gsap.min.js"></script>
+</head>
+<body>
+
+<div id="app-container">
+    <div id="canvas-container">
+        <!-- Floating Labels for Sigma Values -->
+        <div id="label-s1" class="floating-label">σ1 = 85.4</div>
+        <div id="label-s2" class="floating-label">σ2 = 32.1</div>
+    </div>
+
+    <div id="ui-container">
+        <div class="header">
+            <h1>SVD GEOMETRY</h1>
+            <p>A = U × Σ × Vᵀ</p>
+        </div>
+
+        <div class="matrix-panel">
+            <div class="matrix-title">Matrix A (Raw Data)</div>
+            <div id="mat-a" class="matrix-content">AWAITING SEQUENCE...</div>
+        </div>
+
+        <div class="matrix-panel">
+            <div class="matrix-title">Vᵀ (Directions/Patterns)</div>
+            <div id="mat-v" class="matrix-content">...</div>
+        </div>
+
+        <div class="matrix-panel">
+            <div class="matrix-title">Σ (Variance/Scale)</div>
+            <div id="mat-s" class="matrix-content">...</div>
+        </div>
+
+        <div class="matrix-panel">
+            <div class="matrix-title">U (Position/Rotation)</div>
+            <div id="mat-u" class="matrix-content">...</div>
+        </div>
+
+        <button id="exec-btn">[ EXECUTE SVD SEQUENCE ]</button>
+    </div>
+</div>
+
+<script type="module">
+    import * as THREE from 'three';
+    import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+    import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+    import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+    import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+
+    // --------------------------------------------------------
+    // 1. DITHERPUNK POST-PROCESSING SHADER (Ordered Dithering)
+    // --------------------------------------------------------
+    const DitherShader = {
+        uniforms: {
+            "tDiffuse": { value: null },
+            "colorGreen": { value: new THREE.Color(0x00FF41) },
+            "colorBlack": { value: new THREE.Color(0x000000) },
+            "resolution": { value: new THREE.Vector2(window.innerWidth, window.innerHeight) }
+        },
+        vertexShader: `
+            varying vec2 vUv;
+            void main() {
+                vUv = uv;
+                gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+            }
+        `,
+        fragmentShader: `
+            uniform sampler2D tDiffuse;
+            uniform vec3 colorGreen;
+            uniform vec3 colorBlack;
+            uniform vec2 resolution;
+            varying vec2 vUv;
+
+            // 4x4 Bayer Matrix for ordered dithering
+            const float bayerMatrix[16] = float[16](
+                0.0/16.0,  8.0/16.0,  2.0/16.0, 10.0/16.0,
+                12.0/16.0, 4.0/16.0, 14.0/16.0,  6.0/16.0,
+                3.0/16.0, 11.0/16.0,  1.0/16.0,  9.0/16.0,
+                15.0/16.0, 7.0/16.0, 13.0/16.0,  5.0/16.0
+            );
+
+            void main() {
+                vec4 texel = texture2D(tDiffuse, vUv);
+                
+                // Calculate Luminance
+                float lum = dot(texel.rgb, vec3(0.299, 0.587, 0.114));
+                
+                // Boost contrast slightly
+                lum = smoothstep(0.1, 0.8, lum);
+
+                // Pixel coordinates for Bayer matrix
+                vec2 coord = gl_FragCoord.xy;
+                int x = int(mod(coord.x, 4.0));
+                int y = int(mod(coord.y, 4.0));
+                int index = x + y * 4;
+                
+                float threshold = bayerMatrix[index];
+
+                // Apply threshold (1-bit conversion)
+                vec3 finalColor = (lum > threshold) ? colorGreen : colorBlack;
+                
+                gl_FragColor = vec4(finalColor, 1.0);
+            }
+        `
+    };
+
+    // --------------------------------------------------------
+    // 2. SCENE SETUP
+    // --------------------------------------------------------
+    const container = document.getElementById('canvas-container');
+    const renderer = new THREE.WebGLRenderer({ antialias: false });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x000000);
+
+    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
+    camera.position.set(15, 10, 20);
+
+    const controls = new OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+
+    // Post-processing Setup
+    const composer = new EffectComposer(renderer);
+    const renderPass = new RenderPass(scene, camera);
+    composer.addPass(renderPass);
+
+    const ditherPass = new ShaderPass(DitherShader);
+    ditherPass.uniforms["resolution"].value.set(container.clientWidth, container.clientHeight);
+    composer.addPass(ditherPass);
+
+    // Lights (Important for luminance generation for the dither shader)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+    scene.add(ambientLight);
+    
+    const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
+    dirLight.position.set(10, 20, 10);
+    scene.add(dirLight);
+
+    // --------------------------------------------------------
+    // 3. GEOMETRY CONSTRUCTION (The "Data Cloud")
+    // --------------------------------------------------------
+    
+    // Origin Axes (Movies) - Thin and dotted
+    const axesMaterial = new THREE.LineDashedMaterial({ color: 0xffffff, dashSize: 0.5, gapSize: 0.2 });
+    const createAxis = (x, y, z) => {
+        const pts = [new THREE.Vector3(0,0,0), new THREE.Vector3(x,y,z)];
+        const geo = new THREE.BufferGeometry().setFromPoints(pts);
+        const line = new THREE.Line(geo, axesMaterial);
+        line.computeLineDistances();
+        return line;
+    };
+    scene.add(createAxis(15, 0, 0)); // Movie A
+    scene.add(createAxis(0, 15, 0)); // Movie B
+    scene.add(createAxis(0, 0, 15)); // Movie C
+
+    // Data Group (Represents our "Football" and Principal Components)
+    // We group them so we can rotate the entire "cloud" into an arbitrary pattern space
+    const dataGroup = new THREE.Group();
+    // Offset the cloud from origin to show raw data isn't perfectly centered initially
+    dataGroup.position.set(4, 3, 2); 
+    // Random arbitrary rotation to hide the principal axes from the world axes
+    dataGroup.rotation.set(0.6, -0.4, 0.8); 
+    scene.add(dataGroup);
+
+    // A. Generate "Football" Data Points (Ellipsoid)
+    const ptCount = 400;
+    const ptGeo = new THREE.BufferGeometry();
+    const ptsArray = new Float32Array(ptCount * 3);
+    
+    // Ellipsoid radii (Sigma stretch representation)
+    const rx = 6.0; // Longest (Sci-Fi)
+    const ry = 2.0; // Width (Romance)
+    const rz = 0.5; // Depth (Noise)
+
+    for(let i = 0; i < ptCount * 3; i+=3) {
+        // Random spherical distribution scaled to ellipsoid
+        const u = Math.random();
+        const v = Math.random();
+        const theta = 2 * Math.PI * u;
+        const phi = Math.acos(2 * v - 1);
+        
+        // Push points inside the volume, denser towards center
+        const r = Math.cbrt(Math.random()); 
+
+        ptsArray[i] = rx * r * Math.sin(phi) * Math.cos(theta);
+        ptsArray[i+1] = ry * r * Math.sin(phi) * Math.sin(theta);
+        ptsArray[i+2] = rz * r * Math.cos(phi);
+    }
+    ptGeo.setAttribute('position', new THREE.BufferAttribute(ptsArray, 3));
+    
+    // Bright material to pierce through the dithering
+    const ptMat = new THREE.PointsMaterial({ color: 0xffffff, size: 0.2 });
+    const points = new THREE.Points(ptGeo, ptMat);
+    dataGroup.add(points);
+
+    // B. The Wireframe Envelope (The Cloud Shape)
+    const envGeo = new THREE.SphereGeometry(1, 16, 16);
+    envGeo.scale(rx*1.1, ry*1.1, rz*1.1); // Slightly larger than points
+    const envMat = new THREE.MeshStandardMaterial({ 
+        color: 0xffffff, 
+        wireframe: true, 
+        transparent: true, 
+        opacity: 0.0 // Hidden initially
+    });
+    const envelope = new THREE.Mesh(envGeo, envMat);
+    dataGroup.add(envelope);
+
+    // C. The Vectors (V^T - Principal Directions)
+    // In Three.js, ArrowHelper params: dir, origin, length, color, headLength, headWidth
+    const center = new THREE.Vector3(0,0,0);
+    
+    // Principal Component 1 (X local)
+    const arrow1 = new THREE.ArrowHelper(new THREE.Vector3(1,0,0), center, rx * 1.5, 0xffffff, 1, 0.5);
+    // Principal Component 2 (Y local)
+    const arrow2 = new THREE.ArrowHelper(new THREE.Vector3(0,1,0), center, ry * 1.5, 0xffffff, 0.8, 0.4);
+    
+    // Start arrows scaled down to 0
+    arrow1.scale.set(0.001, 0.001, 0.001);
+    arrow2.scale.set(0.001, 0.001, 0.001);
+    
+    dataGroup.add(arrow1);
+    dataGroup.add(arrow2);
+
+    // --------------------------------------------------------
+    // 4. UI HELPERS & HTML LABEL SYNC
+    // --------------------------------------------------------
+    const generateGibberish = (rows, cols) => {
+        let str = "";
+        for(let i=0; i<rows; i++){
+            for(let j=0; j<cols; j++){
+                str += (Math.random() * 9).toFixed(1) + "  ";
+            }
+            str += "\n";
+        }
+        return str;
+    };
+
+    const updateUI = (id, content) => {
+        document.getElementById(id).innerText = content;
+    };
+
+    // Transform HTML label positions to track 3D objects
+    const labelS1 = document.getElementById('label-s1');
+    const labelS2 = document.getElementById('label-s2');
+
+    function updateFloatingLabels() {
+        if(labelS1.style.opacity === "0" && labelS2.style.opacity === "0") return;
+
+        // Position at tip of arrow 1
+        const pos1 = new THREE.Vector3(rx * 1.5, 0, 0);
+        pos1.applyMatrix4(dataGroup.matrixWorld);
+        pos1.project(camera);
+
+        const x1 = (pos1.x * .5 + .5) * container.clientWidth;
+        const y1 = (pos1.y * -.5 + .5) * container.clientHeight;
+        labelS1.style.transform = `translate(-50%, -50%) translate(${x1}px, ${y1}px)`;
+
+        // Position at tip of arrow 2
+        const pos2 = new THREE.Vector3(0, ry * 1.5, 0);
+        pos2.applyMatrix4(dataGroup.matrixWorld);
+        pos2.project(camera);
+
+        const x2 = (pos2.x * .5 + .5) * container.clientWidth;
+        const y2 = (pos2.y * -.5 + .5) * container.clientHeight;
+        labelS2.style.transform = `translate(-50%, -50%) translate(${x2}px, ${y2}px)`;
+    }
+
+    // --------------------------------------------------------
+    // 5. ANIMATION SEQUENCE (GSAP)
+    // --------------------------------------------------------
+    const btn = document.getElementById('exec-btn');
+    
+    btn.addEventListener('click', () => {
+        btn.disabled = true;
+        btn.innerText = "[ EXECUTING... ]";
+
+        const tl = gsap.timeline();
+
+        // Phase 1: Populate Raw Data A
+        tl.to({}, { duration: 0.5, onComplete: () => {
+            updateUI("mat-a", generateGibberish(4, 3));
+        }});
+
+        // Phase 2: Fade in the "Football" Envelope
+        tl.to(envelope.material, { opacity: 0.3, duration: 1.5, ease: "power2.inOut" }, "+=0.5");
+
+        // Phase 3: Arrows Shoot Out (V^T Matrix)
+        tl.to(arrow1.scale, { x: 1, y: 1, z: 1, duration: 1, ease: "back.out(1.7)", onStart: () => {
+            updateUI("mat-v", "Vᵀ Row 1: [ 0.88, -0.45, 0.12 ] (Sci-Fi)\n...");
+        }}, "+=0.5");
+        
+        tl.to(arrow2.scale, { x: 1, y: 1, z: 1, duration: 1, ease: "back.out(1.7)", onStart: () => {
+            updateUI("mat-v", "Vᵀ Row 1: [ 0.88, -0.45, 0.12 ] (Sci-Fi)\nVᵀ Row 2: [ 0.22, 0.89, 0.39 ] (Romance)\n...");
+        }}, "-=0.5");
+
+        // Phase 4: Sigma Matrix (The Stretch)
+        tl.to({}, { duration: 0.5, onComplete: () => {
+            labelS1.style.opacity = 1;
+            labelS2.style.opacity = 1;
+            updateUI("mat-s", `[ 85.4    0      0  ]\n[  0    32.1     0  ]\n[  0      0     2.2 ]`);
+        }}, "+=0.5");
+
+        // Phase 5: The Rotation (U Matrix) - Mapping to Pattern Space
+        // We simulate U by un-rotating and un-translating the dataGroup to the world origin.
+        // This visually aligns the principal axes with the screen/world X and Y.
+        tl.to({}, { duration: 0.5, onComplete: () => {
+            updateUI("mat-u", "COMPUTING MAPPING...");
+        }}, "+=1.5");
+
+        tl.to(dataGroup.rotation, { x: 0, y: 0, z: 0, duration: 3, ease: "power3.inOut" }, "rotate_phase");
+        tl.to(dataGroup.position, { x: 0, y: 0, z: 0, duration: 3, ease: "power3.inOut" }, "rotate_phase");
+        
+        // Also move camera to look directly down Z axis at the newly aligned X/Y axes
+        tl.to(camera.position, { x: 0, y: 0, z: 25, duration: 3, ease: "power3.inOut" }, "rotate_phase");
+        tl.to(controls.target, { x: 0, y: 0, z: 0, duration: 3, ease: "power3.inOut" }, "rotate_phase");
+
+        tl.to({}, { duration: 0.1, onComplete: () => {
+            updateUI("mat-u", `User 1: [ 0.9, 0.1, 0.0 ]\nUser 2: [ -0.5, 0.8, 0.0 ]\n...\nUsers mapped to Pattern Space.`);
+            btn.innerText = "[ SEQUENCE COMPLETE ]";
+        }});
+    });
+
+
+    // --------------------------------------------------------
+    // 6. RENDER LOOP & RESIZE HANDLING
+    // --------------------------------------------------------
+    window.addEventListener('resize', () => {
+        const width = container.clientWidth;
+        const height = container.clientHeight;
+        
+        camera.aspect = width / height;
+        camera.updateProjectionMatrix();
+        
+        renderer.setSize(width, height);
+        composer.setSize(width, height);
+        
+        // Update shader resolution uniform
+        ditherPass.uniforms["resolution"].value.set(width, height);
+    });
+
+    function animate() {
+        requestAnimationFrame(animate);
+        controls.update();
+        
+        // FIX: Removed `points.rotation.y += 0.001;` 
+        // The data cloud must remain completely static relative to its envelope 
+        // and principal axes (Vᵀ) to maintain the mathematical accuracy of the SVD.
+        
+        // Update floating HTML label positions based on 3D coordinates
+        updateFloatingLabels();
+
+        // Render via EffectComposer for the Ditherpunk Shader
+        composer.render();
+    }
+    
+    animate();
+</script>
+</script>
+
+</body>
+</html>

@@ -247,8 +247,9 @@
                 </button>
             </summary>
             <ul>
-                <li><strong>SVD (Singular Value Decomposition):</strong> Dimensionality reduction. It decomposes a matrix into orthogonal components, capturing the most variance. Best for noise reduction and PCA in dense datasets where negative values are mathematically acceptable and data is on a regular grid.</li>
+                <li><strong>SVD (Singular Value Decomposition):</strong> Dimensionality reduction. Vᵀ discovers the underlying patterns (new dimensions). Σ measures how strong or important each pattern is. U maps your users' exact positions along those new dimensions, effectively scoring or ranking their alignment with each pattern.</li>
                 <li><strong>ALS (Alternating Least Squares):</strong> Optimized for massive, sparse matrices common in recommendation systems. It iteratively solves for one latent matrix while holding the other fixed.</li>
+                    <p>ALS iteratively freezes one matrix to update the other. Their product predicts interactions, which are compared against known "ground truth". Using least squares as a loss function, each alternating update algebraically minimizes this error to align predictions with reality.</p>
                 <li><strong>PMF (Probabilistic Matrix Factorization):</strong> A Bayesian approach that models latent factors as Gaussian distributions. It excels at handling uncertainty and prevents overfitting in extremely sparse datasets by incorporating prior distributions.</li>
                 <li><strong>NMF (Non-negative Matrix Factorization):</strong> Forces latent factors to be non-negative, creating a "parts-based" representation. It effectively identifies additive patterns in the data.</li>
             </ul>
