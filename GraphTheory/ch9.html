@@ -146,8 +146,8 @@
             </span>
             
             <ul>
-                <li><strong>Homophily (Community-Based):</strong> Nodes are embedded closely if they are neighbors or belong to the same cluster. This assumes "guilt by association"—if you are connected to enthusiasts of a specific niche, you likely share that interest. <em>Key Algorithm: FastRP. Focus: Proximity and connectivity.</em></li>
-                <li><strong>Structural Roles:</strong> Nodes are embedded closely if they perform the same function, regardless of distance. Two "hubs" connecting different clusters should have similar embeddings even if they are on opposite sides of the graph. <em>Focus: Topology and functional similarity.</em></li>
+                <li><strong>Homophily (Community-Based):</strong> Nodes are embedded closely if they are neighbors or belong to the same cluster. This assumes "guilt by association"—if you are connected to enthusiasts of a specific niche, you likely share that interest.</li>
+                <li><strong>Structural Roles:</strong> Nodes are embedded closely if they perform the same function, regardless of distance. Two "hubs" connecting different clusters should have similar embeddings even if they are on opposite sides of the graph.</li>
             </ul>
         </div>
     </div>
@@ -174,6 +174,7 @@
             
             <ul>
                 <li><strong>Transductive Models:</strong> These models map specific nodes to embeddings like a fixed lookup table. If a new node arrives, it’s not in the "vocabulary," forcing a full recalculation of the entire graph and a retraining of any downstream classifiers. They lack the logic to generalize to unseen data.</li>
+                <li>If you have a graph where you only have the edges (e.g., a "Users who bought X also bought Y" graph with no user profiles), an inductive model has nothing to "calculate" with. Transductive models thrive on pure topology. They are often better at capturing global positions.</li>
                 <li><strong>Inductive Models:</strong> Instead of a lookup table, these models learn a generalizable function (an "encoder") based on node features and neighborhood structures. This allows them to generate embeddings for entirely new nodes or separate graphs on the fly without needing to restart the training process.</li>
             </ul>
         </div>

@@ -197,7 +197,7 @@
                     </svg>
                 </button>
             </span>
-            <p>In practice, you start with a “Master Graph” and perform a random edge split. You extract a percentage of existing links (positive examples) to form your Training and Evaluation sets, removing them from the graph. The remaining links become your <strong>Feature Generation Set</strong>. This ensures that when the model “looks” at the network, the links it is trying to predict are physically absent, forcing it to rely on topological patterns rather than direct adjacency.</p>
+            <p>In practice, you start with a “Master Graph” and perform a random edge split. You extract a percentage of existing links (positive examples) to form your Training and Evaluation sets, removing them from the graph. The remaining links become your <strong>Feature Generation Set</strong>.</p>
         </div>
 
         <div class="subsection">
@@ -225,8 +225,8 @@
             </span>
             <p>Using only the Feature Generation Set, you run graph algorithms to extract features for every pair in your training table. In a tool like Neo4j, you would execute node similarity or path-finding procedures. For each pair (, ), you calculate a vector of metrics:</p>
             <div class="code-block">
-Adamic-Adar score based on mutual neighbors
-PageRank scores for both and to capture “importance”
+Adamic-Adar score based on mutual neighbors,
+PageRank scores for both and to capture “importance”,
 Shortest path length
             </div>
             <p>These metrics are appended to your table, transforming raw graph structures into a standard feature matrix.</p>
@@ -330,7 +330,7 @@ Shortest path length
                     </svg>
                 </button>
             </span>
-            <p>Universal signal for "cumulative advantage." Network growth principle summarized by the phrase <em>"the rich get richer."</em> It suggests that nodes with a high degree (many existing connections). It captures network "gravity." In systems where a few nodes act as hubs—such as the World Wide Web, academic citations, or international airports—these hubs attract new connections simply by being highly visible and accessible within the topology.</p>
+            <p>Universal signal for "cumulative advantage." Network growth principle summarized by the phrase <em>"the rich get richer."</em> It suggests that nodes with a high degree (many existing connections) will continue to make more connections. It captures network "gravity." In systems where a few nodes act as hubs—such as the World Wide Web, academic citations, or international airports—these hubs attract new connections simply by being highly visible and accessible within the topology.</p>
         </div>
 
         <div class="subsection">

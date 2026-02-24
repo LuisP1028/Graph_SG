@@ -158,18 +158,12 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Goal:</strong> Maintain provenance and avoid "Frankenstein" nodes during initial extraction.</p>
+            <p><strong>Goal:</strong> Maintain provenance (the record of where a specific node or edge came from, who created it, and how it has been modified over time) and avoid "Frankenstein" nodes during initial extraction.</p>
             <ul>
                 <li><strong>Atomic Nodes:</strong> Every mention of "Person A" on chunk 1 is a <em>distinct node</em> from "Person A" on chunk 2.</li>
                 <li><strong>Disambiguation:</strong> If Page 5 mentions "Jordan" (the CEO) and Page 80 mentions "Jordan" (the intern), merging them immediately creates a <em>Frankenstein node</em> with conflicting data.</li>
                 <li><strong>Provenance & Explainability:</strong> In RAG or GraphRAG, when a model claims "Person X did Y," you can trace the <em>exact chunk</em> that provided that fact for verification.</li>
             </ul>
-            <div class="code-block">
-// Begin by chunking (choose the appropriate method based on task)
-// For each chunk, you extract Entity mentions and their Relationships 
-// as they appear in that specific context.
-// Do not merge these entities immediately.
-            </div>
         </div>
     </div>
 </details>
