@@ -419,7 +419,7 @@
 
 <details class="section">
     <summary>
-        &lt;Semi-Automated Feature Extraction:&gt;
+        Semi-Automated Feature Extraction:
         <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.5</span>
     </summary>
     <div class="section-content">
@@ -439,12 +439,6 @@
                 <li><strong>Evolution:</strong> Through recursion, simple counts evolve into regional "signatures." Captures increasingly global structural patterns.</li>
                 <li><strong>Structural Equivalence:</strong> Allows a node to learn its structural role and identifies "look-alike" nodes even across different graphs.</li>
             </ul>
-            <div class="code-block">
-Imagine Node A has a local feature (degree) of 3.
-Round 1: Node A aggregates its neighbors' degrees.
-This "egonet feature" (e.g., the sum of neighbors' degrees) is added to A's vector.
-Round 2: When A's neighbor, Node B, performs its aggregation, it pulls in A’s updated vector—which now contains information about A's own neighbors.
-            </div>
         </div>
 
         <div class="subsection">
