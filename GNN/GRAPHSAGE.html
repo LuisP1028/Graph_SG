@@ -333,8 +333,7 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>The Choice:</strong> Use Batch.from_data_list() to unify disjoint graphs during training.</p>
-            <p><strong>The Reasoning:</strong> Many real-world applications (like protein modeling) provide multiple separate graphs. Unifying them allows you to treat a "forest" of graphs as one large adjacency matrix, enabling consistent neighbor sampling across the entire training set rather than processing one tiny graph at a time.</p>
+            <p>When you have multiple separate graphs (like individual molecules or distinct subreddits), iterating through them one by one is incredibly slow for a GPU. <code>Batch.from_data_list()</code> takes all these separate graphs and stitches them together diagonally into one giant, disconnected super-graph. This tricks PyTorch into processing your entire dataset as a single, highly efficient matrix multiplication.</p>
         </div>
 
         <div class="subsection">
@@ -347,8 +346,7 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>The Choice:</strong> Implement NeighborLoader with defined sampling depths (e.g., num_neighbors=[20, 10]).</p>
-            <p><strong>The Reasoning:</strong> This transforms the graph into a set of local computation graphs. By limiting neighbors, you fix the memory footprint, ensuring the model can scale to massive datasets (like social networks) where loading the full graph into GPU memory is impossible.</p>
+            <p>GraphSAGE stands for <strong>Sa</strong>mple and ag<strong>g</strong>r<strong>e</strong>gate. If a node is connected to 100,000 other nodes, looking at all of them will crash your GPU. <code>NeighborLoader</code> fixes this by capping the view. If you set <code>num_neighbors=[20, 10]</code>, the model looks at 20 immediate neighbors, and then 10 of <em>their</em> neighbors. This forces every node to have a predictable, fixed-size "receptive field" (computation graph) to learn from, making the memory footprint stable no matter how dense the real graph gets.<br><br></p>
         </div>
 
         <div class="subsection">
@@ -361,10 +359,11 @@
                     </svg>
                 </button>
             </span>
+            <p>Once a node has sampled its neighbors, it has to summarize their features to update its own state.</p>
             <ul>
-                <li><strong>Mean Aggregator:</strong> Best for general node classification where the average context of neighbors is sufficient. It is computationally efficient and easy to interpret.</li>
-                <li><strong>Pooling Aggregator:</strong> Best for identifying "dominant" features or outliers. By using an MLP transformation before max-pooling, the model learns to highlight the most salient signals in a neighborhood, which is effective in recommendation systems.</li>
-                <li><strong>LSTM Aggregator:</strong> Best for complex, non-linear structural patterns. Because it uses random permutations, it learns to treat neighbors as a "set" while maintaining high expressive power to distinguish between intricate graph isomorphisms.</li>
+                <li><strong>Mean:</strong> Literally averages the neighbors' features. It's fast and works well if the "vibe" of the neighborhood is all you need.</li>
+                <li><strong>Pooling:</strong> Passes each neighbor through a mini neural network, then takes the maximum values. This is crucial when you are looking for a single, loud "outlier" signal hidden among normal neighbors.</li>
+                <li><strong>LSTM:</strong> Feeds neighbors into a sequence model in a random order. This is computationally heavy but necessary when the complex structural arrangement of the neighbors matters more than just their raw features.</li>
             </ul>
         </div>
 
@@ -378,8 +377,7 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>The Choice:</strong> Use BCEWithLogitsLoss for multi-label tasks.</p>
-            <p><strong>The Reasoning:</strong> Unlike CrossEntropyLoss (which assumes only one "correct" class), Binary Cross Entropy treats each of the 121 possible labels as an independent binary prediction. This is essential for applications like document tagging, where a node can belong to multiple categories simultaneously.</p>
+            <p>Standard classification assumes a node can only be one thing (e.g., a photo is either a dog <em>or</em> a cat). Multi-label means a node can be many things (e.g., a movie is Action <em>and</em> Sci-Fi <em>and</em> Thriller). <code>BCEWithLogitsLoss</code> solves this by treating every single possible label as an independent Yes/No question. It calculates a separate binary probability for each of the available classes simultaneously.</p>
         </div>
 
         <div class="subsection">
@@ -392,8 +390,7 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>The Choice:</strong> Thresholding outputs at out > 0 and calculating a Micro-F1 Score.</p>
-            <p><strong>The Reasoning:</strong> In multi-label settings, simple accuracy is often misleadingly high if most labels are "0". The F1 score balances precision and recall, while micro-averaging ensures that rare labels are given appropriate weight in the final performance metric.</p>
+            <p>In multi-label datasets, a node usually only has 2 or 3 active labels out of a possible 100. If the model lazily predicts "0" for everything, it will achieve 97% accuracy while being completely useless. Micro-F1 ignores this inflated accuracy; by thresholding predictions (anything &gt; 0 is a "Yes"), it measures the harmonious balance between catching the actual labels (Recall) and not making false alarms (Precision).</p>
         </div>
     </div>
 </details>
