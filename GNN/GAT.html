@@ -241,7 +241,7 @@
                     <p>After each of the $K$ attention heads has calculated its own unique version of a node’s new embedding ($h'_i$), the model must combine these independent results into a single output.</p>
             </ol>
             <div class="code-block" style="margin-top: 10px;">
-            <p> CORE AGGREGATION METHODS: </p>    
+            <p><strong>CORE AGGREGATION METHODS:</strong></p>    
                 Hidden Layers: Concatenation (preserves feature diversity)
                 $$\vec{h}'_i = \Vert_{k=1}^K \sigma \left( \sum_{j \in \mathcal{N}_i} \alpha_{ij}^k \mathbf{W}_k \vec{h}_j \right)$$
                 
