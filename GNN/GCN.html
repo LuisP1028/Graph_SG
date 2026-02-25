@@ -273,10 +273,10 @@ GRAPH CONVOLUTIONAL NETWORKS
         </span>
         <p><strong>Goal:</strong> Using an encoder-style architecture to distill raw graph data into a single continuous prediction.</p>
         <ul>
-            <li><strong>Key 01:</strong> By stacking three GCNConv layers with decreasing dimensions ( ), the network creates a bottleneck that forces it to learn only the most impactful structural patterns.</li>
-            <li><strong>Key 02:</strong> • Three-Hop Context: Three layers expand the receptive field to 3 hops, letting each node “see” a wide area of the Wikipedia network to inform its prediction.</li>
-            <li><strong>Key 03:</strong> • Regression Head: A final Linear layer maps hidden features to a single scalar (dimension ) without a softmax, allowing for unbounded numerical output.</li>
-            <li><strong>Key 04:</strong> • Training Goal: Mean Squared Error (MSE) loss replaces classification loss, penalizing the squared difference between the predicted and actual log-traffic.</li>
+            <li><strong>Key 01:</strong> By stacking three GCNConv layers with decreasing dimensions, the network creates a bottleneck that forces it to learn only the most impactful structural patterns.</li>
+            <li><strong>Key 02:</strong> Three-Hop Context: Three layers expand the receptive field to 3 hops, letting each node “see” a wide area of the network to inform its prediction.</li>
+            <li><strong>Key 03:</strong> Regression Head: A final Linear layer maps hidden features to a single scalar (dimension ) without a softmax, allowing for unbounded numerical output.</li>
+            <li><strong>Key 04:</strong> Training Goal: Mean Squared Error (MSE) loss replaces classification loss, penalizing the squared difference between the predicted and actual result.</li>
         </ul>
     </div>
 
