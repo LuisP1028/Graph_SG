@@ -199,7 +199,7 @@ GRAPH ISOMORPHISM NETWORK (GIN)
             </button>
         </span>
         
-        <p><strong>GIN (The Implementation):</strong> GIN is a Neural Network architecture. Its entire purpose is to be a "Neural WL Test." It uses the logic of the WL test to ensure its embeddings are as mathematically powerful as possible.</p>
+        <p><strong>GIN (The Implementation):</strong> GIN is a practical choice for graph classification where structural uniqueness and isomorphism are critical. Its entire purpose is to be a "Neural WL Test." It uses the logic of the WL test to ensure its embeddings are as mathematically powerful as possible.</p>
         
         <p><strong>How GIN Works:</strong></p>
         <ul>
@@ -208,9 +208,9 @@ GRAPH ISOMORPHISM NETWORK (GIN)
         </ul>
 
         <div class="code-block">
-How it works:
-Sum Aggregation: Instead of averaging (which loses the number of neighbors) or taking the max (which loses the variety of neighbors), GIN sums the feature vectors. Summing a multiset is mathematically injective for unique inputs.
-MLP Refinement: The sum is fed into a Multi-Layer Perceptron (MLP). Because of the Universal Approximation Theorem, a sufficiently deep MLP can learn the specific injective mapping required to distinguish any two multisets.
+<p><strong>How it works:</strong></p>
+<li>Sum Aggregation: Instead of averaging (which loses the number of neighbors) or taking the max (which loses the variety of neighbors), GIN sums the feature vectors. Summing a multiset is mathematically injective for unique inputs.</li>
+<li>MLP Refinement: The sum is fed into a Multi-Layer Perceptron (MLP). Because of the Universal Approximation Theorem, a sufficiently deep MLP can learn the specific injective mapping required to distinguish any two multisets.</li>
 </div>
 </div>
 
@@ -227,8 +227,6 @@ MLP Refinement: The sum is fed into a Multi-Layer Perceptron (MLP). Because of t
         <ul>
             <li><strong>Disjoint Union [Diagonal Stacking]:</strong> Ensures there are no edges connecting a node in Graph A to a node in Graph B. They are processed together for speed, but they are mathematically invisible to each other. In practice, if Graph A has 3 nodes and Graph B has 2, PyG creates a single 5-node matrix. A stays in the top-left, B stays in the bottom-right, and the rest is zeros.</li>
             <li><strong>Batch Vector:</strong> If Graph 0 has 3 nodes and Graph 1 has 2, the batch vector is [0,0,0,1,1]. Readout layers like global_add_pool use these indices to group and sum node embeddings by graph ID. If your mini-batch contains 100 total nodes across 4 different graphs, the vector might look like [0,0...1,1...2,2...3,3].</li>
-            <li><strong>Node Index:</strong> The position in the vector (e.g., index i is Node i).</li>
-            <li><strong>Value:</strong> The Graph ID (e.g., batch[i] = 2 means Node i belongs to Graph 2).</li>
         </ul>
     </div>
 
