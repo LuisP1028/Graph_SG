@@ -259,7 +259,7 @@
                     </svg>
                 </button>
             </span>
-            <p>Initialize your graph dataset. In PyTorch Geometric (PyG), this involves defining node features ($x$), connectivity (edge_index), and ground-truth labels ($y$). For multi-class tasks, ensure labels are mapped to discrete integers.</p>
+            <p>You begin by instantiating the graph structure. This requires defining the <strong>node feature matrix</strong> (X), which contains the raw attributes of every node, and the <strong>edge index</strong>, which maps the connectivity (adjacency) between nodes. For classification, you also align your <strong>ground-truth labels</strong> (Y) ensuring they are formatted as discrete integers for multi-class targets.</p>
         </div>
 
         <div class="subsection">
@@ -272,7 +272,7 @@
                     </svg>
                 </button>
             </span>
-            <p>For large-scale graphs, use a <em>NeighborLoader</em> to generate subgraphs. This is critical for scalability as it creates "computation graphs" for small batches of target nodes. <strong>Sampling Strategy:</strong> Specify num_neighbors (e.g., $[10, 10]$ for two layers) to control the size of each node's sampled neighborhood. <strong>Batching:</strong> Group target nodes into manageable sizes (e.g., batch_size=16) to process the graph iteratively.</p>
+            <p>To handle graphs too large for GPU memory, you employ a <code>NeighborLoader</code>. Instead of processing the entire graph at once, this utility samples a fixed number of neighbors (defined by <code>num_neighbors</code>, e.g., <code>[15, 10]</code>) for a specific batch of target nodes. This generates smaller, independent <strong>computation graphs</strong> (subgraphs) for every mini-batch, ensuring scalability.<br><br></p>
         </div>
 
         <div class="subsection">
@@ -285,7 +285,7 @@
                     </svg>
                 </button>
             </span>
-            <p>Define a GraphSAGE class inheriting from torch.nn.Module using SAGEConv layers. <strong>Aggregator Choice:</strong> By default, SAGEConv uses a mean aggregator. You can switch this to pooling (max-pooling after an MLP transformation) or LSTM (using random permutations to handle unordered sets) depending on your structural complexity needs. <strong>Layer Stacking:</strong> Use multiple layers (e.g., sage1, sage2) to capture multi-hop dependencies, separated by non-linear activations like ReLU and Dropout to prevent overfitting.</p>
+            <p>You construct the network by stacking <code>SAGEConv</code> layers within a <code>torch.nn.Module</code>. The core mechanism here is <strong>aggregation</strong>: the model gathers information from a node's local neighborhood. You select an <strong>aggregator function</strong>—typically <code>mean</code> (average), <code>pool</code> (max-pooling), or <code>LSTM</code>—to synthesize these neighbor features. Non-linearities like <strong>ReLU</strong> and regularization via <strong>Dropout</strong> are added between layers to learn complex, multi-hop dependencies without overfitting.<br><br></p>
         </div>
 
         <div class="subsection">
@@ -298,7 +298,7 @@
                     </svg>
                 </button>
             </span>
-            <p>Adapt your training loop to handle batches. <strong>Forward Pass:</strong> Pass the batch's features and edges through the model. <strong>Loss Calculation:</strong> Apply a loss function (e.g., CrossEntropyLoss) specifically to the train_mask of the current batch. <strong>Metric Tracking:</strong> Accumulate loss and accuracy across all batches to represent the total epoch performance.</p>
+            <p>Training occurs iteratively over batches. In the <strong>forward pass</strong>, the model processes the features and edges of the current sampled subgraph. You then compute the loss (e.g., via <code>CrossEntropyLoss</code>) strictly on the nodes designated by the <code>train_mask</code>. Gradients are propagated back to update model weights, while metrics like accuracy are tracked across all batches to monitor epoch performance.</p>
         </div>
 
         <div class="subsection">
@@ -311,7 +311,7 @@
                     </svg>
                 </button>
             </span>
-            <p>Switch the model to .eval() mode. While training uses sampled batches, evaluation can be performed on the full graph if memory allows, or through a dedicated test loader for massive datasets.</p>
+            <p>Finally, switch the model to <code>.eval()</code> mode to freeze parameters (disabling Dropout). Depending on hardware constraints, you perform inference either on the <strong>full graph</strong> topology (if memory permits) or via a <strong>test loader</strong> for massive datasets, comparing predictions against the ground truth to validate the model's generalization capability.</p>
         </div>
     </div>
 </details>
