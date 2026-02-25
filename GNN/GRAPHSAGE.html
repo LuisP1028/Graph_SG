@@ -233,11 +233,11 @@
                 </button>
             </span>
             
-            <p><strong>Mean Aggregator:</strong> The simplest route. It calculates the average of the target node's data and its sampled neighbors. This average is multiplied by a learned weight matrix and passed through a non-linear filter (like ReLU). <br><em>Best for:</em> Fast, general-purpose efficiency.</p>
+            <p><strong>Mean Aggregator:</strong> The simplest route. It calculates the average of the target node's data and its sampled neighbors. This average is multiplied by a learned weight matrix and passed through a non-linear filter (like ReLU). <br><em><strong>Best for:</strong></em> Fast, general-purpose efficiency.</p>
             
-            <p><strong>LSTM Aggregator:</strong> Uses a neural network architecture (LSTM) to decode highly complex interactions. Because graph neighbors don't have a natural sequence, GraphSAGE randomly shuffles them before feeding them to the LSTM. This forces the model to learn patterns from the set as a whole, rather than relying on order. <br><em>Best for:</em> Graphs with intricate, non-linear dependencies.</p>
+            <p><strong>LSTM Aggregator:</strong> Uses a neural network architecture (LSTM) to decode highly complex interactions. Because graph neighbors don't have a natural sequence, GraphSAGE randomly shuffles them before feeding them to the LSTM. This forces the model to learn patterns from the set as a whole, rather than relying on order. <br><em><strong>Best for:</strong></em> Graphs with intricate, non-linear dependencies.</p>
             
-            <p><strong>Pooling Aggregator:</strong> A two-step "winner-take-all" method. First, a Multi-Layer Perceptron (MLP) transforms each neighbor's raw embedding to highlight key traits. Second, an <strong>element-wise max pooling</strong> operation scans each data dimension and keeps only the highest value across the entire neighborhood. <br><em>Best for:</em> Isolating the strongest, most dominant signals in a neighborhood.</p>
+            <p><strong>Pooling Aggregator:</strong> A two-step "winner-take-all" method. First, a Multi-Layer Perceptron (MLP) transforms each neighbor's raw embedding to highlight key traits. Second, an <strong>element-wise max pooling</strong> operation scans each data dimension and keeps only the highest value across the entire neighborhood. <br><em><strong>Best for:</strong></em> Isolating the strongest, most dominant signals in a neighborhood.</p>
         </div>
     </div>
 </details>
