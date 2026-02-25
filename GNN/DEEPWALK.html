@@ -133,7 +133,7 @@
         
         <div class="subsection">
             <span class="subsection-title">
-                SKIPGRAMS
+                THE WORKFLOW: FROM RANDOM WALKS TO OPTIMIZED VECTORS
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
@@ -142,69 +142,29 @@
                 </button>
             </span>
             
-            <p><strong>Goal:</strong> Skip-gram is a "prediction" game.</p>
+            <p><strong>Summary:</strong> Skip-gram defines what the model learns (neighbor relationships). Softmax is the mathematical goal (probability distribution). H-Softmax is the optimization structure that makes calculating that probability feasible for massive datasets.</p>
             
             <ul>
-                <li><strong>1. Generate the Sequence:</strong> The process begins with a Random Walk. You traverse the network to create a "sentence" of nodes (e.g., A &rarr; B &rarr; C), which establishes the initial relationships.</li>
-                <li><strong>2. Define the Target and Context:</strong> Pick a Target Node from the walk. Based on your chosen Context Size, identify its neighbors. If the size is 1, B is the target for context nodes A and C. In this setup, every node utilizes two distinct vector representations:
+                <li><strong>1. Data Generation (Skip-gram Setup):</strong> The process begins with Random Walks on your graph. These walks generate the training data: pairs of nodes consisting of a Target Node (the focus) and a Context Node (a neighbor found in the walk). Task: "Given Target Node A, predict that Context Node B is its neighbor."</li>
+                
+                <li><strong>2. Forward Pass (Projection):</strong> The model accepts the unique ID of Target Node A. It looks up Node A's current Input Vector in the Projection Layer (Embedding Matrix). This vector represents Node A's current position in the high-dimensional space.</li>
+                
+                <li><strong>3. The Prediction Problem (The Bottleneck):</strong> Now, the model must determine the probability that Node B is the correct neighbor.
                     <ul>
-                        <li><em>Target Vector (Input):</em> This represents the node as the central subject. It encodes where the node is located in the graph relative to its neighbors.</li>
-                        <li><em>Context Vector (Output):</em> This represents the node as a neighbor. It encodes the node's tendency to appear in the "neighborhood" of other target nodes.</li>
+                        <li><em>Standard Softmax (The Slow Way):</em> To do this normally, the model calculates the dot product of Node A's vector against every other node in the graph to see which score is highest. It then applies Softmax to normalize these scores. For a graph with millions of nodes, calculating millions of dot products for every single training step is impossibly slow (O(|V|)).</li>
                     </ul>
                 </li>
-                <li><strong>3. Input via Lookup Table:</strong> The target node’s ID enters the Projection Layer. This layer acts as a Lookup Table, retrieving a specific high-dimensional vector (embedding) for that unique node.</li>
-                <li><strong>4. Measure Similarity:</strong> The target vector is compared against all possible Context Vectors in the output matrix. The model calculates similarity scores to see which nodes "belong" near the target.</li>
-                <li><strong>5. Calculate Prediction Error:</strong> The model uses a Softmax function to turn similarity scores into probabilities. It then compares these "guesses" against the actual neighbors found in the random walk.</li>
-                <li><strong>6. Optimize the Vectors:</strong> Using Backpropagation, the model adjusts its internal weights. It minimizes the error so that the target node's vector moves "closer" to its true context nodes in vector space.</li>
-                <li><strong>7. Finalize Structural Roles:</strong> After many iterations, nodes that share similar neighbors—and thus similar structural roles—are forced to have nearly identical mathematical vectors.</li>
-            </ul>
-
-            <div class="code-block">
-// Training Pair Generation
-Target: node_v 
-Context: {node_u1, node_u2}
-Pairs: (node_v, node_u1), (node_v, node_u2)
-            </div>
-        </div>
-
-        <div class="subsection">
-            <span class="subsection-title">
-                SoftMax
-                <button class="eye-btn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                </button>
-            </span>
-            <p><strong>Goal:</strong> Softmax is a specific function that first exponentiates every value before normalizing.</p>
-            <ul>
-                <li><strong>Amplification:</strong> Exponentiation makes the largest number much larger relative to the others, forcing the model to pick a "winner.</li>
-                <li><strong>Differentiability:</strong> Unlike a simple "Max" function, Softmax is smooth and mathematically "calculus-friendly," allowing the model to learn via backpropagation.</li>
-                <li><strong>Application:</strong> Use Softmax when you need a neural network to learn categorical rankings.</li>
-            </ul>
-        </div>
-
-        <div class="subsection">
-            <span class="subsection-title">
-                Hierarchical Softmax (H-Softmax)
-                <button class="eye-btn">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                    </svg>
-                </button>
-            </span>
-            <p><strong>Goal:</strong> In a standard Softmax (the "flat" version), the model must calculate a probability for every single node in your graph to decide which one is the neighbor.</p>
-            <ul>
-                <li><strong>Structure:</strong> Instead of looking at a flat list, H-Softmax organizes all nodes into a Binary Tree where the nodes themselves are the "leaves" at the very bottom.</li>
-                <li><strong>The Path to Prediction:</strong> To predict a neighbor, the model doesn't check all nodes. It starts at the top (the root) and makes a series of binary choices (Left or Right?) until it reaches the correct node leaf.</li>
-                <li><strong>Logarithmic Speed:</strong> Because it uses a tree, it only performs a few calculations (proportional to the tree's height) rather than checking the entire vocabulary.</li>
-                <li><strong>The Huffman Advantage:</strong> To be even faster, it often uses a Huffman Tree, which puts frequently visited nodes (like "hubs" or common words) near the top of the tree and rare nodes deeper down.</li>
-                <li><strong>When to Use H-Softmax:</strong></li>
-                <li><strong>Massive Vocabulary/Graph:</strong> Use it when you have millions of nodes and a "flat" softmax makes training impossibly slow.</li>
-                <li><strong>Limited Hardware:</strong> Use it to reduce the memory and computational load if you aren't training on a massive cluster of GPUs.</li>
-                <li><strong>Static Frequency:</strong> It is most effective when some nodes appear much more often than others (power-law distribution), as the Huffman tree can exploit this imbalance.</li>
+                
+                <li><strong>4. The Solution (H-Softmax Integration):</strong> To fix the speed issue, Hierarchical Softmax replaces the flat output layer with a Binary Huffman Tree.
+                    <ul>
+                        <li><em>Restructuring:</em> All nodes in the graph are placed as "leaves" at the bottom of this tree. Common nodes (hubs) are placed near the top; rare nodes are placed deeper.</li>
+                        <li><em>The Root:</em> Think of the root as a binary classifier. It holds a unique weight vector &theta;<sub>root</sub> of the same dimensionality as your node embeddings. It is learned via Backpropagation.</li>
+                        <li><em>The New Task:</em> Instead of comparing Node A against everyone, the model navigates the tree. To predict Node B, it only needs to calculate the probability of taking the correct sequence of binary turns (e.g., Left &rarr; Right &rarr; Left) to reach Node B from the root.</li>
+                        <li><em>Efficiency:</em> This reduces the complexity from checking millions of nodes to checking just the tree depth (roughly log<sub>2</sub>(|V|)).</li>
+                    </ul>
+                </li>
+                
+                <li><strong>5. Optimization (Backpropagation):</strong> The model calculates the error based on the path taken. If the probability of turning "Left" at a specific branch was low but should have been high, the model applies Backpropagation. This updates the Input Vector of Target Node A. It also updates the weights of the internal branch nodes along that specific path.</li>
             </ul>
         </div>
     </div>
@@ -227,9 +187,13 @@ Pairs: (node_v, node_u1), (node_v, node_u2)
                     </svg>
                 </button>
             </span>
-            <p><strong>Goal:</strong> While more performant architectures have been proposed since then, DeepWalk is a simple and reliable baseline that can be quickly implemented to solve a lot of problems,</p>
+            
             <ul>
-                <li><strong>Objective:</strong> The goal of DeepWalk is to produce high-quality feature representations of nodes in an unsupervised way.</li>
+                <li><strong>How It Works:</strong> DeepWalk treats a graph like a corpus of text. It uses Random Walks to transform the network's topology into "sentences" of node IDs. These sequences are fed into a Skip-gram model (originally from Word2Vec). By maximizing the local community's probability through Hierarchical Softmax, the model forces nodes that frequently appear together in walks to have similar vector representations in a low-dimensional space.</li>
+                
+                <li><strong>Why Use It:</strong> It solves the "dimensionality curse" of massive adjacency matrices. DeepWalk is computationally efficient ($O(\log |V|)$ per step), making it feasible for graphs with millions of nodes. Unlike traditional methods, it doesn't require the entire graph to be in memory simultaneously. It captures latent social dimensions—the hidden community structures—that simple neighbor-counting misses, leading to better downstream performance.</li>
+                
+                <li><strong>When To Use It:</strong> Use DeepWalk when you have a large, unweighted, or undirected graph and need baseline embeddings for tasks like node classification or community detection. It is ideal for unsupervised scenarios where you lack labeled data but want to preserve structural similarity. While newer models like Node2vec offer more flexibility, DeepWalk remains the "gold standard" for a fast, reliable, and "set-it-and-forget-it" graph embedding strategy.</li>
             </ul>
         </div>
     </div>
