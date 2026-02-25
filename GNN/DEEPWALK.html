@@ -129,7 +129,7 @@
     </summary>
     
     <div class="section-content">
-        <p><em>&lt;PRECURSORS NECESSARY TO UNDERSTAND DEEPWALK:&gt;</em></p>
+        <p><em>PRECURSORS NECESSARY TO UNDERSTAND DEEPWALK:</em></p>
         
         <div class="subsection">
             <span class="subsection-title">
@@ -145,16 +145,18 @@
             <p><strong>Goal:</strong> Skip-gram is a "prediction" game.</p>
             
             <ul>
-                <li><strong>Key 01:</strong> You feed the model a "target" node (from a random walk) and task it with predicting its "context" nodes (the neighbors in that walk).</li>
-                <li><strong>Key 02:</strong> The number of skip grams for the same target word depends on a parameter called context size,</li>
-                <li><strong>Key 03:</strong> <em>Projection Layer (Input Embedding):</em> This acts as a Lookup Table.</li>
-                <li><strong>Key 04:</strong> It takes a node’s unique ID as input and retrieves its specific embedding in high dimensional space.</li>
-                <li><strong>Key 05:</strong> <em>Output Layer</em> You take a Target Vector (from the Projection Layer) and calculate its similarity against all Context Vectors (the Output Weight Matrix).</li>
-                <li><strong>Key 06:</strong> This tells you which nodes "belong" together.</li>
-                <li><strong>Key 07:</strong> By training the model to "guess" which nodes appear near each other, nodes with similar structural roles (neighbors) are forced to have similar mathematical vectors.</li>
-                <li><strong>Key 08:</strong> A random walk creates a “sentence” of nodes (e.g., node     ).</li>
-                <li><strong>Key 09:</strong> To “feed” the model, you pick one node as the target (e.g., ) and its neighbors in that specific walk as the context ( and ).</li>
-                <li><strong>Key 10:</strong> It adjusts its internal weights so that when it “sees” , it predicts  and  are nearby.</li>
+                <li><strong>1. Generate the Sequence:</strong> The process begins with a Random Walk. You traverse the network to create a "sentence" of nodes (e.g., A &rarr; B &rarr; C), which establishes the initial relationships.</li>
+                <li><strong>2. Define the Target and Context:</strong> Pick a Target Node from the walk. Based on your chosen Context Size, identify its neighbors. If the size is 1, B is the target for context nodes A and C. In this setup, every node utilizes two distinct vector representations:
+                    <ul>
+                        <li><em>Target Vector (Input):</em> This represents the node as the central subject. It encodes where the node is located in the graph relative to its neighbors.</li>
+                        <li><em>Context Vector (Output):</em> This represents the node as a neighbor. It encodes the node's tendency to appear in the "neighborhood" of other target nodes.</li>
+                    </ul>
+                </li>
+                <li><strong>3. Input via Lookup Table:</strong> The target node’s ID enters the Projection Layer. This layer acts as a Lookup Table, retrieving a specific high-dimensional vector (embedding) for that unique node.</li>
+                <li><strong>4. Measure Similarity:</strong> The target vector is compared against all possible Context Vectors in the output matrix. The model calculates similarity scores to see which nodes "belong" near the target.</li>
+                <li><strong>5. Calculate Prediction Error:</strong> The model uses a Softmax function to turn similarity scores into probabilities. It then compares these "guesses" against the actual neighbors found in the random walk.</li>
+                <li><strong>6. Optimize the Vectors:</strong> Using Backpropagation, the model adjusts its internal weights. It minimizes the error so that the target node's vector moves "closer" to its true context nodes in vector space.</li>
+                <li><strong>7. Finalize Structural Roles:</strong> After many iterations, nodes that share similar neighbors—and thus similar structural roles—are forced to have nearly identical mathematical vectors.</li>
             </ul>
 
             <div class="code-block">

@@ -278,7 +278,6 @@ Because a building cannot "un-consume" power, NMF’s additive nature accurately
             <ul>
                 <li><strong>GRMF (Graph-Regularized Matrix Factorization):</strong> It ensures that "connected" nodes in a topology have similar latent representations. Finds patterns from the data matrix while ensuring that "neighbors" on the graph stay close in the low-dimensional space.</li>
                 <li><strong>Standard MF (Global):</strong> It treats every row as an isolated data point in high-dimensional space. It compresses the data based on how rows look similar on average, even if those rows have no real-world relationship.</li>
-                <li><strong>GRMF (Local/Topological):</strong> It adds a "spatial awareness" constraint. It says: "Find the global patterns, but respect the local map." It ensures that if two nodes are connected in your graph, their low-dimensional representations stay close together.</li>
             </ul>
         </details>
 
