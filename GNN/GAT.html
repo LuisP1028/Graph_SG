@@ -159,12 +159,12 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Definition:</strong> Simply a set of "prior assumptions" a model makes to help it generalize to new, unseen data.</p>
+            <p><strong>Definition:</strong> An inductive bias is the built-in set of assumptions a model uses to make sense of data it has never seen before. Without these assumptions, a model cannot learn; it can only memorize. In GNNs, this bias is driven by a shared weight matrix that enforces homogeneity—the idea that the rules of the graph apply universally everywhere.</p>
             <p>In GNNs, the shared matrix $W$ is the core of this bias because it assumes <em>homogeneity</em>:</p>
             <ul>
-                <li><strong>Assumption of Symmetry:</strong> It assumes that the "rule" for transforming a feature (like a chemical bond or a user's age) is the same regardless of which node it belongs to.</li>
-                <li><strong>Structure over Identity:</strong> The bias forces the model to ignore who a node is (identity) and focus on what a node is (features) and who it knows (topology).</li>
-                <li><strong>Generalization:</strong> Without this bias, the model would just "memorize" the specific training graph (overfitting). With it, the model learns the underlying physics of the data, allowing it to work on an entirely different graph structure later.</li>
+                <li><strong>Assumption of Symmetry:</strong> The mathematical rule used to process a feature (like identifying a carbon bond or a user's purchase history) is identical for every single node. The rules do not change based on where you are in the graph.</li>
+                <li><strong>Structure over Identity:</strong> The model acts completely blind to a node's specific name or ID. It only cares about two things: the node's properties (its features) and its relationships (the graph topology).</li>
+                <li><strong>Generalization:</strong> By focusing on the universal rules of the features and connections rather than memorizing the exact layout of the training graph, the model learns the underlying "physics" of the data. This allows you to train the model on one graph and successfully deploy it on a completely different one.</li>
             </ul>
         </div>
 
@@ -181,15 +181,14 @@
             <p><strong>Shared Weight Matrix ($W$):</strong> The <em>“Feature Refiner”</em></p>
             <ul>
                 <li><strong>Dimensionality:</strong> It is a 2D grid of numbers (e.g., $F' \times F$).</li>
-                <li><strong>Role:</strong> The weight matrix $W$ is shared because it acts as a universal feature extractor. It doesn't learn about specific nodes; it learns which types of features are important across the entire domain.</li>
+                <li><strong>Role:</strong> The weight matrix $W$ acts as a universal translator for features across the entire graph. It transforms raw data into a standardized format, learning which features matter overall rather than focusing on specific individual nodes.</li>
             </ul>
             <p><strong>The Weight Vector ($a$):</strong> The <em>“Relationship Scorer”</em></p>
             <ul>
                 <li><strong>Dimensionality:</strong> It is a 1D list of numbers (e.g., $2F' \times 1$).</li>
-                <li><strong>Role:</strong> It looks at the concatenated features of two nodes at once. It acts like a judge that looks at the “concatenated vectors” created during feature fusion and decides how well these two nodes “match.”</li>
-                <li><strong>Output:</strong> It collapses a relationship between two nodes into a single scalar number (the attention score).</li>
+                <li><strong>Role:</strong> Acts as a judge. It takes the newly refined features of two connected nodes, combines them, and evaluates how well they match. It compresses this relationship into a single number called an "attention score."</li>
             </ul>
-            <p><strong>Summary:</strong> $W$ is used to understand what a node is; $a$ is used to understand how much one node should care about another.</p>
+            <p><strong>Summary:</strong> $W$ figures out what a node represents. $a$ figures out how much one node should care about another.</p>
         </div>
 
     </div>
