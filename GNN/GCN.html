@@ -220,7 +220,7 @@ GRAPH CONVOLUTIONAL NETWORKS
             <li>
                 <strong>Aggregation:</strong>
                 <br>
-                Through message passing, a node gathers and sums the transformed feature vectors from its immediate neighbors. The network structurally routes information strictly along the graph's existing edges.
+                The Adjacency Matrix (A) acts as the structural filter. It takes the refined feature vectors from the Linear Transformation and redistributes them across the graph. By multiplying the Adjacency Matrix by these updated features, the Adjacency Matrix ensures each acts as a selector, ensuring node i only receives the updated features from its specific neighbors where an edge exists.
             </li>
             <br>
             <li>
