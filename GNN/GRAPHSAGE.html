@@ -139,7 +139,7 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Goal:</strong> In practice, the graph is built by expanding ’s neighborhood to hops.</p>
+            <p><strong>Goal:</strong> In practice, the graph is built by expanding x’s neighborhood to k hops.</p>
         </div>
 
         <div class="subsection">
@@ -153,7 +153,7 @@
                 </button>
             </span>
             <ul>
-                <li><strong>Key 01:</strong> Computation flows inward: Leaf nodes (at distance) pass features to their neighbors at, which aggregate and transform them.</li>
+                <li><strong>Key 01:</strong> Computation flows inward: Leaf nodes (at distance K) pass features to their neighbors at 𝐾−𝟏, which aggregate and transform them.</li>
                 <li><strong>Key 02:</strong> This repeats until produces a final embedding from its 1-hop neighbors.</li>
             </ul>
         </div>
@@ -177,7 +177,7 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Goal:</strong> GraphSAGE is a GNN architecture designed to handle large graphs. Its goal is to generate node embeddings for downstream tasks, such as node classification.</p>
+            <p><strong>Goal:</strong> GraphSAGE is designed to process massive networks. It generates <strong>node embeddings</strong>—dense mathematical representations of a node's local network and features—which are then used downstream for tasks like predicting a node's category (node classification). </p>
         </div>
 
         <div class="subsection">
@@ -191,8 +191,8 @@
                 </button>
             </span>
             <ul>
-                <li><strong>Mechanism:</strong> GraphSAGE addresses exponentially large computation graphs and hub nodes via neighbor sampling.</li>
-                <li><strong>Strategy:</strong> Instead of aggregating all neighbors, it samples a fixed number per hop.</li>
+                <li><strong>Mechanism:</strong> In huge graphs, some nodes have an overwhelming number of connections (hub nodes). GraphSAGE manages this by limiting the data it pulls.</li>
+                <li><strong>Strategy:</strong> Instead of aggregating data from <em>every</em> neighbor, it randomly samples a fixed number of neighbors per connection jump (hop).</li>
             </ul>
         </div>
 
@@ -206,7 +206,7 @@
                     </svg>
                 </button>
             </span>
-            <p>Low sampling (few neighbors) increases training efficiency and lowers memory usage, but introduces higher variance: sampled neighbors may miss important information, leading to noisier gradients, less stable training, and potentially reduced accuracy or generalization.</p>
+            <p>Sampling fewer neighbors uses less memory and speeds up training. However, it increases variance; you might randomly exclude crucial neighbors, causing noisy gradients, unstable training, and potentially reduced accuracy.</p>
         </div>
 
         <div class="subsection">
@@ -219,7 +219,7 @@
                     </svg>
                 </button>
             </span>
-            <p>Replaces uniform neighbor sampling with random walks starting from each node. It performs multiple short random walks, then selects the most frequently visited nodes as neighbors. This <em>importance-based sampling</em> captures structurally relevant nodes more effectively than random selection, improving efficiency and performance in recommendation tasks.</p>
+            <p>Instead of uniform random sampling, PinSAGE takes multiple simulated "random walks" starting from a node. It selects the neighbors visited most often during these walks. This <strong>importance-based sampling</strong> guarantees that structurally critical nodes are chosen, which is highly effective for recommendation systems.</p>
         </div>
 
         <div class="subsection">
@@ -232,12 +232,12 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Mean Aggregator:</strong> In practice, this is the most straightforward approach. It calculates the average of the current embeddings of the target node and its sampled neighbors. This averaged vector is then multiplied by a weight matrix $W$ and passed through a non-linear activation function like ReLU. <strong>Use Case:</strong> It is ideal for general-purpose applications where computational simplicity and efficiency are prioritized.</p>
-            <p><strong>LSTM aggregator:</strong> LSTM aggregator is powerful because its high capacity allows it to learn complex, non-linear interactions between neighbors. Since neighbors lack a natural order, random shuffling forces the LSTM to identify patterns within the entire set rather than an arbitrary sequence. This allows it to capture intricate structural features that simpler aggregators might overlook. <strong>Use Case:</strong> The LSTM aggregator is appropriate when your graph contains complex, non-linear dependencies between neighbors that simple averaging or max-pooling might miss.</p>
-            <p><strong>Pooling aggregator:</strong> The Pooling Aggregator operates through a two-step process to extract the most prominent features from a node's neighborhood: 
-            Step 1: Feature Transformation via MLP. The MLP acts as a feature extractor, transforming each neighbor's raw embedding into a higher-level, processed representation. By passing every neighbor through the same MLP, the model learns to highlight specific "important" attributes across the neighborhood before the aggregation occurs.
-            Step 2: Element-Wise Max Pooling. After the MLP transforms each embedding, the aggregator performs an element-wise max operation. This means that for every individual dimension in the embedding vector, the maximum value across all neighbors is selected to describe the representation for layer x. This "winner-take-all" approach makes the aggregator symmetric and robust to neighbor ordering, effectively capturing the strongest signals or "dominant" features within the neighborhood rather than just an average.
-            <strong>Use Case:</strong> It is highly effective for capturing "dominant" signals within a neighborhood, making it appropriate for applications like recommendation systems where specific strong neighbor attributes are more telling than the average.</p>
+            
+            <p><strong>Mean Aggregator:</strong> The simplest route. It calculates the average of the target node's data and its sampled neighbors. This average is multiplied by a learned weight matrix and passed through a non-linear filter (like ReLU). <br><em>Best for:</em> Fast, general-purpose efficiency.</p>
+            
+            <p><strong>LSTM Aggregator:</strong> Uses a neural network architecture (LSTM) to decode highly complex interactions. Because graph neighbors don't have a natural sequence, GraphSAGE randomly shuffles them before feeding them to the LSTM. This forces the model to learn patterns from the set as a whole, rather than relying on order. <br><em>Best for:</em> Graphs with intricate, non-linear dependencies.</p>
+            
+            <p><strong>Pooling Aggregator:</strong> A two-step "winner-take-all" method. First, a Multi-Layer Perceptron (MLP) transforms each neighbor's raw embedding to highlight key traits. Second, an <strong>element-wise max pooling</strong> operation scans each data dimension and keeps only the highest value across the entire neighborhood. <br><em>Best for:</em> Isolating the strongest, most dominant signals in a neighborhood.</p>
         </div>
     </div>
 </details>

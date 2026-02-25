@@ -260,8 +260,28 @@
                     </svg>
                 </button>
             </span>
-            <p><strong>Original Limitation:</strong> In the original GAT, the weight matrix $W$ is applied to nodes individually before they are compared. This creates a “global” ranking: if node $A$ is more “important” than node $B$, it will have a higher attention score for every node in the graph. It can’t prioritize $A$ for one neighbor and $B$ for another.</p>
-            <p><strong>GATv2 Solution:</strong> GATv2 applies $W$ after joining the nodes together. This allows the attention score to depend on the interaction between specific pairs, letting node $i$ pick node $j$ while node $k$ picks node $l$.</p>
+            <p><strong>Original Limitation:</strong> In the original GAT, the weight matrix $\mathbf{W}$ is applied to nodes individually before they are compared. This creates a “global” ranking: if node $A$ is more “important” than node $B$, it will have a higher attention score for every node in the graph. It can’t prioritize $A$ for one neighbor and $B$ for another.</p>
+            <p><strong>GATv2 Solution:</strong> GATv2 applies $\mathbf{W}$ after joining the nodes together. This allows the attention score to depend on the interaction between specific pairs, letting node $i$ pick node $j$ while node $k$ picks node $l$.</p>
+            
+            
+
+            <ol>
+                <li><strong>1. Joint Linear Projection:</strong> Instead of projecting individual nodes in isolation to create "super vectors," GATv2 applies the $K$ weight matrices ($\mathbf{W}_k$) to the concatenated pair of nodes simultaneously. Receiver node $i$ and sender node $j$ are concatenated, and then the linear projection is applied to the joint representation: $\mathbf{W}_k [\vec{h}_i \, \Vert \, \vec{h}_j]$.</li>
+                <li><strong>2. Early Non-Linearity:</strong> Unlike the original GAT, which waits until the end to apply activation, GATv2 applies LeakyReLU <em>immediately</em> after the joint projection. This creates a shared, non-linear latent representation of the edge itself, rather than just stacking two linear node representations: $\vec{z}_{ij,k} = \text{LeakyReLU}(\mathbf{W}_k [\vec{h}_i \, \Vert \, \vec{h}_j])$.</li>
+                <li><strong>3. Independent Learnable Mappings (Scoring):</strong> The model now takes the dot product between the head-specific learnable weight vector ($\vec{a}_k$) and the <em>activated</em> joint representation. This yields the unique raw scalar score for the relationship: $e_{ij,k} = \vec{a}_k^T \vec{z}_{ij,k}$. Because the scoring vector is applied after the non-linearity, the network can now dynamically rank nodes based on the specific $(i, j)$ pairing, solving the static attention problem.</li>
+                <li><strong>4. Head-Specific Normalization:</strong> This step remains mathematically identical to the original GAT. To convert raw scores into relative importance, the Softmax function is applied across the neighborhood of node $i$ for each head $k$ independently: 
+                    $$\alpha_{ij}^k = \text{softmax}_j(e_{ij,k}) = \frac{\exp(e_{ij,k})}{\sum_{l \in \mathcal{N}_i} \exp(e_{il,k})}$$
+                </li>
+                <li><strong>5. Multi-Head Aggregation:</strong> After each head calculates its weighted sum of neighbor features using the dynamic attention scores, the independent results are combined identically to GATv1.
+                    <div class="code-block" style="margin-top: 10px;">
+// Hidden Layers: Concatenation (preserves feature diversity)
+$$\vec{h}'_i = \Vert_{k=1}^K \sigma \left( \sum_{j \in \mathcal{N}_i} \alpha_{ij}^k \mathbf{W}_k \vec{h}_j \right)$$
+
+// Final Layer: Averaging (stabilizes final prediction)
+$$\vec{h}'_i = \sigma \left( \frac{1}{K} \sum_{k=1}^K \sum_{j \in \mathcal{N}_i} \alpha_{ij}^k \mathbf{W}_k \vec{h}_j \right)$$
+                    </div>
+                </li>
+            </ol>
         </div>
 
     </div>
