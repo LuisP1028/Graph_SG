@@ -256,6 +256,8 @@
                 </li>
                 <li>
                     <strong>PMF (Probabilistic Matrix Factorization):</strong> A Bayesian approach that models latent factors as Gaussian distributions. It excels at handling uncertainty and prevents overfitting in extremely sparse datasets by incorporating prior distributions.
+                    
+                            
                     <ol>
                         <li><strong>Generative Assumption:</strong> Ratings are modeled as noisy samples from a Gaussian distribution: $R_{ij} \sim \mathcal{N}(U_i^T V_j, \sigma^2)$.</li>
                         <li><strong>Gaussian Priors:</strong> We place zero-mean Gaussian priors on every row vector in $U$ and $V$. This acts as an anchor, assuming factors default near zero to prevent overfitting.</li>
