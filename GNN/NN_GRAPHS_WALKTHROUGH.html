@@ -263,10 +263,10 @@ Pairs perfectly with node features to enable memory-efficient, localized message
             </span>
             <p>Because all nodes (Train/Val/Test) exist in the same data.x matrix, you use <strong>Masks</strong> to prevent "cheating."</p>
             <div class="code-block">
-1. Forward Pass: Calculate predictions for all nodes.
-2. Masking: Apply data.train_mask to the output and the ground truth.
-3. Loss: Calculate the error (e.g., CrossEntropy or MSE) only on the training subset.
-4. Step: Update weights via the optimizer.
+<p>1. Forward Pass: Calculate predictions for all nodes.</p>
+<p>2. Masking: Apply data.train_mask to the output and the ground truth.</p>
+<p>3. Loss: Calculate the error (e.g., CrossEntropy or MSE) only on the training subset.</p>
+<p>4. Step: Update weights via the optimizer.</p>
             </div>
         </div>
     </div>

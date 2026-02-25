@@ -145,10 +145,29 @@ GRAPH CONVOLUTIONAL NETWORKS
         <p><strong>Goal:</strong> Compared to the vanilla GNN, the main feature of the GCN is that it considers node degrees to weigh its features.</p>
         
         <ul>
-            <li><strong>Key 01:</strong> The scale problem in Graph Neural Networks (GNNs), popular nodes produce massive values while "loners" produce tiny ones.</li>
-            <li><strong>Key 02:</strong> This variance makes it impossible for the model to compare embeddings or learn effectively.</li>
-            <li><strong>Key 03:</strong> To solve this, we normalize the aggregation. The degree matrix () tracks how many neighbors each node has.</li>
-            <li><strong>Key 04:</strong> By multiplying the adjacency matrix by the inverse degree matrix (¹), we transform the “sum” into a mean.</li>
+            <li>
+                <strong>The Raw Aggregation Problem:</strong>
+                <br>
+                In a vanilla GNN, summing neighbor features creates massive values for "hub" nodes and tiny ones for isolated nodes. This extreme variance in scale prevents the neural network from finding stable patterns.
+            </li>
+            <br>
+            <li>
+                <strong>The Variance Issue:</strong>
+                <br>
+                Because embeddings exist on vastly different scales, the model struggles to compare them or learn effectively. It becomes biased toward high-degree nodes, ignoring the actual semantic features of the graph structure.
+            </li>
+             <br>
+            <li>
+                <strong>The Degree Matrix ($D$):</strong>
+                <br>
+                To normalize this, we first quantify node influence using the Degree Matrix ($D$). This diagonal matrix acts as a lookup table, where each entry tracks exactly how many connections (edges) a specific node possesses.
+            </li>
+             <br>
+            <li>
+                <strong>Transforming Sum to Mean:</strong>
+                <br>
+                We multiply the Adjacency Matrix by the Inverse Degree Matrix ($D^{-1}A$). This mathematically shifts the operation from a "sum" to a "mean," ensuring node embeddings remain consistent in magnitude regardless of neighbor count.
+            </li>
         </ul>
     </div>
 
