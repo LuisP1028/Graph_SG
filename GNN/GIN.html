@@ -203,8 +203,8 @@ GRAPH ISOMORPHISM NETWORK (GIN)
         
         <p><strong>How GIN Works:</strong></p>
         <ul>
-            <li><strong>1. Multiset Preservation:</strong> Instead of averaging neighbors, GIN treats the neighborhood as a multiset. It ensures that a node with two neighbors of type A is seen as different from a node with three neighbors of type A.</li>
-            <li><strong>2. The Injective Function:</strong> Injective Function is the "sorting machine" that ensures different inputs never produce the same output. Its job is to prevent structural collisions. If two nodes have different neighborhood structures, the injective function guarantees they will be mapped to different coordinates in the embedding space.</li>
+            <li><strong>1. Multiset Preservation:</strong> Instead of averaging a node's neighbors (which hides the total count), GIN adds their features together. Summing treats the neighborhood as a "multiset," preserving the exact quantity and variety of neighbors. It ensures that a node with two neighbors of type A is seen as different from a node with three neighbors of type A.</li>
+            <li><strong>2. The Injective Function:</strong> This sum is fed into an MLP, guaranteeing that different neighbor sums always result in distinctly different embeddings, preventing structural mix-ups.</li>
         </ul>
 
         <div class="code-block">
