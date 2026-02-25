@@ -199,13 +199,43 @@ GRAPH CONVOLUTIONAL NETWORKS
                 </svg>
             </button>
         </span>
+        
         <p><strong>Goal:</strong> In deep learning, a layer is a mathematical transformation that maps input features to a new representation.</p>
+        
         <ul>
-            <li><strong>Key 01:</strong> A graph layer (GCN layer) is unique because its transformation depends on two things: the node features () and the graph structure ().</li>
-            <li><strong>Key 02:</strong> Linear Transformation: Features are multiplied by a weight matrix () to extract relevant patterns.</li>
-            <li><strong>Key 03:</strong> Aggregation: Each node gathers features from its neighbors.</li>
-            <li><strong>Key 04:</strong> Normalization: This sum is scaled using the degrees of the sender and receiver (1/deg(i)deg(j)) to keep values stable.</li>
-            <li><strong>Key 05:</strong> Activation functions: Applied to each dimension of a node's embedding.</li>
+            <li>
+                <strong>Features & Structure:</strong>
+                <br>
+                Unlike standard layers, a GCN layer computes its transformation using both node features (what the node is) and the graph's adjacency matrix (how nodes connect). This blends content with topology.
+                <br><br>
+                
+            </li>
+            <br>
+            <li>
+                <strong>Linear Transformation:</strong>
+                <br>
+                Node features are multiplied by a learnable weight matrix ($W$). This standard neural network step extracts high-level semantic patterns from the raw input data before sharing them across the graph.
+            </li>
+            <br>
+            <li>
+                <strong>Aggregation:</strong>
+                <br>
+                Through message passing, a node gathers and sums the transformed feature vectors from its immediate neighbors. The network structurally routes information strictly along the graph's existing edges.
+            </li>
+            <br>
+            <li>
+                <strong>Normalization:</strong>
+                <br>
+                To prevent feature explosion from hub nodes, the aggregated sum is scaled down symmetrically. It scales the message using the degrees of both the sender and receiver, stabilizing the network's embeddings.
+                <br><br>
+                
+            </li>
+            <br>
+            <li>
+                <strong>Activation:</strong>
+                <br>
+                Finally, a non-linear activation function (like ReLU) is applied to the normalized features. This allows the model to capture complex, non-linear relationships in the graph data across multiple layers.
+            </li>
         </ul>
     </div>
 
