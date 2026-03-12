@@ -132,8 +132,8 @@
         <p><strong>Node embeddings:</strong> Link prediction is framed as matrix factorization, where the likelihood of a connection is calculated based on their dimension similarity (cosine distance).</p>
         <p><strong>Subgraph representation:</strong> Uses the local topography around each node to check if they're similar.</p>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 CORE METHODS OF LINK PREDICTION
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -141,35 +141,60 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p><strong>Goal:</strong> Measure the similarity between two nodes by considering their local neighborhoods or the entire network.</p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
-                1.HEURISTICS
+        <details class="subsection">
+            <summary class="subsection-title">
+                1. HEURISTICS
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                         <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p><strong>Local Heuristics:</strong></p>
             <ul>
-                <li><strong>Common neighbors:</strong> Simply counts the number of neighbors two nodes have in common (1-hop neighbors).</li>
-                <li><strong>Jaccard’s coefficient:</strong> Measures the proportion of neighbors shared by two nodes (1-hop neighbors). It relies on the same idea as common neighbors but normalizes the result by the total number of neighbors. This rewards nodes with few interconnected neighbors instead of nodes with high degrees.</li>
-                <li><strong>Adamic–Adar index:</strong> Quantifying shared neighbors being <em>"exclusive."</em> If you and I both know a celebrity (high degree), it doesn't mean we’re likely to be friends. But if we both know the same obscure person (low degree), we’re much more likely to be connected.</li>
+                <li>
+                    <details>
+                        <summary><strong>Common neighbors:</strong></summary>
+                        <p>Simply counts the number of neighbors two nodes have in common (1-hop neighbors).</p>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>Jaccard’s coefficient:</strong></summary>
+                        <p>Measures the proportion of neighbors shared by two nodes (1-hop neighbors). It relies on the same idea as common neighbors but normalizes the result by the total number of neighbors. This rewards nodes with few interconnected neighbors instead of nodes with high degrees.</p>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>Adamic–Adar index:</strong></summary>
+                        <p>Quantifying shared neighbors being <em>"exclusive."</em> If you and I both know a celebrity (high degree), it doesn't mean we’re likely to be friends. But if we both know the same obscure person (low degree), we’re much more likely to be connected.</p>
+                    </details>
+                </li>
             </ul>
             <p><strong>Global Heuristics:</strong> Considering an entire network instead of a local neighborhood.</p>
             <ul>
-                <li><strong>Katz Index:</strong> Measures the total "influence" between two nodes by counting every possible path that connects them. To keep it realistic, it uses a decay factor. Short, direct paths are weighted heavily, while long, winding paths are "penalized" and count for very little.</li>
-                <li><strong>Random Walk with Restart:</strong> Performs random walks, starting from a target node. After each walk, it increases the visit count of the current node. With an `α` probability, it restarts the walk at the target node. Otherwise, it continues its random walk. After a predefined number of iterations, we stop the algorithm, and we can suggest links between the target node and nodes with the highest visit counts.</li>
+                <li>
+                    <details>
+                        <summary><strong>Katz Index:</strong></summary>
+                        <p>Measures the total "influence" between two nodes by counting every possible path that connects them. To keep it realistic, it uses a decay factor. Short, direct paths are weighted heavily, while long, winding paths are "penalized" and count for very little.</p>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>Random Walk with Restart:</strong></summary>
+                        <p>Performs random walks, starting from a target node. After each walk, it increases the visit count of the current node. With an `α` probability, it restarts the walk at the target node. Otherwise, it continues its random walk. After a predefined number of iterations, we stop the algorithm, and we can suggest links between the target node and nodes with the highest visit counts.</p>
+                    </details>
+                </li>
             </ul>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 2. MATRIX FACTORIZATION
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -177,20 +202,50 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p><strong>Goal:</strong> Matrix Factorization aims to minimize the "gap" between the actual adjacency matrix and the predicted scores from node embeddings.</p>
             <ul>
-                <li><strong>Logic:</strong> If Node A and Node B have a link in the real data, their dot product is high. If there is no link, it pushes their vectors apart. Eventually, the model predicts links because nodes are forced to share "coordinates" based on their common connections.</li>
-                <li><strong>Example:</strong> If Node A is linked to Node B, and Node C is also linked to Node B, the model adjusts all three vectors so they "cluster" near each other to satisfy those known links. Even if A and C have no direct link yet, their vectors end up close together in space because they both need to "point" toward B. When you later calculate the dot product between A and C, the score is high because of this shared proximity. That high score is the "predicted link".</li>
-                <li><strong>DRAWBACKS:</strong> 
-                    <ul>
-                        <li><em>Feature Blindness:</em> They only "see" the network structure, ignoring any actual data (like a user's age or a protein's function) attached to the nodes.</li>
-                        <li><em>No Inductive Logic:</em> They are "transductive," meaning they can't handle new nodes. If a new node joins the graph, the whole model must often be retrained because it hasn't learned a general rule for embedding.</li>
-                        <li><em>Structural Ignorance:</em> Two nodes that play the exact same role (like "hubs") but are in different parts of the graph might end up with completely different embeddings because the model only cares about direct proximity, not structural similarity.</li>
-                    </ul>
+                <li>
+                    <details>
+                        <summary><strong>Logic:</strong></summary>
+                        <p>If Node A and Node B have a link in the real data, their dot product is high. If there is no link, it pushes their vectors apart. Eventually, the model predicts links because nodes are forced to share "coordinates" based on their common connections.</p>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>Example:</strong></summary>
+                        <p>If Node A is linked to Node B, and Node C is also linked to Node B, the model adjusts all three vectors so they "cluster" near each other to satisfy those known links. Even if A and C have no direct link yet, their vectors end up close together in space because they both need to "point" toward B. When you later calculate the dot product between A and C, the score is high because of this shared proximity. That high score is the "predicted link".</p>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>DRAWBACKS:</strong></summary>
+                        <ul>
+                            <li>
+                                <details>
+                                    <summary><em>Feature Blindness:</em></summary>
+                                    <p>They only "see" the network structure, ignoring any actual data (like a user's age or a protein's function) attached to the nodes.</p>
+                                </details>
+                            </li>
+                            <li>
+                                <details>
+                                    <summary><em>No Inductive Logic:</em></summary>
+                                    <p>They are "transductive," meaning they can't handle new nodes. If a new node joins the graph, the whole model must often be retrained because it hasn't learned a general rule for embedding.</p>
+                                </details>
+                            </li>
+                            <li>
+                                <details>
+                                    <summary><em>Structural Ignorance:</em></summary>
+                                    <p>Two nodes that play the exact same role (like "hubs") but are in different parts of the graph might end up with completely different embeddings because the model only cares about direct proximity, not structural similarity.</p>
+                                </details>
+                            </li>
+                        </ul>
+                    </details>
                 </li>
             </ul>
-        </div>
+        </details>
+    </div>
+</details>
 
         <div class="subsection">
             <span class="subsection-title">
