@@ -124,164 +124,164 @@
 <div class="scanlines"></div>
 
 <details class="section" open>
-<summary>
-GRAPH CONVOLUTIONAL NETWORKS
-<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
-</summary>
-
-<div class="section-content">
+    <summary>
+    GRAPH CONVOLUTIONAL NETWORKS
+    <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
     
-    <div class="subsection">
-        <span class="subsection-title">
-            Feature Smoothing
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
+    <div class="section-content">
         
-        <p><strong>Goal:</strong> Compared to the vanilla GNN, the main feature of the GCN is that it considers node degrees to weigh its features.</p>
-        
-        <ul>
-            <li>
-                <strong>The Raw Aggregation Problem:</strong>
+        <details class="subsection">
+            <summary class="subsection-title">
+                Feature Smoothing
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </summary>
+            
+            <p><strong>Goal:</strong> Compared to the vanilla GNN, the main feature of the GCN is that it considers node degrees to weigh its features.</p>
+            
+            <ul>
+                <li>
+                    <strong>The Raw Aggregation Problem:</strong>
+                    <br>
+                    In a vanilla GNN, summing neighbor features creates massive values for "hub" nodes and tiny ones for isolated nodes. This extreme variance in scale prevents the neural network from finding stable patterns.
+                </li>
                 <br>
-                In a vanilla GNN, summing neighbor features creates massive values for "hub" nodes and tiny ones for isolated nodes. This extreme variance in scale prevents the neural network from finding stable patterns.
-            </li>
-            <br>
-            <li>
-                <strong>The Variance Issue:</strong>
+                <li>
+                    <strong>The Variance Issue:</strong>
+                    <br>
+                    Because embeddings exist on vastly different scales, the model struggles to compare them or learn effectively. It becomes biased toward high-degree nodes, ignoring the actual semantic features of the graph structure.
+                </li>
+                 <br>
+                <li>
+                    <strong>The Degree Matrix ($D$):</strong>
+                    <br>
+                    To normalize this, we first quantify node influence using the Degree Matrix ($D$). This diagonal matrix acts as a lookup table, where each entry tracks exactly how many connections (edges) a specific node possesses.
+                </li>
+                 <br>
+                <li>
+                    <strong>Transforming Sum to Mean:</strong>
+                    <br>
+                    We multiply the Adjacency Matrix by the Inverse Degree Matrix ($D^{-1}A$). This mathematically shifts the operation from a "sum" to a "mean," ensuring node embeddings remain consistent in magnitude regardless of neighbor count.
+                </li>
+            </ul>
+        </details>
+    
+        <details class="subsection">
+            <summary class="subsection-title">
+                The Power of Self-Loops and Normalization
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </summary>
+            <p><strong>Goal:</strong> Adding self-loops ( = + ): Ensures that a node’s own features are included during the aggregation step.</p>
+            <ul>
+                <li><strong>Key 01:</strong> Without them, a node would only “know” about its neighbors, effectively losing its own identity in every layer.</li>
+                <li><strong>Key 02:</strong> Symmetric normalization: Prevents "hub" nodes with massive connectivity from over-powering the network.</li>
+                <li><strong>Key 03:</strong> By factoring in both the sender's and receiver's degrees, it scales down signals from high-degree nodes and boosts those from isolated ones.</li>
+            </ul>
+        </details>
+    
+        <details class="subsection">
+            <summary class="subsection-title">
+                GCN Layers
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </summary>
+            
+            <p><strong>Goal:</strong> In deep learning, a layer is a mathematical transformation that maps input features to a new representation.</p>
+            
+            <ul>
+                <li>
+                    <strong>Features & Structure:</strong>
+                    <br>
+                    Unlike standard layers, a GCN layer computes its transformation using both node features (what the node is) and the graph's adjacency matrix (how nodes connect). This blends content with topology.
+                    <br><br>
+                    
+                </li>
                 <br>
-                Because embeddings exist on vastly different scales, the model struggles to compare them or learn effectively. It becomes biased toward high-degree nodes, ignoring the actual semantic features of the graph structure.
-            </li>
-             <br>
-            <li>
-                <strong>The Degree Matrix ($D$):</strong>
+                <li>
+                    <strong>Linear Transformation:</strong>
+                    <br>
+                    Node features are multiplied by a learnable weight matrix ($W$). This standard neural network step extracts high-level semantic patterns from the raw input data before sharing them across the graph.
+                </li>
                 <br>
-                To normalize this, we first quantify node influence using the Degree Matrix ($D$). This diagonal matrix acts as a lookup table, where each entry tracks exactly how many connections (edges) a specific node possesses.
-            </li>
-             <br>
-            <li>
-                <strong>Transforming Sum to Mean:</strong>
+                <li>
+                    <strong>Aggregation:</strong>
+                    <br>
+                    The Adjacency Matrix (A) acts as the structural filter. It takes the refined feature vectors from the Linear Transformation and redistributes them across the graph. By multiplying the Adjacency Matrix by these updated features, the Adjacency Matrix ensures each acts as a selector, ensuring node i only receives the updated features from its specific neighbors where an edge exists.
+                </li>
                 <br>
-                We multiply the Adjacency Matrix by the Inverse Degree Matrix ($D^{-1}A$). This mathematically shifts the operation from a "sum" to a "mean," ensuring node embeddings remain consistent in magnitude regardless of neighbor count.
-            </li>
-        </ul>
+                <li>
+                    <strong>Normalization:</strong>
+                    <br>
+                    To prevent feature explosion from hub nodes, the aggregated sum is scaled down symmetrically. It scales the message using the degrees of both the sender and receiver, stabilizing the network's embeddings.
+                    <br><br>
+                    
+                </li>
+                <br>
+                <li>
+                    <strong>Activation:</strong>
+                    <br>
+                    Finally, a non-linear activation function (like ReLU) is applied to the normalized features. This allows the model to capture complex, non-linear relationships in the graph data across multiple layers.
+                </li>
+            </ul>
+        </details>
+    
+        <details class="subsection">
+            <summary class="subsection-title">
+                GCN GENERAL SETUP
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </summary>
+            <p><strong>Goal:</strong> 1. Define the Architecture: You create a class inheriting from torch.nn.Module.</p>
+            <ul>
+                <li><strong>Key 01:</strong> Unlike standard networks, you instantiate GCNConv layers which require both node features and the graph structure (edge_index) during the forward pass.</li>
+                <li><strong>Key 02:</strong> Layer 1: Performs the "message pass" (aggregating neighbor info to the current node) and projects it to a higher dimensional space.</li>
+                <li><strong>Key 03:</strong> Activation: An activation function adds non-linearity, allowing the model to learn complex patterns.</li>
+                <li><strong>Key 04:</strong> Layer 2: Performs a message pass using the embeddings. Since those neighbors already gathered information from their neighbors in the first layer, the second layer effectively enables each node to capture information from n-hops away.</li>
+                <li><strong>Key 05:</strong> (Hops defined as the number of GCN layers used)</li>
+                <li><strong>Key 06:</strong> 2. The Training Loop (fit): The training process uses standard optimizers like Adam, but the loss is typically calculated only on a specific mask (e.g., train_mask).</li>
+                <li><strong>Key 07:</strong> 3. Application Versatility: Node Classification (Cora dataset), Link Prediction, and Graph Classification (using pooling).</li>
+            </ul>
+        </details>
+    
+        <details class="subsection">
+            <summary class="subsection-title">
+                GCN NODE REGRESSION SETUP
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </summary>
+            <p><strong>Goal:</strong> Using an encoder-style architecture to distill raw graph data into a single continuous prediction.</p>
+            <ul>
+                <li><strong>Key 01:</strong> By stacking three GCNConv layers with decreasing dimensions, the network creates a bottleneck that forces it to learn only the most impactful structural patterns.</li>
+                <li><strong>Key 02:</strong> Three-Hop Context: Three layers expand the receptive field to 3 hops, letting each node “see” a wide area of the network to inform its prediction.</li>
+                <li><strong>Key 03:</strong> Regression Head: A final Linear layer maps hidden features to a single scalar (dimension ) without a softmax, allowing for unbounded numerical output.</li>
+                <li><strong>Key 04:</strong> Training Goal: Mean Squared Error (MSE) loss replaces classification loss, penalizing the squared difference between the predicted and actual result.</li>
+            </ul>
+        </details>
+    
     </div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            The Power of Self-Loops and Normalization
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> Adding self-loops ( = + ): Ensures that a node’s own features are included during the aggregation step.</p>
-        <ul>
-            <li><strong>Key 01:</strong> Without them, a node would only “know” about its neighbors, effectively losing its own identity in every layer.</li>
-            <li><strong>Key 02:</strong> Symmetric normalization: Prevents "hub" nodes with massive connectivity from over-powering the network.</li>
-            <li><strong>Key 03:</strong> By factoring in both the sender's and receiver's degrees, it scales down signals from high-degree nodes and boosts those from isolated ones.</li>
-        </ul>
-    </div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            GCN Layers
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        
-        <p><strong>Goal:</strong> In deep learning, a layer is a mathematical transformation that maps input features to a new representation.</p>
-        
-        <ul>
-            <li>
-                <strong>Features & Structure:</strong>
-                <br>
-                Unlike standard layers, a GCN layer computes its transformation using both node features (what the node is) and the graph's adjacency matrix (how nodes connect). This blends content with topology.
-                <br><br>
-                
-            </li>
-            <br>
-            <li>
-                <strong>Linear Transformation:</strong>
-                <br>
-                Node features are multiplied by a learnable weight matrix ($W$). This standard neural network step extracts high-level semantic patterns from the raw input data before sharing them across the graph.
-            </li>
-            <br>
-            <li>
-                <strong>Aggregation:</strong>
-                <br>
-                The Adjacency Matrix (A) acts as the structural filter. It takes the refined feature vectors from the Linear Transformation and redistributes them across the graph. By multiplying the Adjacency Matrix by these updated features, the Adjacency Matrix ensures each acts as a selector, ensuring node i only receives the updated features from its specific neighbors where an edge exists.
-            </li>
-            <br>
-            <li>
-                <strong>Normalization:</strong>
-                <br>
-                To prevent feature explosion from hub nodes, the aggregated sum is scaled down symmetrically. It scales the message using the degrees of both the sender and receiver, stabilizing the network's embeddings.
-                <br><br>
-                
-            </li>
-            <br>
-            <li>
-                <strong>Activation:</strong>
-                <br>
-                Finally, a non-linear activation function (like ReLU) is applied to the normalized features. This allows the model to capture complex, non-linear relationships in the graph data across multiple layers.
-            </li>
-        </ul>
-    </div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            GCN GENERAL SETUP
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> 1. Define the Architecture: You create a class inheriting from torch.nn.Module.</p>
-        <ul>
-            <li><strong>Key 01:</strong> Unlike standard networks, you instantiate GCNConv layers which require both node features and the graph structure (edge_index) during the forward pass.</li>
-            <li><strong>Key 02:</strong> Layer 1: Performs the "message pass" (aggregating neighbor info to the current node) and projects it to a higher dimensional space.</li>
-            <li><strong>Key 03:</strong> Activation: An activation function adds non-linearity, allowing the model to learn complex patterns.</li>
-            <li><strong>Key 04:</strong> Layer 2: Performs a message pass using the embeddings. Since those neighbors already gathered information from their neighbors in the first layer, the second layer effectively enables each node to capture information from n-hops away.</li>
-            <li><strong>Key 05:</strong> (Hops defined as the number of GCN layers used)</li>
-            <li><strong>Key 06:</strong> 2. The Training Loop (fit): The training process uses standard optimizers like Adam, but the loss is typically calculated only on a specific mask (e.g., train_mask).</li>
-            <li><strong>Key 07:</strong> 3. Application Versatility: Node Classification (Cora dataset), Link Prediction, and Graph Classification (using pooling).</li>
-        </ul>
-    </div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            GCN NODE REGRESSION SETUP
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> Using an encoder-style architecture to distill raw graph data into a single continuous prediction.</p>
-        <ul>
-            <li><strong>Key 01:</strong> By stacking three GCNConv layers with decreasing dimensions, the network creates a bottleneck that forces it to learn only the most impactful structural patterns.</li>
-            <li><strong>Key 02:</strong> Three-Hop Context: Three layers expand the receptive field to 3 hops, letting each node “see” a wide area of the network to inform its prediction.</li>
-            <li><strong>Key 03:</strong> Regression Head: A final Linear layer maps hidden features to a single scalar (dimension ) without a softmax, allowing for unbounded numerical output.</li>
-            <li><strong>Key 04:</strong> Training Goal: Mean Squared Error (MSE) loss replaces classification loss, penalizing the squared difference between the predicted and actual result.</li>
-        </ul>
-    </div>
-
-</div>
-</details>
+    </details>
 
 </body>
 </html>
