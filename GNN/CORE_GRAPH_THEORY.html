@@ -292,80 +292,81 @@
         </div>
         </details>
 
-<details class="section">
-<summary>
-GRAPH MEASURES
-<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
-</summary>
-<div class="section-content">
-<div class="subsection">
-<span class="subsection-title">
-Degree centrality
-<button class="eye-btn">
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-<circle cx="12" cy="12" r="3"></circle>
-</svg>
-</button>
-</span>
-<p><strong>Goal:</strong> One of the simplest and most commonly used measures of centrality.</p>
-<ul>
-<li><strong>Key 01:</strong> It is simply defined as the degree of the node.</li>
-<li><strong>Key 02:</strong> A high degree centrality indicates that a vertex is highly connected to other vertices in the graph, and thus significantly influences the network.</li>
-</ul>
-</div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            Closeness centrality
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> Measures how close a node is to all other nodes in the graph.</p>
-        <ul>
-            <li><strong>Key 01:</strong> It corresponds to the average length of the shortest path between the target node and all other nodes in the graph.</li>
-            <li><strong>Key 02:</strong> A node with high closeness centrality can quickly reach all other vertices in the network.</li>
-        </ul>
-    </div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            Betweenness centrality
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> Measures the number of times a node lies on the shortest path between pairs of other nodes in the graph.</p>
-        <ul>
-            <li><strong>Key 01:</strong> A node with high betweenness centrality acts as a bottleneck or bridge between different parts of the graph.</li>
-        </ul>
-    </div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            Density
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> Density measures how saturated a network is with connections compared to its theoretical maximum.</p>
-        <ul>
-            <li><strong>Key 01:</strong> It represents the "compactness" of the topology: a density of 1.0 is a complete graph where everyone is connected to everyone else; a density near 0 is a sparse graph.</li>
-            <li><strong>Key 02:</strong> Generally, a graph is considered dense if its density is greater than 0.5 and sparse if its density is less than 0.1.</li>
-        </ul>
-    </div>
-</div>
-</details>
+        <details class="section">
+            <summary>
+            GRAPH MEASURES
+            <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+            </summary>
+            <div class="section-content">
+            
+                <details class="subsection">
+                    <summary class="subsection-title">
+                        Degree centrality
+                        <button class="eye-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </summary>
+                    <p><strong>Goal:</strong> One of the simplest and most commonly used measures of centrality.</p>
+                    <ul>
+                        <li><strong>Key 01:</strong> It is simply defined as the degree of the node.</li>
+                        <li><strong>Key 02:</strong> A high degree centrality indicates that a vertex is highly connected to other vertices in the graph, and thus significantly influences the network.</li>
+                    </ul>
+                </details>
+            
+                <details class="subsection">
+                    <summary class="subsection-title">
+                        Closeness centrality
+                        <button class="eye-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </summary>
+                    <p><strong>Goal:</strong> Measures how close a node is to all other nodes in the graph.</p>
+                    <ul>
+                        <li><strong>Key 01:</strong> It corresponds to the average length of the shortest path between the target node and all other nodes in the graph.</li>
+                        <li><strong>Key 02:</strong> A node with high closeness centrality can quickly reach all other vertices in the network.</li>
+                    </ul>
+                </details>
+            
+                <details class="subsection">
+                    <summary class="subsection-title">
+                        Betweenness centrality
+                        <button class="eye-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </summary>
+                    <p><strong>Goal:</strong> Measures the number of times a node lies on the shortest path between pairs of other nodes in the graph.</p>
+                    <ul>
+                        <li><strong>Key 01:</strong> A node with high betweenness centrality acts as a bottleneck or bridge between different parts of the graph.</li>
+                    </ul>
+                </details>
+            
+                <details class="subsection">
+                    <summary class="subsection-title">
+                        Density
+                        <button class="eye-btn">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </button>
+                    </summary>
+                    <p><strong>Goal:</strong> Density measures how saturated a network is with connections compared to its theoretical maximum.</p>
+                    <ul>
+                        <li><strong>Key 01:</strong> It represents the "compactness" of the topology: a density of 1.0 is a complete graph where everyone is connected to everyone else; a density near 0 is a sparse graph.</li>
+                        <li><strong>Key 02:</strong> Generally, a graph is considered dense if its density is greater than 0.5 and sparse if its density is less than 0.1.</li>
+                    </ul>
+                </details>
+            </div>
+            </details>
 
 <details class="section">
 <summary>
