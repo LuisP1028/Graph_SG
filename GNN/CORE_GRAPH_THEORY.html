@@ -124,82 +124,82 @@
 <div class="scanlines"></div>
 
 <details class="section" open>
-<summary>
-GRAPH PROPERTIES
-<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
-</summary>
-
-<div class="section-content">
+    <summary>
+    GRAPH PROPERTIES
+    <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
     
-    <div class="subsection">
-        <span class="subsection-title">
-            Directed graphs
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> Also called digraphs, each edge has a direction or orientation.</p>
-        <ul>
-            <li><strong>Key 01:</strong> This means that the edge connects two nodes in a particular direction, where one node is the source and the other is the destination.</li>
-        </ul>
+    <div class="section-content">
+        
+        <details class="subsection">
+            <summary class="subsection-title">
+                Directed graphs
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </summary>
+            <p><strong>Goal:</strong> Also called digraphs, each edge has a direction or orientation.</p>
+            <ul>
+                <li><strong>Key 01:</strong> This means that the edge connects two nodes in a particular direction, where one node is the source and the other is the destination.</li>
+            </ul>
+        </details>
+    
+        <details class="subsection">
+            <summary class="subsection-title">
+                Undirected graph
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </summary>
+            <p><strong>Goal:</strong> Where the edges have no direction.</p>
+            <ul>
+                <li><strong>Key 01:</strong> This means that the edge between two vertices can be traversed in either direction, and the order in which we visit the nodes does not matter.</li>
+            </ul>
+        </details>
+    
+        <details class="subsection">
+            <summary class="subsection-title">
+                Weighted Graphs
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </summary>
+            <p><strong>Goal:</strong> In a weighted graph, each edge has a weight or cost associated with it.</p>
+            <ul>
+                <li><strong>Key 01:</strong> These weights can represent various factors, such as distance, travel time, or cost.</li>
+                    <li>For example, in a transportation network, the weights of edges might represent the distances between different cities or the time it takes to travel between them.</li>
+                <li><strong>Key 03:</strong> In contrast, <em>unweighted graphs</em> have no weight associated with their edges.</li>
+                    <li>These types of graphs are commonly used in situations where the relationships between nodes are binary, and the edges simply indicate the presence or absence of a connection between them.</li>
+            </ul>
+        </details>
+    
+        <details class="subsection">
+            <summary class="subsection-title">
+                Connected and Disconnected Graphs
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </summary>
+            <p><strong>Goal:</strong> Define the reachability between vertices within the graph topology.</p>
+            <ul>
+                <li><strong>Connected:</strong> In connected graphs, there is a path between any two vertices in the graph.</li>
+                <li><strong>Disconnected:</strong> In disconnected graphs, at least two vertices are not connected by a path.</li>
+            </ul>
+        </details>
     </div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            Undirected graph
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> Where the edges have no direction.</p>
-        <ul>
-            <li><strong>Key 01:</strong> This means that the edge between two vertices can be traversed in either direction, and the order in which we visit the nodes does not matter.</li>
-        </ul>
-    </div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            Weighted Graphs
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> In a weighted graph, each edge has a weight or cost associated with it.</p>
-        <ul>
-            <li><strong>Key 01:</strong> These weights can represent various factors, such as distance, travel time, or cost.</li>
-                <li>For example, in a transportation network, the weights of edges might represent the distances between different cities or the time it takes to travel between them.</li>
-            <li><strong>Key 03:</strong> In contrast, <em>unweighted graphs</em> have no weight associated with their edges.</li>
-                <li>These types of graphs are commonly used in situations where the relationships between nodes are binary, and the edges simply indicate the presence or absence of a connection between them.</li>
-        </ul>
-    </div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            Connected and Disconnected Graphs
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> Define the reachability between vertices within the graph topology.</p>
-        <ul>
-            <li><strong>Connected:</strong> In connected graphs, there is a path between any two vertices in the graph.</li>
-            <li><strong>Disconnected:</strong> In disconnected graphs, at least two vertices are not connected by a path.</li>
-        </ul>
-    </div>
-</div>
-</details>
+    </details>
 
 <details class="section">
 <summary>
