@@ -244,11 +244,9 @@
                 </li>
             </ul>
         </details>
-    </div>
-</details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 GRAPH AUTOENCODER AND VARIATIONAL GRAPH AUTOENCODER:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -256,41 +254,88 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>GAE and VGAE are GNN architectures that automate matrix factorization. They use a GNN to "encode" nodes into vectors, then a decoder to "reconstruct" the graph by predicting links based on vector similarity.</p>
             <p><strong>Graph Autoencoder (GAE):</strong></p>
             <ul>
-                <li><em>The Encoder:</em> Takes node features (`X`) and the adjacency matrix (`A`) to produce node embeddings (`Z`). Unlike basic matrix factorization, this allows the model to use actual node properties.</li>
-                <li><em>The Decoder:</em> This module reconstructs the adjacency matrix (`A'`) by calculating the dot product between embeddings (`Z`) and applying a sigmoid function to output link probabilities between 0 and 1.</li>
-                <li><em>Weighted Loss:</em> This modifies the loss function by adding a weight parameter that scales the importance of positive links. By making the penalty for missing a real connection much higher than the penalty for a false alarm, the model is forced to focus on the rare existing links rather than the abundant empty spaces.</li>
-                <li><em>Negative Sampling:</em> Sampling fewer zero-value entries (non-links) during training to create a more balanced dataset.</li>
+                <li>
+                    <details>
+                        <summary><em>The Encoder:</em></summary>
+                        Takes node features (`X`) and the adjacency matrix (`A`) to produce node embeddings (`Z`). Unlike basic matrix factorization, this allows the model to use actual node properties.
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><em>The Decoder:</em></summary>
+                        This module reconstructs the adjacency matrix (`A'`) by calculating the dot product between embeddings (`Z`) and applying a sigmoid function to output link probabilities between 0 and 1.
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><em>Weighted Loss:</em></summary>
+                        This modifies the loss function by adding a weight parameter that scales the importance of positive links. By making the penalty for missing a real connection much higher than the penalty for a false alarm, the model is forced to focus on the rare existing links rather than the abundant empty spaces.
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><em>Negative Sampling:</em></summary>
+                        Sampling fewer zero-value entries (non-links) during training to create a more balanced dataset.
+                    </details>
+                </li>
             </ul>
 
             <p><strong>Variational Graph Autoencoder (VGAE):</strong></p>
             <p>Unlike a standard GAE that outputs a fixed vector for each node, the VGAE encoder outputs a mean (`μ`) and standard deviation (`σ`). This means each node is represented as a distribution in the latent space, accounting for uncertainty.</p>
             <ul>
-                <li><em>The Probabilistic Encoder:</em> Outputs two distinct vectors for every node: `μ` (Mean vector): A d-length vector acting as the coordinate center, and `σ` (Standard deviation vector): A d-length vector representing the “uncertainty” or spread.</li>
-                <li><em>The Sampling Decoder:</em> 
-                    <ol>
-                        <li>Sampling: To obtain a concrete coordinate `Z` for each node, it computes dimension-by-dimension. It takes random noise (`ϵ`), scales it by the dimension's uncertainty (`σ`), then adds the mean (`μ`). This element-wise operation produces a distinct d-dimensional vector `Z`.</li>
-                        <li>Reconstruction: It stacks every node's `Z` vector into a latent matrix `Z`. By computing the inner product `ZZ^T`, it measures similarity between all pairs of coordinates to predict edges, yielding a matrix of predicted probabilities `A'`. In the end, we obtain the approximated adjacency matrix.</li>
-                    </ol>
+                <li>
+                    <details>
+                        <summary><em>The Probabilistic Encoder:</em></summary>
+                        Outputs two distinct vectors for every node: `μ` (Mean vector): A d-length vector acting as the coordinate center, and `σ` (Standard deviation vector): A d-length vector representing the “uncertainty” or spread.
+                    </details>
                 </li>
-                <li><strong>The ELBO loss:</strong> How to balance accuracy with generalization. It has two competing parts: 
-                    <ol>
-                        <li>Binary Cross-Entropy (`_BCE`): This rewards the model for making high link predictions between nodes that actually have links.</li>
-                        <li>KL Divergence: This penalizes the model if the learned embedding distributions (`μ and σ²`) do not look like a standard normal distribution.</li>
-                    </ol>
+                <li>
+                    <details>
+                        <summary><em>The Sampling Decoder:</em></summary>
+                        <ol>
+                            <li>Sampling: To obtain a concrete coordinate `Z` for each node, it computes dimension-by-dimension. It takes random noise (`ϵ`), scales it by the dimension's uncertainty (`σ`), then adds the mean (`μ`). This element-wise operation produces a distinct d-dimensional vector `Z`.</li>
+                            <li>Reconstruction: It stacks every node's `Z` vector into a latent matrix `Z`. By computing the inner product `ZZ^T`, it measures similarity between all pairs of coordinates to predict edges, yielding a matrix of predicted probabilities `A'`. In the end, we obtain the approximated adjacency matrix.</li>
+                        </ol>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>The ELBO loss:</strong></summary>
+                        How to balance accuracy with generalization. It has two competing parts: 
+                        <ol>
+                            <li>Binary Cross-Entropy (`_BCE`): This rewards the model for making high link predictions between nodes that actually have links.</li>
+                            <li>KL Divergence: This penalizes the model if the learned embedding distributions (`μ and σ²`) do not look like a standard normal distribution.</li>
+                        </ol>
+                    </details>
                 </li>
             </ul>
 
             <p><strong>Implementing (VGAE):</strong></p>
             <ol>
-                <li><em>Data Preparation:</em> Use T.RandomLinkSplit to divide your edges into training, validation, and testing sets. Crucially, set add_negative_train_samples=False. This is because the VGAE class performs its own negative sampling internally during loss calculation.</li>
-                <li><em>The Encoder Architecture:</em> The Encoder class requires a shared base followed by two "heads": <em>conv_mu</em> (Learns the mean vector `μ`) and <em>conv_logstd</em> (Learns the log-standard deviation log `σ`). Note: We predict log `σ` rather than `σ` for numerical stability; it ensures the standard deviation is always positive when exponentiated.</li>
-                <li><em>Training & the ELBO Objective:</em> During training, the `model.encode()` function samples a specific `Z` using the reparameterization trick. The ELBO loss is then calculated as: <em>recon_loss</em> (Reconstructs adjacency matrix) and <em>kl_loss</em> (Regularizes latent space). Scaling this by 1/N is standard practice.</li>
+                <li>
+                    <details>
+                        <summary><em>Data Preparation:</em></summary>
+                        Use T.RandomLinkSplit to divide your edges into training, validation, and testing sets. Crucially, set add_negative_train_samples=False. This is because the VGAE class performs its own negative sampling internally during loss calculation.
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><em>The Encoder Architecture:</em></summary>
+                        The Encoder class requires a shared base followed by two "heads": <em>conv_mu</em> (Learns the mean vector `μ`) and <em>conv_logstd</em> (Learns the log-standard deviation log `σ`). Note: We predict log `σ` rather than `σ` for numerical stability; it ensures the standard deviation is always positive when exponentiated.
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><em>Training & the ELBO Objective:</em></summary>
+                        During training, the `model.encode()` function samples a specific `Z` using the reparameterization trick. The ELBO loss is then calculated as: <em>recon_loss</em> (Reconstructs adjacency matrix) and <em>kl_loss</em> (Regularizes latent space). Scaling this by 1/N is standard practice.
+                    </details>
+                </li>
             </ol>
-        </div>
+        </details>
     </div>
 </details>
 
@@ -301,8 +346,8 @@
     </summary>
     
     <div class="section-content">
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 PREDICTING LINKS WITH SEAL:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -310,35 +355,62 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             
             <p><strong>Goal:</strong> Subgraphs, Embeddings, and Attributes for Link prediction.</p>
             
             <ol>
-                <li><strong>Data Preparation & Link Splitting:</strong> We begin with a standard graph (e.g., Cora). Unlike node classification, link prediction requires splitting the edges into Positive edges, Negative edges, and using a Transform (RandomLinkSplit) to withhold a percentage for validation and testing.</li>
-                <li><strong>The Core Preprocessing: Enclosing Subgraphs:</strong> The “magic” of SEAL is that for every potential link (u, v), we extract a k-hop enclosing subgraph.
-                    <ul>
-                        <li>Extraction: Find all neighbors within k hops (usually k = 1 or 2).</li>
-                        <li>Sub-indexing: Relabel the nodes within this small subgraph.</li>
-                        <li>Edge removal: Crucially, we remove the direct edge between the source and destination if it exists. We want the model to predict the link based on the surrounding structure.</li>
-                    </ul>
+                <li>
+                    <details>
+                        <summary><strong>Data Preparation & Link Splitting:</strong></summary>
+                        We begin with a standard graph (e.g., Cora). Unlike node classification, link prediction requires splitting the edges into Positive edges, Negative edges, and using a Transform (RandomLinkSplit) to withhold a percentage for validation and testing.
+                    </details>
                 </li>
-                <li><strong>Node Labeling via DRNL:</strong> To help the GNN distinguish roles, we use Double Radius Node Labeling (DRNL). This assigns an integer label `z` based on distance to the two target nodes.
-                    <ul>
-                        <li>The target nodes u and v are assigned label 1.</li>
-                        <li>Purpose: These labels provide a structural “coordinate system,” allowing the GNN to understand which nodes are “bridges”.</li>
-                    </ul>
+                <li>
+                    <details>
+                        <summary><strong>The Core Preprocessing: Enclosing Subgraphs:</strong></summary>
+                        The “magic” of SEAL is that for every potential link (u, v), we extract a k-hop enclosing subgraph.
+                        <ul>
+                            <li>Extraction: Find all neighbors within k hops (usually k = 1 or 2).</li>
+                            <li>Sub-indexing: Relabel the nodes within this small subgraph.</li>
+                            <li>Edge removal: Crucially, we remove the direct edge between the source and destination if it exists. We want the model to predict the link based on the surrounding structure.</li>
+                        </ul>
+                    </details>
                 </li>
-                <li><strong>Feature Construction:</strong> Each node in the subgraph receives a feature vector: Structural labels (DRNL `z` values converted into one-hot encoded vectors) and Node attributes (concatenated if available).</li>
-                <li><strong>Architecture: DGCNN:</strong> SEAL typically uses the Deep Graph Convolutional Neural Network (DGCNN).
-                    <ul>
-                        <li>SortPooling: This is the defining feature. It sorts nodes based on structural importance and picks the top k nodes. This converts a variable-sized graph into a fixed-size tensor.</li>
-                        <li>1D Conv & MLP: Standard deep learning layers process the sorted graph features to output a probability (0 to 1).</li>
-                    </ul>
+                <li>
+                    <details>
+                        <summary><strong>Node Labeling via DRNL:</strong></summary>
+                        To help the GNN distinguish roles, we use Double Radius Node Labeling (DRNL). This assigns an integer label `z` based on distance to the two target nodes.
+                        <ul>
+                            <li>The target nodes u and v are assigned label 1.</li>
+                            <li>Purpose: These labels provide a structural “coordinate system,” allowing the GNN to understand which nodes are “bridges”.</li>
+                        </ul>
+                    </details>
                 </li>
-                <li><strong>Training and Evaluation:</strong> Uses Binary Cross-Entropy (BCE) as the loss function and monitors ROC AUC and Average Precision (AP).</li>
+                <li>
+                    <details>
+                        <summary><strong>Feature Construction:</strong></summary>
+                        Each node in the subgraph receives a feature vector: Structural labels (DRNL `z` values converted into one-hot encoded vectors) and Node attributes (concatenated if available).
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>Architecture: DGCNN:</strong></summary>
+                        SEAL typically uses the Deep Graph Convolutional Neural Network (DGCNN).
+                        <ul>
+                            <li>SortPooling: This is the defining feature. It sorts nodes based on structural importance and picks the top k nodes. This converts a variable-sized graph into a fixed-size tensor.</li>
+                            <li>1D Conv & MLP: Standard deep learning layers process the sorted graph features to output a probability (0 to 1).</li>
+                        </ul>
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>Training and Evaluation:</strong></summary>
+                        Uses Binary Cross-Entropy (BCE) as the loss function and monitors ROC AUC and Average Precision (AP).
+                    </details>
+                </li>
             </ol>
-        </div>
+        </details>
     </div>
 </details>
 
