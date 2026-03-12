@@ -201,95 +201,96 @@
     </div>
     </details>
 
-<details class="section">
-<summary>
-GRAPH TYPES
-<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
-</summary>
-<div class="section-content">
-<div class="subsection">
-<span class="subsection-title">
-Tree
-<button class="eye-btn">
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-<circle cx="12" cy="12" r="3"></circle>
-</svg>
-</button>
-</span>
-<p><strong>Goal:</strong> A connected, undirected graph with no cycles.</p>
-<ul>
-<li><strong>Key 01:</strong> Since there is only one path between any two nodes in a tree, a tree is a special case of a graph.</li>
-<li><strong>Key 02:</strong> Trees are often used to model hierarchical structures, such as family trees, organizational structures, or classification trees.</li>
-</ul>
-</div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            Rooted Tree
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> A tree in which one node is designated as the root, and all other vertices are connected to it by a unique path.</p>
-        <ul>
-            <li><strong>Key 01:</strong> Rooted trees are often used in computer science to represent hierarchical data structures.</li>
-        </ul>
-    </div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            Directed acyclic graph (DAG)
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> A directed graph that has no cycles.</p>
-        <ul>
-            <li><strong>Key 01:</strong> This means that the edges can only be traversed in a particular direction, and there are no loops or cycles.</li>
-            <li><strong>Key 02:</strong> DAGs are often used to model dependencies between tasks or events – for example in computing the critical path of a job.</li>
-        </ul>
-    </div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            Bipartite graph
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> Graph in which the vertices can be divided into two types, such that all edges connect vertices in different sets.</p>
-        <ul>
-            <li><strong>Key 01:</strong> Bipartite graphs are often used to model relationships between two different types of objects, such as buyers and sellers, or employees and jects.</li>
-        </ul>
-    </div>
-
-    <div class="subsection">
-        <span class="subsection-title">
-            Complete Graph
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
-        <p><strong>Goal:</strong> Graph in which every pair of vertices is connected by an edge.</p>
-        <ul>
-            <li><strong>Key 01:</strong> Complete graphs are often used in combinatorics to model problems involving all possible pairwise connections.</li>
-        </ul>
-    </div>
-</div>
-</details>
+    <details class="section">
+        <summary>
+        GRAPH TYPES
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+        </summary>
+        <div class="section-content">
+            
+            <details class="subsection">
+                <summary class="subsection-title">
+                    Tree
+                    <button class="eye-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </summary>
+                <p><strong>Goal:</strong> A connected, undirected graph with no cycles.</p>
+                <ul>
+                    <li><strong>Key 01:</strong> Since there is only one path between any two nodes in a tree, a tree is a special case of a graph.</li>
+                    <li><strong>Key 02:</strong> Trees are often used to model hierarchical structures, such as family trees, organizational structures, or classification trees.</li>
+                </ul>
+            </details>
+        
+            <details class="subsection">
+                <summary class="subsection-title">
+                    Rooted Tree
+                    <button class="eye-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </summary>
+                <p><strong>Goal:</strong> A tree in which one node is designated as the root, and all other vertices are connected to it by a unique path.</p>
+                <ul>
+                    <li><strong>Key 01:</strong> Rooted trees are often used in computer science to represent hierarchical data structures.</li>
+                </ul>
+            </details>
+        
+            <details class="subsection">
+                <summary class="subsection-title">
+                    Directed acyclic graph (DAG)
+                    <button class="eye-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </summary>
+                <p><strong>Goal:</strong> A directed graph that has no cycles.</p>
+                <ul>
+                    <li><strong>Key 01:</strong> This means that the edges can only be traversed in a particular direction, and there are no loops or cycles.</li>
+                    <li><strong>Key 02:</strong> DAGs are often used to model dependencies between tasks or events – for example in computing the critical path of a job.</li>
+                </ul>
+            </details>
+        
+            <details class="subsection">
+                <summary class="subsection-title">
+                    Bipartite graph
+                    <button class="eye-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </summary>
+                <p><strong>Goal:</strong> Graph in which the vertices can be divided into two types, such that all edges connect vertices in different sets.</p>
+                <ul>
+                    <li><strong>Key 01:</strong> Bipartite graphs are often used to model relationships between two different types of objects, such as buyers and sellers, or employees and jects.</li>
+                </ul>
+            </details>
+        
+            <details class="subsection">
+                <summary class="subsection-title">
+                    Complete Graph
+                    <button class="eye-btn">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                            <circle cx="12" cy="12" r="3"></circle>
+                        </svg>
+                    </button>
+                </summary>
+                <p><strong>Goal:</strong> Graph in which every pair of vertices is connected by an edge.</p>
+                <ul>
+                    <li><strong>Key 01:</strong> Complete graphs are often used in combinatorics to model problems involving all possible pairwise connections.</li>
+                </ul>
+            </details>
+        </div>
+        </details>
 
 <details class="section">
 <summary>
