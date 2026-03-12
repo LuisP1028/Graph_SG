@@ -144,28 +144,40 @@
             
             <p><strong>Summary:</strong> Skip-gram defines what the model learns (neighbor relationships). Softmax is the mathematical goal (probability distribution). H-Softmax is the optimization structure that makes calculating that probability feasible for massive datasets.</p>
             
-            <ul>
-                <li><strong>1. Data Generation (Skip-gram Setup):</strong> The process begins with Random Walks on your graph. These walks generate the training data: pairs of nodes consisting of a Target Node (the focus) and a Context Node (a neighbor found in the walk). Task: "Given Target Node A, predict that Context Node B is its neighbor."</li>
-                
-                <li><strong>2. Forward Pass (Projection):</strong> The model accepts the unique ID of Target Node A. It looks up Node A's current Input Vector in the Projection Layer (Embedding Matrix). This vector represents Node A's current position in the high-dimensional space.</li>
-                
-                <li><strong>3. The Prediction Problem (The Bottleneck):</strong> Now, the model must determine the probability that Node B is the correct neighbor.
-                    <ul>
-                        <li><em>Standard Softmax (The Slow Way):</em> To do this normally, the model calculates the dot product of Node A's vector against every other node in the graph to see which score is highest. It then applies Softmax to normalize these scores. For a graph with millions of nodes, calculating millions of dot products for every single training step is impossibly slow (O(|V|)).</li>
-                    </ul>
-                </li>
-                
-                <li><strong>4. The Solution (H-Softmax Integration):</strong> To fix the speed issue, Hierarchical Softmax replaces the flat output layer with a Binary Huffman Tree.
-                    <ul>
-                        <li><em>Restructuring:</em> All nodes in the graph are placed as "leaves" at the bottom of this tree. Common nodes (hubs) are placed near the top; rare nodes are placed deeper.</li>
-                        <li><em>The Root:</em> Think of the root as a binary classifier. It holds a unique weight vector &theta;<sub>root</sub> of the same dimensionality as your node embeddings. It is learned via Backpropagation.</li>
-                        <li><em>The New Task:</em> Instead of comparing Node A against everyone, the model navigates the tree. To predict Node B, it only needs to calculate the probability of taking the correct sequence of binary turns (e.g., Left &rarr; Right &rarr; Left) to reach Node B from the root.</li>
-                        <li><em>Efficiency:</em> This reduces the complexity from checking millions of nodes to checking just the tree depth (roughly log<sub>2</sub>(|V|)).</li>
-                    </ul>
-                </li>
-                
-                <li><strong>5. Optimization (Backpropagation):</strong> The model calculates the error based on the path taken. If the probability of turning "Left" at a specific branch was low but should have been high, the model applies Backpropagation. This updates the Input Vector of Target Node A. It also updates the weights of the internal branch nodes along that specific path.</li>
-            </ul>
+            <details class="subsection">
+                <summary><strong>1. Data Generation (Skip-gram Setup):</strong></summary>
+                <p>The process begins with Random Walks on your graph. These walks generate the training data: pairs of nodes consisting of a Target Node (the focus) and a Context Node (a neighbor found in the walk). Task: "Given Target Node A, predict that Context Node B is its neighbor."</p>
+            </details>
+            
+            <details class="subsection">
+                <summary><strong>2. Forward Pass (Projection):</strong></summary>
+                <p>The model accepts the unique ID of Target Node A. It looks up Node A's current Input Vector in the Projection Layer (Embedding Matrix). This vector represents Node A's current position in the high-dimensional space.</p>
+            </details>
+            
+            <details class="subsection">
+                <summary><strong>3. The Prediction Problem (The Bottleneck):</strong></summary>
+                <p>Now, the model must determine the probability that Node B is the correct neighbor.</p>
+                <ul>
+                    <li><em>Standard Softmax (The Slow Way):</em> To do this normally, the model calculates the dot product of Node A's vector against every other node in the graph to see which score is highest. It then applies Softmax to normalize these scores. For a graph with millions of nodes, calculating millions of dot products for every single training step is impossibly slow (O(|V|)).</li>
+                </ul>
+            </details>
+            
+            <details class="subsection">
+                <summary><strong>4. The Solution (H-Softmax Integration):</strong></summary>
+                <p>To fix the speed issue, Hierarchical Softmax replaces the flat output layer with a Binary Huffman Tree.</p>
+                <ul>
+                    <li><em>Restructuring:</em> All nodes in the graph are placed as "leaves" at the bottom of this tree. Common nodes (hubs) are placed near the top; rare nodes are placed deeper.</li>
+                    <li><em>The Root:</em> Think of the root as a binary classifier. It holds a unique weight vector &theta;<sub>root</sub> of the same dimensionality as your node embeddings. It is learned via Backpropagation.</li>
+                    <li><em>The New Task:</em> Instead of comparing Node A against everyone, the model navigates the tree. To predict Node B, it only needs to calculate the probability of taking the correct sequence of binary turns (e.g., Left &rarr; Right &rarr; Left) to reach Node B from the root.</li>
+                    <li><em>Efficiency:</em> This reduces the complexity from checking millions of nodes to checking just the tree depth (roughly log<sub>2</sub>(|V|)).</li>
+                </ul>
+            </details>
+            
+            <details class="subsection">
+                <summary><strong>5. Optimization (Backpropagation):</strong></summary>
+                <p>The model calculates the error based on the path taken. If the probability of turning "Left" at a specific branch was low but should have been high, the model applies Backpropagation. This updates the Input Vector of Target Node A. It also updates the weights of the internal branch nodes along that specific path.</p>
+            </details>
+            
         </div>
     </div>
 </details>
