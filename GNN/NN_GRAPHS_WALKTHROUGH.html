@@ -158,8 +158,8 @@
     </summary>
     
     <div class="section-content">
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 A. Architecture Types (The "Engines”)
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -167,14 +167,14 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>The "Middle" (Hidden Layers) extracts patterns; the "End" (Output Layer) must match your task’s math.</p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 1. MLP: The Feature Compressor
-            </span>
+            </summary>
             <p>The Multi-Layer Perceptron is the primary "engine" for Graph-Agnostic learning.</p>
             <ul>
                 <li><strong>Operation:</strong> It treats each node as an isolated data point, ignoring the $edge\_index$.</li>
@@ -186,12 +186,12 @@
 Most Appropriate Representation: Feature Matrix ($X \in \mathbb{R}^{N \times F}$). 
 It ignores edges entirely, processing only the $N \times F$ tabular dataset of isolated node attributes.
             </div>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 2. CNN: The Spatial Filter
-            </span>
+            </summary>
             <p>A Convolutional Neural Network is specialized for data with a fixed, Euclidean grid structure (like pixels in an image or voxels in 3D space).</p>
             <ul>
                 <li><strong>Concept:</strong> In graph terms, an image is just a very regular Lattice Graph. We repurpose CNN logic when we want to extract local spatial patterns through "sliding windows" (kernels).</li>
@@ -202,12 +202,12 @@ It ignores edges entirely, processing only the $N \times F$ tabular dataset of i
 Most Appropriate Representation: Grid Adjacency Matrix. 
 Requires fixed, ordered neighborhood structures (like 2D/3D lattices) to apply sliding spatial kernels.
             </div>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 3. RNN/LSTM: The Temporal Memory
-            </span>
+            </summary>
             <p>Recurrent Neural Networks (RNNs) and Long Short-Term Memory (LSTM) units are the engines of "Memory."</p>
             <ul>
                 <li><strong>Concept:</strong> They are designed to process sequences where the order of data points matters. In graph learning, we use them for Evolving/Dynamic Graphs to capture how a node's state changes over time.</li>
@@ -218,12 +218,12 @@ Requires fixed, ordered neighborhood structures (like 2D/3D lattices) to apply s
 Most Appropriate Representation: Temporal Snapshots or Random Walks.
 Processes ordered sequences of node features over time ($X^{(t)}$) or path-based node lists.
             </div>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 4. GNN: The Relational Engine
-            </span>
+            </summary>
             <p>The Graph Neural Network is the only engine that treats the $edge\_index$ as a first-class citizen.</p>
             <ul>
                 <li><strong>Mechanism:</strong> It uses Message Passing to allow nodes to "talk" to one another. It is the appropriate choice when the identity of a node is defined by its relationships rather than just its individual attributes.</li>
@@ -234,19 +234,19 @@ Processes ordered sequences of node features over time ($X^{(t)}$) or path-based
 Most Appropriate Representation: Edge Index (COO format). 
 Pairs perfectly with node features to enable memory-efficient, localized message passing without dense matrices.
             </div>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 B. Output Layer Edits (The "Nozzle")
-            </span>
+            </summary>
             <p>The number of neurons in your final Linear layer and the Activation Function change per task:</p>
             <ul>
                 <li><strong>Multi-Class Classification (Cora):</strong> out_channels = num_classes. Use LogSoftmax to get a probability distribution.</li>
                 <li><strong>Binary Classification:</strong> out_channels = 1. Use Sigmoid to get a value between 0 and 1.</li>
                 <li><strong>Regression (Predicting Node "Temperature"):</strong> out_channels = 1. Use No Activation (identity) to allow for any real number output.</li>
             </ul>
-        </div>
+        </details>
     </div>
 </details>
 
