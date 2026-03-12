@@ -124,35 +124,70 @@
 <div class="scanlines"></div>
 
 <details class="section" open>
-<summary>
-GRAPH GENERATION
-<span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
-</summary>
+    <summary>
+        GRAPH GENERATION
+        <span style="color: var(--dim-color); font-size: 0.8rem;">MODULE_V1.0</span>
+    </summary>
 
-<div class="section-content">
-    
-    <div class="subsection">
-        <span class="subsection-title">
-            CORE:
-            <button class="eye-btn">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                    <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-            </button>
-        </span>
+    <div class="section-content">
         
-        <p><strong>Goal:</strong> Establishing foundations of Realistic and Goal-Directed generation.</p>
-        
-        <ul>
-            <li><strong>Realistic Graph Generation [Data Augmentation]:</strong> This approach focuses on structural imitation. The goal is to learn the underlying distribution of a reference graph (like a social network) to produce new versions that maintain its statistical properties, such as <em>degree distribution and clustering coefficients</em>. It is primarily used for data augmentation and privacy-preserving synthetic data.</li>
-            <li><strong>Goal-Directed Graph Generation [Maximize KPI]:</strong> This approach focuses on property optimization. Instead of mimicking an existing layout, Goal-Directed Generation treats a graph as a "design" to be optimized for a specific <em>Key Performance Indicator (KPI)</em>.</li>
-            <li><strong>Example: Traffic:</strong> You aren't just timing lights; you're generating new lane configurations or bypasses to minimize travel time (KPI).</li>
-            <li><strong>Example: Supply Chain:</strong> You're reconfiguring logistics edges (routes) to maximize throughput (KPI).</li>
-            <li><strong>Erds-Rényi (ER):</strong> The scientific control for graph theory. Use ER to prove a network is non-random. To prove a network is non-random, you compare its metrics against an graph with the same number of nodes and edges. Because connections are formed by pure chance (), it represents <em>"statistical noise."</em> If your real-world graph has a clustering coefficient or degree distribution (hubs) that deviates significantly from the baseline, you have "signal."</li>
-            <li><strong>Watts-Strogatz [Small World] model:</strong> The structural blueprint for propagation efficiency. While modern models (like GNNs) focus on learning complex features, <em>small-worldness</em> explains the topology that enables rapid communication across a system. It describes how a few "shortcut" edges collapse the distance between distant concepts without losing local density.</li>
-        </ul>
+        <details class="subsection">
+            <summary class="subsection-title">
+                CORE:
+                <button class="eye-btn">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                        <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                </button>
+            </summary>
+            
+            <div class="subsection-content">
+                <p><strong>Goal:</strong> Establishing foundations of Realistic and Goal-Directed generation.</p>
+                
+                <ul>
+                    <li>
+                        <details>
+                            <summary><strong>Realistic Graph Generation [Data Augmentation]:</strong></summary>
+                            <p>This approach focuses on structural imitation. The goal is to learn the underlying distribution of a reference graph (like a social network) to produce new versions that maintain its statistical properties, such as <em>degree distribution and clustering coefficients</em>. It is primarily used for data augmentation and privacy-preserving synthetic data.</p>
+                        </details>
+                    </li>
+                    <li>
+                        <details>
+                            <summary><strong>Goal-Directed Graph Generation [Maximize KPI]:</strong></summary>
+                            <p>This approach focuses on property optimization. Instead of mimicking an existing layout, Goal-Directed Generation treats a graph as a "design" to be optimized for a specific <em>Key Performance Indicator (KPI)</em>.</p>
+                        </details>
+                    </li>
+                    <li>
+                        <details>
+                            <summary><strong>Example: Traffic:</strong></summary>
+                            <p>You aren't just timing lights; you're generating new lane configurations or bypasses to minimize travel time (KPI).</p>
+                        </details>
+                    </li>
+                    <li>
+                        <details>
+                            <summary><strong>Example: Supply Chain:</strong></summary>
+                            <p>You're reconfiguring logistics edges (routes) to maximize throughput (KPI).</p>
+                        </details>
+                    </li>
+                    <li>
+                        <details>
+                            <summary><strong>Erds-Rényi (ER):</strong></summary>
+                            <p>The scientific control for graph theory. Use ER to prove a network is non-random. To prove a network is non-random, you compare its metrics against an graph with the same number of nodes and edges. Because connections are formed by pure chance (), it represents <em>"statistical noise."</em> If your real-world graph has a clustering coefficient or degree distribution (hubs) that deviates significantly from the baseline, you have "signal."</p>
+                        </details>
+                    </li>
+                    <li>
+                        <details>
+                            <summary><strong>Watts-Strogatz [Small World] model:</strong></summary>
+                            <p>The structural blueprint for propagation efficiency. While modern models (like GNNs) focus on learning complex features, <em>small-worldness</em> explains the topology that enables rapid communication across a system. It describes how a few "shortcut" edges collapse the distance between distant concepts without losing local density.</p>
+                        </details>
+                    </li>
+                </ul>
+            </div>
+        </details> 
+
     </div>
+</details>
 
     <div class="subsection">
         <span class="subsection-title">
