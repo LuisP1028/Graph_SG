@@ -130,8 +130,8 @@
     
     <div class="section-content">
         
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 Static Graphs with Temporal Signals
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -139,12 +139,12 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>In these systems, the <strong>topological structure is invariant</strong>; the set of nodes and their relational links remain constant. Complexity arises solely from the <em>time-evolving state</em> of those components. While the connectivity backbone is rigid, the feature vectors and labels associated with nodes or edges shift across time intervals.</p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 Dynamic Graphs with Temporal Signals
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -152,9 +152,9 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>Here, the entire <strong>graph architecture is transient</strong>. Both the existence of entities (nodes) and their relationships (edges) appear, vanish, or reform over time. This <em>structural fluidity</em> occurs in parallel with evolving attribute data, requiring models that account for a non-stationary skeleton alongside shifting feature distributions.</p>
-        </div>
+        </details>
 
     </div>
 </details>
@@ -167,8 +167,8 @@
     
     <div class="section-content">
         
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 Overview
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -176,16 +176,26 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>In standard GCNs, the <strong>weight matrix is static</strong> once trained; the model applies the exact same transformation rules regardless of how the graph changes over time. EvolveGCN sets itself apart by making the <em>GCN weights the hidden state of a GRU</em>.</p>
             <ul>
-                <li><strong>Temporal Storage:</strong> The GRU doesn't just store "data"; it stores the evolving logic of the model.</li>
-                <li><strong>Logic:</strong> It takes the previous weight matrix ($W_{t-1}$) and the current graph state ($G_t$) to "re-calibrate" the weight matrix for the current moment ($W_t$). This produces node embeddings that are deeply context-aware of both structural transitions and feature shifts.</li>
+                <li>
+                    <details>
+                        <summary><strong>Temporal Storage:</strong></summary> 
+                        The GRU doesn't just store "data"; it stores the evolving logic of the model.
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>Logic:</strong></summary> 
+                        It takes the previous weight matrix ($W_{t-1}$) and the current graph state ($G_t$) to "re-calibrate" the weight matrix for the current moment ($W_t$). This produces node embeddings that are deeply context-aware of both structural transitions and feature shifts.
+                    </details>
+                </li>
             </ul>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 EvolveGCN-H
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -193,17 +203,32 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p><strong>Goal:</strong> Updates weights using both the previous weights (history) AND current node features.</p>
             <ul>
-                <li><strong>Adjacency Matrix ($A_t$):</strong> An input defining the topological structure (node connectivity) at a specific discrete time step $t$.</li>
-                <li><strong>Node Features ($H_t$):</strong> The internal state or attributes of the entities (e.g., user data, gene expression) at time step $t$.</li>
-                <li><strong>Evolved Weights ($W_t$):</strong> The transformation logic that adapts to the graph snapshot at time $t$.</li>
+                <li>
+                    <details>
+                        <summary><strong>Adjacency Matrix ($A_t$):</strong></summary> 
+                        An input defining the topological structure (node connectivity) at a specific discrete time step $t$.
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>Node Features ($H_t$):</strong></summary> 
+                        The internal state or attributes of the entities (e.g., user data, gene expression) at time step $t$.
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>Evolved Weights ($W_t$):</strong></summary> 
+                        The transformation logic that adapts to the graph snapshot at time $t$.
+                    </details>
+                </li>
             </ul>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 Extensions Necessary
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -211,13 +236,13 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p><strong>Matrix-Based Weight Evolution:</strong> In standard RNNs, the hidden state is a 1D vector. EvolveGCN re-engineers the GRU gates to treat the <em>2D weight matrix (W)</em> as the hidden state. This prevents flattening the weights, which would destroy the meaningful row-column relationships (input-to-output units) of the GCN layer.</p>
             <p><strong>Node Embedding Summarization:</strong> The GRU requires its input to align with its internal state dimensions. While the weight matrix has fixed dimensions, the node embedding matrix (H) has a variable count of nodes. To bridge this gap, the model summarizes H—condensing the node data into a <em>fixed representation</em> that matches the column dimension of the hidden state.</p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 Implementation
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -225,7 +250,7 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>1. <strong>Parameter Recurrence (Weight Continuity):</strong> The model uses an RNN (typically a GRU) to pass the weight matrix from $t-1$ to $t$. <em>Utility:</em> This maintains temporal consistency, ensuring the model's relational logic is an informed evolution of historical states.</p>
             <p>2. <strong>State Integration (Data-Driven Adaptation):</strong> In the EvolveGCN-H variant, the GRU ingests the current node embeddings $H_t$ to update the weights. <em>Utility:</em> This allows the model's "brain" to change based on the content of the data.</p>
             <p>3. <strong>Weight Generation (Dynamic Filtering):</strong> The GRU outputs a tailored weight matrix $W_t$ for the specific graph snapshot. <em>Utility:</em> This provides flexibility for non-stationary systems.</p>
@@ -235,7 +260,7 @@ The GCN applies the evolved weights to the current adjacency matrix $A_t$ using 
 $H^{t+1} = GCN(A_t, H_t, W_t)$.
             </div>
             <p><em>Utility:</em> This is where spatial and temporal dimensions merge. It performs message-passing across the current topology using updated temporal logic.</p>
-        </div>
+        </details>
 
     </div>
 </details>
@@ -248,8 +273,8 @@ $H^{t+1} = GCN(A_t, H_t, W_t)$.
     
     <div class="section-content">
         
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 Core Components
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -257,17 +282,32 @@ $H^{t+1} = GCN(A_t, H_t, W_t)$.
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p><strong>Goal:</strong> Updates weights using only the previous weights via an LSTM.</p>
             <ul>
-                <li><strong>Adjacency Matrix ($A_t$):</strong> The input defining the topological structure at time $t$. In dynamic graphs, nodes and edges in $A_t$ may appear or disappear between snapshots.</li>
-                <li><strong>Node Features ($H_t$):</strong> The attributes of the entities at time $t$.</li>
-                <li><strong>Evolved Weights ($W_t$):</strong> The transformation logic generated by an LSTM that remembers previous weight states.</li>
+                <li>
+                    <details>
+                        <summary><strong>Adjacency Matrix ($A_t$):</strong></summary> 
+                        The input defining the topological structure at time $t$. In dynamic graphs, nodes and edges in $A_t$ may appear or disappear between snapshots.
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>Node Features ($H_t$):</strong></summary> 
+                        The attributes of the entities at time $t$.
+                    </details>
+                </li>
+                <li>
+                    <details>
+                        <summary><strong>Evolved Weights ($W_t$):</strong></summary> 
+                        The transformation logic generated by an LSTM that remembers previous weight states.
+                    </details>
+                </li>
             </ul>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 Implementation Steps
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -275,7 +315,7 @@ $H^{t+1} = GCN(A_t, H_t, W_t)$.
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>1. <strong>Parameter Recurrence (Internal Memory):</strong> Unlike the -H variant, EvolveGCN-O utilizes an LSTM network to model the weight evolution. The LSTM cell acts as a dedicated <em>memory unit</em> that “remembers” previous values of the weights ($W_{t-1}$) automatically.</p>
             <p>2. <strong>Weight Evolution (Autonomous Logic):</strong> The weight update is governed by the function $W_t = LSTM(W_{t-1})$. In this variant, the model does not ingest current node embeddings ($H_t$) into the recurrent unit. <em>Utility:</em> This significantly simplifies the update step.</p>
             <p>3. <strong>Weight Generation (Dynamic Filtering):</strong> The LSTM outputs the updated weight matrix ($W_t$) for the current snapshot. <em>Utility:</em> Even though it doesn’t “see” the current features, the evolved weights are still dynamic.</p>
@@ -285,7 +325,7 @@ The final step applies these evolved weights to the current topology:
 $H^{t+1} = GCN(A_t, H_t, W_t)$
             </div>
             <p><em>Utility:</em> This performs message-passing using the current structure ($A_t$) but the evolved logic ($W_t$). It allows the model to handle dynamic graphs where the number of nodes or edges changes.</p>
-        </div>
+        </details>
 
     </div>
 </details>
