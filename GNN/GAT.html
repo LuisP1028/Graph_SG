@@ -278,7 +278,7 @@
             <p><strong>Normalization (Softmax):</strong> Softmax normalization converts raw scores into a "percentage of influence" by squashing them into a probability distribution. This is essential for structural consistency; it ensures that whether a node has 2 or 2,000 neighbors, their total influence always sums to exactly 1.0. This prevents the hidden states of highly connected nodes from exploding in magnitude, keeping the learning process stable across the entire graph.</p>
         </details>
 
-        <details class="subsection">
+        <details class="section">
             <summary class="subsection-title">
                 MULTI-HEAD ATTENTION GAT ARCHITECTURE WALKTHROUGH:
                 <button class="eye-btn">
@@ -288,22 +288,43 @@
                     </svg>
                 </button>
             </summary>
-            <ol>
-                <li><strong>1. Parallel Linear Projections:</strong> The model initializes $K$ independent weight matrices ($\mathbf{W}_k$), where $K$ is exactly equal to the number of attention heads. Every node’s raw features ($\vec{h}_i$) are multiplied by each of these $K$ matrices in parallel ($\vec{h}'_{i,k} = \mathbf{W}_k \vec{h}_i$). This creates $K$ distinct versions of the latent space, allowing the model to project nodes into different “feature subspaces” simultaneously.</li>
-                <li><strong>2. Multi-Head Feature Fusion:</strong> For every individual head $k$, when comparing a receiver node $i$ and a sender node $j$, the transformed vectors are concatenated horizontally: $\vec{e}_{ij,k} = [\vec{h}'_{i,k} \, \Vert \, \vec{h}'_{j,k}]$. If the transformed dimension is $F'$, this results in unique “super vectors” of size $2F'$. This structure keeps the sender and receiver features distinct for each head’s specific perspective.</li>
-                <li><strong>3. Independent Learnable Mappings:</strong> The model initializes $K$ independent learnable weight vectors ($\vec{a}_k$), matching the number of attention heads. Each vector $\vec{a}_k$ is responsible only for its corresponding head. The dot product between $\vec{a}_k$ and its head’s super vector collapses the relationship into a unique raw scalar $e_{ij,k}$ (often passed through an activation: $e_{ij,k} = \text{LeakyReLU}(\vec{a}_k^T \vec{e}_{ij,k})$). This ensures that head 1 can “score” a relationship based on different criteria than head 2.</li>
-                <li><strong>4. Head-Specific Non-Linearity & Normalization:</strong> The LeakyReLU and Softmax processes are applied independently within each head. This results in $K$ different sets of attention coefficients ($\alpha^k_{ij}$), each forming a valid probability distribution (summing to 1.0) within its own head.</li>
-                <li><strong>5. Multi-Head Aggregation:</strong> You are deciding: "Now that I have k separate versions of Node $i$, do I glue them together (Concatenate) or blend them (Average)?".</li>
-                    <p>After each of the $K$ attention heads has calculated its own unique version of a node’s new embedding ($h'_i$), the model must combine these independent results into a single output.</p>
-            </ol>
-            <div class="code-block" style="margin-top: 10px;">
-            <p><strong>CORE AGGREGATION METHODS:</strong></p>    
-                Hidden Layers: Concatenation (preserves feature diversity)
-                $$\vec{h}'_i = \Vert_{k=1}^K \sigma \left( \sum_{j \in \mathcal{N}_i} \alpha_{ij}^k \mathbf{W}_k \vec{h}_j \right)$$
+            
+            <div class="section-content">
+                <details class="subsection">
+                    <summary><strong>1. Parallel Linear Projections:</strong></summary>
+                    <p>The model initializes $K$ independent weight matrices ($\mathbf{W}_k$), where $K$ is exactly equal to the number of attention heads. Every node’s raw features ($\vec{h}_i$) are multiplied by each of these $K$ matrices in parallel ($\vec{h}'_{i,k} = \mathbf{W}_k \vec{h}_i$). This creates $K$ distinct versions of the latent space, allowing the model to project nodes into different “feature subspaces” simultaneously.</p>
+                </details>
                 
-                Final Layer: Averaging (stabilizes final prediction)
-                $$\vec{h}'_i = \sigma \left( \frac{1}{K} \sum_{k=1}^K \sum_{j \in \mathcal{N}_i} \alpha_{ij}^k \mathbf{W}_k \vec{h}_j \right)$$
-                                    </div>
+                <details class="subsection">
+                    <summary><strong>2. Multi-Head Feature Fusion:</strong></summary>
+                    <p>For every individual head $k$, when comparing a receiver node $i$ and a sender node $j$, the transformed vectors are concatenated horizontally: $\vec{e}_{ij,k} = [\vec{h}'_{i,k} \, \Vert \, \vec{h}'_{j,k}]$. If the transformed dimension is $F'$, this results in unique “super vectors” of size $2F'$. This structure keeps the sender and receiver features distinct for each head’s specific perspective.</p>
+                </details>
+                
+                <details class="subsection">
+                    <summary><strong>3. Independent Learnable Mappings:</strong></summary>
+                    <p>The model initializes $K$ independent learnable weight vectors ($\vec{a}_k$), matching the number of attention heads. Each vector $\vec{a}_k$ is responsible only for its corresponding head. The dot product between $\vec{a}_k$ and its head’s super vector collapses the relationship into a unique raw scalar $e_{ij,k}$ (often passed through an activation: $e_{ij,k} = \text{LeakyReLU}(\vec{a}_k^T \vec{e}_{ij,k})$). This ensures that head 1 can “score” a relationship based on different criteria than head 2.</p>
+                </details>
+                
+                <details class="subsection">
+                    <summary><strong>4. Head-Specific Non-Linearity & Normalization:</strong></summary>
+                    <p>The LeakyReLU and Softmax processes are applied independently within each head. This results in $K$ different sets of attention coefficients ($\alpha^k_{ij}$), each forming a valid probability distribution (summing to 1.0) within its own head.</p>
+                </details>
+                
+                <details class="subsection">
+                    <summary><strong>5. Multi-Head Aggregation:</strong></summary>
+                    <p>You are deciding: "Now that I have k separate versions of Node $i$, do I glue them together (Concatenate) or blend them (Average)?".</p>
+                    <p>After each of the $K$ attention heads has calculated its own unique version of a node’s new embedding ($h'_i$), the model must combine these independent results into a single output.</p>
+                </details>
+        
+                <div class="code-block" style="margin-top: 10px;">
+                <p><strong>CORE AGGREGATION METHODS:</strong></p>    
+                    Hidden Layers: Concatenation (preserves feature diversity)
+                    $$\vec{h}'_i = \Vert_{k=1}^K \sigma \left( \sum_{j \in \mathcal{N}_i} \alpha_{ij}^k \mathbf{W}_k \vec{h}_j \right)$$
+                    
+                    Final Layer: Averaging (stabilizes final prediction)
+                    $$\vec{h}'_i = \sigma \left( \frac{1}{K} \sum_{k=1}^K \sum_{j \in \mathcal{N}_i} \alpha_{ij}^k \mathbf{W}_k \vec{h}_j \right)$$
+                </div>
+            </div>
         </details>
 
         <details class="section">
