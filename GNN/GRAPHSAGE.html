@@ -167,8 +167,8 @@
     </summary>
     
     <div class="section-content">
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 Its goal
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -176,12 +176,12 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p><strong>Goal:</strong> GraphSAGE is designed to process massive networks. It generates <strong>node embeddings</strong>—dense mathematical representations of a node's local network and features—which are then used downstream for tasks like predicting a node's category (node classification). </p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 1. Neighbor sampling:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -189,15 +189,15 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <ul>
                 <li><strong>Mechanism:</strong> In huge graphs, some nodes have an overwhelming number of connections (hub nodes). GraphSAGE manages this by limiting the data it pulls.</li>
                 <li><strong>Strategy:</strong> Instead of aggregating data from <em>every</em> neighbor, it randomly samples a fixed number of neighbors per connection jump (hop).</li>
             </ul>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 Tradeoffs of low sampling numbers:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -205,12 +205,12 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>Sampling fewer neighbors uses less memory and speeds up training. However, it increases variance; you might randomly exclude crucial neighbors, causing noisy gradients, unstable training, and potentially reduced accuracy.</p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 PinSAGE:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -218,12 +218,12 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>Instead of uniform random sampling, PinSAGE takes multiple simulated "random walks" starting from a node. It selects the neighbors visited most often during these walks. This <strong>importance-based sampling</strong> guarantees that structurally critical nodes are chosen, which is highly effective for recommendation systems.</p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 2. Aggregation:
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -231,14 +231,14 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             
             <p><strong>Mean Aggregator:</strong> The simplest route. It calculates the average of the target node's data and its sampled neighbors. This average is multiplied by a learned weight matrix and passed through a non-linear filter (like ReLU). <br><em><strong>Best for:</strong></em> Fast, general-purpose efficiency.</p>
             
             <p><strong>LSTM Aggregator:</strong> Uses a neural network architecture (LSTM) to decode highly complex interactions. Because graph neighbors don't have a natural sequence, GraphSAGE randomly shuffles them before feeding them to the LSTM. This forces the model to learn patterns from the set as a whole, rather than relying on order. <br><em><strong>Best for:</strong></em> Graphs with intricate, non-linear dependencies.</p>
             
             <p><strong>Pooling Aggregator:</strong> A two-step "winner-take-all" method. First, a Multi-Layer Perceptron (MLP) transforms each neighbor's raw embedding to highlight key traits. Second, an <strong>element-wise max pooling</strong> operation scans each data dimension and keeps only the highest value across the entire neighborhood. <br><em><strong>Best for:</strong></em> Isolating the strongest, most dominant signals in a neighborhood.</p>
-        </div>
+        </details>
     </div>
 </details>
 
@@ -249,8 +249,8 @@
     </summary>
     
     <div class="section-content">
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 1. Data Preparation & Loading
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -258,12 +258,12 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>You begin by instantiating the graph structure. This requires defining the <strong>node feature matrix</strong> (X), which contains the raw attributes of every node, and the <strong>edge index</strong>, which maps the connectivity (adjacency) between nodes. For classification, you also align your <strong>ground-truth labels</strong> (Y) ensuring they are formatted as discrete integers for multi-class targets.</p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 2. Neighbor Sampling
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -271,12 +271,12 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>To handle graphs too large for GPU memory, you employ a <code>NeighborLoader</code>. Instead of processing the entire graph at once, this utility samples a fixed number of neighbors (defined by <code>num_neighbors</code>, e.g., <code>[15, 10]</code>) for a specific batch of target nodes. This generates smaller, independent <strong>computation graphs</strong> (subgraphs) for every mini-batch, ensuring scalability.<br><br></p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 3. Model Architecture
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -284,12 +284,12 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>You construct the network by stacking <code>SAGEConv</code> layers within a <code>torch.nn.Module</code>. The core mechanism here is <strong>aggregation</strong>: the model gathers information from a node's local neighborhood. You select an <strong>aggregator function</strong>—typically <code>mean</code> (average), <code>pool</code> (max-pooling), or <code>LSTM</code>—to synthesize these neighbor features. Non-linearities like <strong>ReLU</strong> and regularization via <strong>Dropout</strong> are added between layers to learn complex, multi-hop dependencies without overfitting.<br><br></p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 4. Training Pipeline
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -297,12 +297,12 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>Training occurs iteratively over batches. In the <strong>forward pass</strong>, the model processes the features and edges of the current sampled subgraph. You then compute the loss (e.g., via <code>CrossEntropyLoss</code>) strictly on the nodes designated by the <code>train_mask</code>. Gradients are propagated back to update model weights, while metrics like accuracy are tracked across all batches to monitor epoch performance.</p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 5. Evaluation & Testing
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -310,9 +310,9 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>Finally, switch the model to <code>.eval()</code> mode to freeze parameters (disabling Dropout). Depending on hardware constraints, you perform inference either on the <strong>full graph</strong> topology (if memory permits) or via a <strong>test loader</strong> for massive datasets, comparing predictions against the ground truth to validate the model's generalization capability.</p>
-        </div>
+        </details>
     </div>
 </details>
 
@@ -323,8 +323,8 @@
     </summary>
     
     <div class="section-content">
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 1. Data Organization & Unification
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -332,12 +332,12 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>When you have multiple separate graphs (like individual molecules or distinct subreddits), iterating through them one by one is incredibly slow for a GPU. <code>Batch.from_data_list()</code> takes all these separate graphs and stitches them together diagonally into one giant, disconnected super-graph. This tricks PyTorch into processing your entire dataset as a single, highly efficient matrix multiplication.</p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 2. Sampling & Stochastic Loading
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -345,12 +345,12 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>GraphSAGE stands for <strong>Sa</strong>mple and ag<strong>g</strong>r<strong>e</strong>gate. If a node is connected to 100,000 other nodes, looking at all of them will crash your GPU. <code>NeighborLoader</code> fixes this by capping the view. If you set <code>num_neighbors=[20, 10]</code>, the model looks at 20 immediate neighbors, and then 10 of <em>their</em> neighbors. This forces every node to have a predictable, fixed-size "receptive field" (computation graph) to learn from, making the memory footprint stable no matter how dense the real graph gets.<br><br></p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 3. Aggregator Selection (SAGEConv)
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -358,17 +358,17 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>Once a node has sampled its neighbors, it has to summarize their features to update its own state.</p>
             <ul>
                 <li><strong>Mean:</strong> Literally averages the neighbors' features. It's fast and works well if the "vibe" of the neighborhood is all you need.</li>
                 <li><strong>Pooling:</strong> Passes each neighbor through a mini neural network, then takes the maximum values. This is crucial when you are looking for a single, loud "outlier" signal hidden among normal neighbors.</li>
                 <li><strong>LSTM:</strong> Feeds neighbors into a sequence model in a random order. This is computationally heavy but necessary when the complex structural arrangement of the neighbors matters more than just their raw features.</li>
             </ul>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 4. Loss Functions & Multi-Label Logic
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -376,12 +376,12 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>Standard classification assumes a node can only be one thing (e.g., a photo is either a dog <em>or</em> a cat). Multi-label means a node can be many things (e.g., a movie is Action <em>and</em> Sci-Fi <em>and</em> Thriller). <code>BCEWithLogitsLoss</code> solves this by treating every single possible label as an independent Yes/No question. It calculates a separate binary probability for each of the available classes simultaneously.</p>
-        </div>
+        </details>
 
-        <div class="subsection">
-            <span class="subsection-title">
+        <details class="subsection">
+            <summary class="subsection-title">
                 5. Performance Metrics (F1 Score)
                 <button class="eye-btn">
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
@@ -389,9 +389,9 @@
                         <circle cx="12" cy="12" r="3"></circle>
                     </svg>
                 </button>
-            </span>
+            </summary>
             <p>In multi-label datasets, a node usually only has 2 or 3 active labels out of a possible 100. If the model lazily predicts "0" for everything, it will achieve 97% accuracy while being completely useless. Micro-F1 ignores this inflated accuracy; by thresholding predictions (anything &gt; 0 is a "Yes"), it measures the harmonious balance between catching the actual labels (Recall) and not making false alarms (Precision).</p>
-        </div>
+        </details>
     </div>
 </details>
 
